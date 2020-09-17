@@ -68,3 +68,6 @@ Use[currentColor](https://www.zhangxinxu.com/wordpress/2014/10/currentcolor-css3
 
 借助`currentColor`, `hover`时候的颜色变化，我们根本无需关心，因为无论是`border`, `background`, 还是`box-shadow`都使用`currentColor`作为图形颜色，hover时候自然就会变成我们想要的文字颜色。
 
+
+
+注意[选择器](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Selectors)，尤其是Pseudo & 属性选择器
