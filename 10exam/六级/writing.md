@@ -10,7 +10,7 @@
 
 2. 描图和引言
 
-As the picture given dipicts, `___描述___`,which conveys to us is thought-provoking:___
+As the picture given dipicts, `___描述___`,what conveys to us is thought-provoking:___
 
 
 
@@ -25,6 +25,10 @@ It goes without saying that higher education has captured a great deal of attent
 ### 社会现象 重要
 
 It goes without saying that inovation plays a key role in developing national economy. The past several years have witnessed a striking increase in the number of scientists who are making new breakthroughs in their fields. This will definitely exert a substantial impact on our society
+
+
+
+It goes without saying that innovation plays a key role in developing national economy.Innovation,  a common word,  but extert an profound impact on our life. Consequently,xxx is necessay
 
 
 
@@ -75,7 +79,44 @@ The development of technology has brought us unprecedented transformation, which
 
 
 
+first of all ,secondly, thirdly
+
+for one thing, for another
+
+
+
+to some extent
+
 ## 总结
 
-Given the factors I have just outlined,`总结`. There are no panaceas or prescription for solving the problem, but only alternate ways of coping with it. The time is right for us to take full advantage of ample existing opportunities, which will render our society to be of much peace and harmony.
+Given the factors I have just outlined / in brief,`总结`. Only with xxx can we... The time is right for us to take full advantage of ample existing opportunities, which will render our society to be of much peace and harmony.
 
+
+
+## 常用表达
+
+### 重要,重视
+
+pay more attention to n
+
+attach great importance to n
+
+lay great emphasis on n
+
+necessay indespensable significant essential
+
+exert an profound impact on
+
+play a key role in
+
+
+
+使得
+
+enable allow render
+
+
+
+因此
+
+therefore consequently
