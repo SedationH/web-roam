@@ -113,3 +113,196 @@ function makePower(exponent){
 }
 ```
 
+
+
+## 纯函数
+
+A **pure function** is a function which:
+
+- Given the same inputs, always returns the same output, and
+- Has no side-effects
+
+
+
+### 好处
+
+- 可缓存
+
+```js
+// 因为纯函数什么样的输入就可以得到什么样子的输出
+// 我们可以通过建立input -> output的映射缓存
+function memoize(f) {
+  const cache = {}
+  return function (...args) {
+    const arg_str = JSON.stringify(args)
+    cache[arg_str] = cache[arg_str] || f.apply(f, args)
+    return cache[arg_str]
+  }
+}
+
+function getArea(r) {
+  console.log('getArea调用')
+  return Math.PI * r * r
+}
+
+const fn = memoize(getArea)
+
+console.log(fn(1))
+console.log(fn(1))
+console.log(fn(1))
+
+// getArea调用
+// 3.141592653589793
+// 3.141592653589793
+// 3.141592653589793
+```
+
+- 方便测试 输入输出的稳定关联
+- 并行处理
+  - 在多线程环境下并行操作共享的数据很可能会出现意外情况
+  - 纯函数不需要访问共享的内存数据，所以在并行环境下可以任意运行纯函数(Web Worker[JS也能多线程了])
+
+### 副作用
+
+```js
+const mini = 18
+function checkAge(age) {
+  return age >= mini
+}
+
+// refer mini not pure
+```
+
+如果函数依赖于外部的状态就无法保证相同的输入一定会带来相同的输出
+
+来源：
+
+- 配置文件
+- 数据库
+- 用户交互
+
+> 所有的外部交互都可能带来副作用，副作用也使得方法通用性下降，带来不稳定
+>
+> 但副作用不可能完全禁止，尽可能控制他们在可控范围内发生
+
+
+
+## 柯里化(currying)
+
+固定一部分参数，相当于对于函数参数的缓存
+
+```js
+const _ = require('lodash')
+
+function getSum(a, b, c) {
+  return a + b + c
+}
+
+const curried = _.curry(getSum)
+
+console.log(
+  curried(1, 2, 3),
+  curried(1)(2, 3),
+  curried(1)(2)(3)
+)
+// 6 6 6
+
+const match = _.curry((reg, str) => str.match(reg))
+const haveSpace = match(/\s+/g)
+const haveNumber = match(/\d+/g)
+
+console.log(haveSpace('hi i am you love❤️'))
+
+const filter = _.curry((fn, arry) => arry.filter(fn))
+
+console.log(filter(haveSpace, ['hi SedationH', 'hi_SedationT']))
+
+// 进行组合
+const SelectItemHaveSpace = filter(haveSpace)
+console.log(
+  SelectItemHaveSpace(['hi SedationH', 'hi_SedationT'])
+)
+
+```
+
+
+
+### lodash中的currying
+
+```js
+const _ = require('lodash')
+
+function getSum(a, b, c) {
+  return a + b + c
+}
+
+const curried = _.curry(getSum)
+
+console.log(
+  curried(1, 2, 3),
+  curried(1)(2, 3),
+  curried(1)(2)(3)
+)
+// 6 6 6
+
+const match = _.curry((reg, str) => str.match(reg))
+const haveSpace = match(/\s+/g)
+const haveNumber = match(/\d+/g)
+
+console.log(haveSpace('hi i am you love❤️'))
+
+const filter = _.curry((fn, arry) => arry.filter(fn))
+
+console.log(filter(haveSpace, ['hi SedationH', 'hi_SedationT']))
+
+// 进行组合
+const SelectItemHaveSpace = filter(haveSpace)
+console.log(
+  SelectItemHaveSpace(['hi SedationH', 'hi_SedationT'])
+)
+
+
+// 简单实现_.curry
+// 有点小难
+
+// 分析
+/**
+ * curry能返回一个函数
+ * 当函数的参数不够时，返回固定部分参数的函数
+ * 返回直接能够运行的函数
+ */
+function curry(fn) {
+  return function curriedFn(...args) {
+    // 根据实参和形参的关系
+    if (args.length < fn.length) {
+      return function () {
+        return curriedFn(...args.concat(Array.from(arguments)))
+      }
+    }
+    return fn(...args)
+  }
+}
+
+function getSum(a, b, c) {
+  return a + b + c
+}
+
+const curried2 = curry(getSum)
+
+
+console.log(
+  curried2(1, 2, 3),
+  curried2(1)(2, 3),
+  curried2(1)(2)(3)
+)
+```
+
+
+
+### 总结
+
+- 固定参数
+- 灵活，函数颗粒度更小
+- 多元函数->一元函数
+- 通过函数组合产生更加强大的功能
+
