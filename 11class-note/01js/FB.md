@@ -94,7 +94,7 @@ pay(2)
 
 
 
-[练习](./tryImplement)，尝试实现JS提供的常用高阶函数
+[练习](../tryImplement)，尝试实现JS提供的常用高阶函数
 
 
 
@@ -292,12 +292,26 @@ const curried2 = curry(getSum)
 
 console.log(
   curried2(1, 2, 3),
-  curried2(1)(2, 3),
+  curried2(1)(2, 3), // 举例 看下面
   curried2(1)(2)(3)
 )
 ```
 
 
+
+重点断点向curried2传入部分参数的时候函数的执行和返回情况
+
+比如当curried2(1)返回后(2,3)执行返回的函数
+
+![image-20200920162035882](http://picbed.sedationh.cn/image-20200920162035882.png)
+
+
+
+下面一行  执行(1)(2)返回的函数
+
+![](http://picbed.sedationh.cn/image-20200920162035882.png)
+
+这一点还是有些绕的 注意断点理解
 
 ### 总结
 
@@ -305,4 +319,79 @@ console.log(
 - 灵活，函数颗粒度更小
 - 多元函数->一元函数
 - 通过函数组合产生更加强大的功能
+
+
+
+## 函数组合
+
+### 场景
+
+使用多个函数才能获取到所需要的结果的时候，代码比较丑（洋葱代码）
+
+`_.toUpper(_.first(_.reverse(array)))`
+
+### 意义
+
+通过compose函数组合所需的函数，将多个函数组合成一个函数
+
+> 形象化理解：
+>
+> ​	函数是处理的管道 上述场景就是说 数据需要通过多个管道
+>
+> ​	我们通过compose函数将他们封装称为一个大管道
+>
+> ![image-20200920171548378](http://picbed.sedationh.cn/image-20200920171548378.png)
+
+### 实现
+
+值得注意的是，如果函数执行的顺序是f1 -> f2 -> f3
+
+我们一般写成 compose(f3, f2, f1)
+
+[implementFlow.html](../implementFlow.html)
+
+```js
+function compose(...fns) {
+  return function (value) {
+    return fns.reverse().reduce(function (accValue, curFn) {
+      return curFn(accValue)
+    }, value)
+  }
+}
+
+function curry(fn) {
+  return function curriedFn(...args) {
+    if (args.length < fn.length) {
+      return function () {
+        // 这里注意arguments是伪数组,需要转换一下
+        return curriedFn(...args.concat(Array.from(arguments)))
+      }
+    }
+    return fn(...args)
+  }
+}
+
+// 目标
+// transform NEVER SAY DIE to never-say-day
+
+// 需要用到的函数
+const toLowerCase = value => value.toLowerCase()
+const split = curry((sep, str) => str.split(sep))
+const join = curry((sep, str) => str.join(sep))
+const log = value => {
+  console.log(value)
+  return value
+}
+const track = curry((tag, value) => {
+  console.log(`${tag}: ${value}`)
+  return value
+})
+
+
+const f = compose(join('-'), track('after split'), split(' '), log, toLowerCase)
+
+console.log(
+  f('NEVER SAY DIE')
+)
+```
 
