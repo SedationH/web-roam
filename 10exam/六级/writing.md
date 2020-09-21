@@ -103,7 +103,7 @@ attach great importance to n
 
 lay great emphasis on n
 
-necessay indespensable significant essential
+necessay Indispensable significant essential
 
 exert an profound impact on
 

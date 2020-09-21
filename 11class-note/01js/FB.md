@@ -395,3 +395,169 @@ console.log(
 )
 ```
 
+
+
+## Pointfree
+
+Point free 是一种编程风格，指将函数处理数据的过程定义为与数据无关的合成运算
+
+这里需要两个前提知识
+
+1. 柯里化
+2. 函数组合
+
+我们通过上面两个方法来具体实现
+
+
+
+为了操作方便，引入Lodash fp模块来演示
+
+```js
+// target: Hello World -> hello_world
+
+const word = 'Hello World'
+
+// 非 Point free
+/**
+ * @param {string} word
+ */
+function f1(word) {
+  return word.toLowerCase().replace(/\s+/g, '_')
+}
+
+console.log(
+  f1(word)
+)
+
+// Point Free
+const fp = require('lodash/fp')
+const f2 = fp.flowRight(fp.replace(/\s+/g, '_'), fp.toLower)
+
+console.log(
+  f2(word)
+)
+
+// 其实就是上面一直在用的
+```
+
+
+
+## Functor(函子)
+
+在函数式编程中，为了控制副作用(异常，异步)在可控的范围内，引入了函子
+
+所谓函子，就是一个容器，包含值和值的变形关系(map函数)
+
+```js
+class Container {
+  // 省略通过new来创建对象 更加函数式
+  static of(value) {
+    return new Container(value)
+  }
+
+  constructor(value) {
+    this._value = value
+  }
+
+  // map利用fn处理变形关系，产生新的Container
+  map(fn) {
+    return Container.of(fn(this._value))
+  }
+}
+
+const r = Container.of(3)
+  .map(x => x + 2)
+  .map(x => x * x)
+
+console.log(r)
+
+// 由此可见，函数式编程的运算不直接操作值，而是借助函子完成
+// 所谓函子就是一个实现了map，存有值的对象
+
+```
+
+### MayBe
+
+```js
+// 为了解决空值异常，引入Mabe函子
+class MayBe {
+  static of(value) {
+    return new MayBe(value)
+  }
+
+  constructor(value) {
+    this._value = value
+  }
+
+  map(fn) {
+    // 实际上就是在fn执行前增加了一个空值处理
+    return this.isNothing() ? MayBe.of(this._value)
+      : MayBe.of(fn(this._value))
+  }
+
+  isNothing() {
+    return this._value === null || this._value === undefined
+  }
+}
+
+const r2 = MayBe.of(null)
+  .map(x => x.toLowerCase())
+
+console.log(r2)
+
+```
+
+
+
+
+
+### Either函子
+
+```js
+// 为了解决异常造成的副作用，引入Either函子
+
+// 产生异常的情况
+class Left {
+  static of(value) {
+    return new Left(value)
+  }
+
+  constructor(value) {
+    this._value = value
+  }
+
+  // 这里让map直接返回当前函子
+  map() {
+    return this
+  }
+}
+
+// 正常处理的情况
+class Right {
+  static of(value) {
+    return new Right(value)
+  }
+
+  constructor(value) {
+    this._value = value
+  }
+
+  map(fn) {
+    return Right.of(fn(this._value))
+  }
+}
+
+function parseJSON(json) {
+  try {
+    return Right.of(JSON.parse(json))
+  } catch (e) {
+    return Left.of({ message: 'error' })
+  }
+}
+
+console.log(
+  parseJSON('{ "name": "zs" }').map(x => x.name.toUpperCase()),
+  parseJSON('{ name: "zs" }').map(x => x.name.toUpperCase())
+)
+```
+
