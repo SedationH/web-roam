@@ -12,7 +12,7 @@ WebAPi中所维护的计时器和JS线程的执行屁不想干，timer1计时结
 
 - Call stack是当前js运行的调用表
 - Queue是等待进入Call Stack的等待表
-- 只有Call stack为空(除了全局的(annomymous)) 才去查看Queue中是否有需要执行的任务，进行执行
+- 只有Call stack为空 才去查看Queue中是否有需要执行的任务，进行执行
 
 回调函数是JS实现异步的基础
 
