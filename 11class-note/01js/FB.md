@@ -507,10 +507,6 @@ console.log(r2)
 
 ```
 
-
-
-
-
 ### Either函子
 
 ```js
@@ -561,3 +557,86 @@ console.log(
 )
 ```
 
+### IO函子
+
+```js
+const fp = require('lodash/fp')
+
+// 为了解决IO操作所带来的副作用，引入IO函子
+// 惰性处理IO的操作，整个函数保持纯，副作用由调用者处理
+class IO {
+  // 通过of我们可以感受到，通过IO函子，我们想拿到的还是值
+  // 但是我们通过在值外面包裹一个函数，延迟拿到值
+  static of(x) {
+    return new IO(function () {
+      return x
+    })
+  }
+
+  // 接受一个函数
+  // 通常IO把不纯的动作存储到_value中，延迟执行这个不纯的操作
+  // 将不纯的操作交给调用着处理
+  // io._value()
+  constructor(fn) {
+    this._value = fn
+  }
+
+  map(fn) {
+    return new IO(fp.flowRight(fn, this._value))
+  }
+}
+
+const io = IO.of(process).map(p => p.execPath)
+
+console.log(io._value())
+```
+
+注意IO函子在设计上与上面其他函子的区别，首先_value是个函数，用来惰性处理IO操作，最终想拿到的仍然是IO后的值，不过我们用一个函数把这个值包裹了起来
+
+### Task函子
+
+task函子用于处理异步任务，这里简单实用folktale来实现需求
+
+```js
+const fs = require('fs')
+const { task } = require('folktale/concurrency/task')
+const { find, split, flowRight } = require('lodash/fp')
+
+function readFile(filename) {
+  return task(resolver => {
+    fs.readFile(filename, 'utf-8', (err, data) => {
+      if (err) resolver.reject(err)
+      resolver.resolve(data)
+    })
+  })
+}
+
+// 这里的run 有_.value()的感觉
+readFile('package.json')
+  // .map(split('\n'))
+  // .map(find(line => line.includes('version')))
+  .map(
+    flowRight(
+      find(line => line.includes('version')),
+      split('\n')
+    )
+  )
+  .run()
+  .listen({
+    onRejected: err => console.log(err),
+    onResolved: value => console.log(value)
+  })
+
+```
+
+### Pointed函子
+
+指实现了of静态方法的函子
+
+上面提过说of是为了不实用new，让代码看起来更像是函数式编程
+
+但更深层的含义是of方法用来把值放到上下文Context中，即容器将值包裹起来，放到map可以进行处理的上下文之中
+
+### Monad 单子
+
+没看懂....

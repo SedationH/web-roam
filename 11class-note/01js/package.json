@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "folktale": "^2.3.2",
     "lodash": "^4.17.20"
   }
 }
