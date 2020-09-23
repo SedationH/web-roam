@@ -57,5 +57,15 @@ new Promise((resolve, reject) => {
 )
 ```
 
+通过then产生的回调是一种micro-task 当前call stack中的函数执行完成后，优先检查执行micro-queue中的任务
 
+也就是说类似setTimeout所产生的回调，进入queue等待队列，想要执行，需要call stack & micro 都为空的时候，才能轮到queue
+
+
+
+Promise还有一些特性与方法，异常穿透，链式调用，一些常用的静态方法all race ...
+
+这些尝试写一遍源码就行了
+
+## 生成器函数 Generate
 
