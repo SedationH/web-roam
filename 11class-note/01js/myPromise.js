@@ -30,10 +30,14 @@ class MyPromise {
 
   then(onFulfilled, onRejected) {
     const returePromise = new MyPromise((resolve, reject) => {
+      // 这个需求点好奇怪，干嘛会在自己返回自己，还要在创建前拿到自己
       if (this.status === FULFILLED) {
-        const result = onFulfilled(this.value)
-        // 要判断result的类型和状态,决定如何处理
-        resovlePromise(result, resolve, reject)
+        // 这里引入异步，先产生returnPromise
+        setTimeout(() => {
+          const result = onFulfilled(this.value)
+          // 要判断result的类型和状态,决定如何处理
+          resovlePromise(returePromise, result, resolve, reject)
+        }, 0);
       } else if (this.status === REJECTED) {
         onRejected(this.reason)
       } else {
@@ -46,7 +50,11 @@ class MyPromise {
 
 }
 
-function resovlePromise(result, resolve, reject) {
+function resovlePromise(returePromise, result, resolve, reject) {
+  if (returePromise === result) {
+    // 这里的return只是意味着终止
+    return reject(TypeError('[TypeError: Chaining cycle detected for promise #<Promise>]'))
+  }
   if (result instanceof MyPromise) {
     result.then(resolve, reject)
   } else {

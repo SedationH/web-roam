@@ -1,18 +1,14 @@
 const MyPromise = require('./myPromise')
 
-const promise = new MyPromise((resolve, reject) => {
-  resolve(1)
-})
-
-
-const p = new Promise((resolve, reject) => {
+const p = new MyPromise((resolve, reject) => {
   resolve(1)
 })
 
 const p2 = p.then(
   _ => p2
 )
-p2.catch(
+p2.then(
+  () => { },
   err => console.log(err)
 )
 
