@@ -29,14 +29,28 @@ class MyPromise {
   }
 
   then(onFulfilled, onRejected) {
-    if (this.status === FULFILLED) {
-      onFulfilled(this.value)
-    } else if (this.status === REJECTED) {
-      onRejected(this.reason)
-    } else {
-      this.successCallbacks.push(onFulfilled)
-      this.failCallbacks.push(onRejected)
-    }
+    const returePromise = new MyPromise((resolve, reject) => {
+      if (this.status === FULFILLED) {
+        const result = onFulfilled(this.value)
+        // 要判断result的类型和状态,决定如何处理
+        resovlePromise(result, resolve, reject)
+      } else if (this.status === REJECTED) {
+        onRejected(this.reason)
+      } else {
+        this.successCallbacks.push(onFulfilled)
+        this.failCallbacks.push(onRejected)
+      }
+    })
+    return returePromise
+  }
+
+}
+
+function resovlePromise(result, resolve, reject) {
+  if (result instanceof MyPromise) {
+    result.then(resolve, reject)
+  } else {
+    resolve(result)
   }
 }
 
