@@ -11,15 +11,18 @@ p.then(
 )
 
 const p2 = new MyPromise((resolve, reject) => {
-  resolve(1)
+  reject(1)
 }).then(
-  value => {
-    throw new Error('fulfilled里面的回调')
-  }
-).then(
   () => { },
   err => {
     console.log(err)
-    console.log(111)
+    return new MyPromise((_, reject) => {
+      setTimeout(() => {
+        reject(666)
+      }, 2000);
+    })
   }
+).then(
+  () => { },
+  console.log
 )

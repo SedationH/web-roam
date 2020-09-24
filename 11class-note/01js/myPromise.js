@@ -22,14 +22,14 @@ class MyPromise {
     if (this.status !== PENDING) return
     this.status = FULFILLED
     this.value = value
-    while (this.successCallbacks.length) this.successCallbacks.shift()(this.value)
+    while (this.successCallbacks.length) this.successCallbacks.shift()()
   }
 
   reject = reason => {
     if (this.status !== PENDING) return
     this.status = REJECTED
     this.reason = reason
-    while (this.failCallbacks.length) this.failCallbacks.shift()(this.reason)
+    while (this.failCallbacks.length) this.failCallbacks.shift()()
   }
 
   then(onFulfilled, onRejected) {
@@ -47,10 +47,41 @@ class MyPromise {
           }
         }, 0);
       } else if (this.status === REJECTED) {
-        onRejected(this.reason)
+        setTimeout(() => {
+          // 捕获成功回调里面可能的异常
+          try {
+            const result = onRejected(this.reason)
+            // 要判断result的类型和状态,决定如何处理
+            resovlePromise(returePromise, result, resolve, reject)
+          } catch (e) {
+            reject(e)
+          }
+        }, 0);
       } else {
-        this.successCallbacks.push(onFulfilled)
-        this.failCallbacks.push(onRejected)
+        this.successCallbacks.push(() => {
+          setTimeout(() => {
+            // 捕获成功回调里面可能的异常
+            try {
+              const result = onFulfilled(this.value)
+              // 要判断result的类型和状态,决定如何处理
+              resovlePromise(returePromise, result, resolve, reject)
+            } catch (e) {
+              reject(e)
+            }
+          }, 0);
+        })
+        this.failCallbacks.push(() => {
+          setTimeout(() => {
+            // 捕获成功回调里面可能的异常
+            try {
+              const result = onRejected(this.reason)
+              // 要判断result的类型和状态,决定如何处理
+              resovlePromise(returePromise, result, resolve, reject)
+            } catch (e) {
+              reject(e)
+            }
+          }, 0);
+        })
       }
     })
     return returePromise
