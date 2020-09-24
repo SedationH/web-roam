@@ -1,0 +1,28 @@
+<body>
+  <script src="./myPromise.js"></script>
+  <script>
+    const p0 = () => new MyPromise(resolve => {
+      resolve('p0')
+    })
+
+    const p1 = () => new MyPromise((resolve) => {
+      setTimeout(resolve, 5000, 'p1')
+    })
+
+    const p2 = () => new MyPromise((resolve) => {
+      setTimeout(resolve, 1000, 'p2')
+    })
+
+    // MyPromise.resolve(1).then(console.log)
+    // MyPromise.resolve(p1()).then(console.log)
+    console.time('1')
+    p0().finally(
+      () => p1()
+    ).then(
+      () => {
+        console.log(2)
+        console.timeEnd('1')
+      }
+    )
+  </script>
+</body>

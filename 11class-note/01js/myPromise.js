@@ -11,7 +11,6 @@ class MyPromise {
     }
   }
   status = PENDING
-  value = undefined
   reason = undefined
   successCallbacks = []
   failCallbacks = []
@@ -89,6 +88,28 @@ class MyPromise {
     return returePromise
   }
 
+  finally(callback) {
+    return this.then(
+      value => (
+        MyPromise.resolve(callback()).then(
+          () => value
+        )
+      ),
+      reason => (
+        MyPromise.resolve(callback()).then(
+          () => { throw reason },
+        )
+      )
+    )
+  }
+
+  catch(onRejected) {
+    return this.then(
+      undefined,
+      onRejected
+    )
+  }
+
   static all(array) {
     const result = [], len = array.length
     let cnt = 0
@@ -110,6 +131,11 @@ class MyPromise {
       }
     })
   }
+
+  static resolve(value) {
+    return value instanceof MyPromise ? value :
+      new MyPromise(resolve => resolve(value))
+  }
 }
 
 function resovlePromise(returePromise, result, resolve, reject) {
@@ -123,5 +149,3 @@ function resovlePromise(returePromise, result, resolve, reject) {
     resolve(result)
   }
 }
-
-module.exports = MyPromise
