@@ -1,16 +1,17 @@
-const { reject } = require('lodash')
-const { compose } = require('lodash/fp')
 const MyPromise = require('./myPromise')
 
-new MyPromise((resolve, reject) => {
-  resolve(1)
-}).then().then().then(
+const p1 = () => new MyPromise((resolve) => {
+  setTimeout(resolve, 2000, 'p1')
+})
+
+const p2 = () => new MyPromise((resolve) => {
+  setTimeout(resolve, 1000, 'p2')
+})
+
+MyPromise.all(
+  ['a', 'b', p1(), p2(), 'c']
+).then(
   console.log
 )
 
-new MyPromise((_, reject) => {
-  reject(2)
-}).then().then().then(
-  () => { },
-  console.log
-)
+// [ 'a', 'b', 'p1', 'p2', 'c' ]

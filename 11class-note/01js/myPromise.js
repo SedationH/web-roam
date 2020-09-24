@@ -89,6 +89,27 @@ class MyPromise {
     return returePromise
   }
 
+  static all(array) {
+    const result = [], len = array.length
+    let cnt = 0
+    return new MyPromise((resolve, reject) => {
+      for (let i = 0; i < len; i++) {
+        if (array[i] instanceof MyPromise) {
+          array[i].then(
+            value => {
+              result[i] = value
+              cnt++
+              if (cnt === len) resolve(result)
+            },
+            reason => reject(reason)
+          )
+        } else {
+          result[i] = array[i]
+          cnt++
+        }
+      }
+    })
+  }
 }
 
 function resovlePromise(returePromise, result, resolve, reject) {
