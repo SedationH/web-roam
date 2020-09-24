@@ -235,14 +235,15 @@ co(main)
 
 ```js
 async function main() {
-  const users = awaaw ajax('/api/users.json')
+  const users = await ajax('/api/users.json')
   console.log(users)
 
-  const posts = yield ajax('/api/posts.json')
+  const posts = await ajax('/api/posts.json')
   console.log(posts)
 
-  const urls = yield ajax('/api/urls.json')
+  const urls = await ajax('/api/urls.json')
   console.log(urls)
+  return 6
 }
 ```
 
