@@ -4,7 +4,11 @@ const
   REJECTED = 'rejected'
 class MyPromise {
   constructor(executor) {
-    executor(this.resolve, this.reject)
+    try {
+      executor(this.resolve, this.reject)
+    } catch (e) {
+      this.reject('executor err')
+    }
   }
   status = PENDING
   value = undefined
@@ -30,13 +34,17 @@ class MyPromise {
 
   then(onFulfilled, onRejected) {
     const returePromise = new MyPromise((resolve, reject) => {
-      // 这个需求点好奇怪，干嘛会在自己返回自己，还要在创建前拿到自己
       if (this.status === FULFILLED) {
         // 这里引入异步，先产生returnPromise
         setTimeout(() => {
-          const result = onFulfilled(this.value)
-          // 要判断result的类型和状态,决定如何处理
-          resovlePromise(returePromise, result, resolve, reject)
+          // 捕获成功回调里面可能的异常
+          try {
+            const result = onFulfilled(this.value)
+            // 要判断result的类型和状态,决定如何处理
+            resovlePromise(returePromise, result, resolve, reject)
+          } catch (e) {
+            reject(e)
+          }
         }, 0);
       } else if (this.status === REJECTED) {
         onRejected(this.reason)

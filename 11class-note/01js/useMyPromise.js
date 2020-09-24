@@ -1,15 +1,25 @@
 const MyPromise = require('./myPromise')
 
 const p = new MyPromise((resolve, reject) => {
-  resolve(1)
+  throw new Error('err')
 })
 
-const p2 = p.then(
-  _ => p2
-)
-p2.then(
+// 拿到执行器的错误
+p.then(
   () => { },
-  err => console.log(err)
+  console.log
 )
 
-// [TypeError: Chaining cycle detected for promise #<Promise>]
+const p2 = new MyPromise((resolve, reject) => {
+  resolve(1)
+}).then(
+  value => {
+    throw new Error('fulfilled里面的回调')
+  }
+).then(
+  () => { },
+  err => {
+    console.log(err)
+    console.log(111)
+  }
+)
