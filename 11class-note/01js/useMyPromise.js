@@ -1,28 +1,16 @@
+const { reject } = require('lodash')
+const { compose } = require('lodash/fp')
 const MyPromise = require('./myPromise')
 
-const p = new MyPromise((resolve, reject) => {
-  throw new Error('err')
-})
-
-// 拿到执行器的错误
-p.then(
-  () => { },
+new MyPromise((resolve, reject) => {
+  resolve(1)
+}).then().then().then(
   console.log
 )
 
-const p2 = new MyPromise((resolve, reject) => {
-  reject(1)
-}).then(
-  () => { },
-  err => {
-    console.log(err)
-    return new MyPromise((_, reject) => {
-      setTimeout(() => {
-        reject(666)
-      }, 2000);
-    })
-  }
-).then(
+new MyPromise((_, reject) => {
+  reject(2)
+}).then().then().then(
   () => { },
   console.log
 )

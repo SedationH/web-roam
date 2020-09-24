@@ -33,6 +33,8 @@ class MyPromise {
   }
 
   then(onFulfilled, onRejected) {
+    onFulfilled = onFulfilled ? onFulfilled : value => value
+    onRejected = onRejected ? onRejected : reason => { throw reason }
     const returePromise = new MyPromise((resolve, reject) => {
       if (this.status === FULFILLED) {
         // 这里引入异步，先产生returnPromise
