@@ -2,11 +2,18 @@ const MyPromise = require('./myPromise')
 
 const promise = new MyPromise((resolve, reject) => {
   resolve(1)
-}).then(
-  value => {
-    console.log(value)
-    return new MyPromise(resolve => resolve(66))
-  }
-).then(
-  console.log
+})
+
+
+const p = new Promise((resolve, reject) => {
+  resolve(1)
+})
+
+const p2 = p.then(
+  _ => p2
 )
+p2.catch(
+  err => console.log(err)
+)
+
+// [TypeError: Chaining cycle detected for promise #<Promise>]
