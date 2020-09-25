@@ -126,4 +126,4 @@ function resovlePromise(returePromise, result, resolve, reject) {
   } else {
     resolve(result)
   }
-}
+}  
