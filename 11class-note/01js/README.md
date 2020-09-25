@@ -2,7 +2,7 @@
 
 理解的前提是要知道JS引擎和相关runtime逻辑，[参考](JS运行机制.md)
 
-JS的异步发展从callback -> Promise -> Generate -> async 注意理清发展的逻辑，新tec解决了什么痛点,[参考](./Promise.js)
+JS的异步发展从callback -> Promise -> Generate -> async 注意理清发展的逻辑，新tec解决了什么痛点,[参考](./Promise.md)
 
  Promise是现代异步JavaScript的支柱，知其然和所以然, 参考看关于Promise的一步一步commit [从这里开始](https://github.com/SedationH/web-roam/commit/f8fc1136f4e4eac60f65689d42a594af228ec04b)
 
