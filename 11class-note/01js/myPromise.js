@@ -7,10 +7,11 @@ class MyPromise {
     try {
       executor(this.resolve, this.reject)
     } catch (e) {
-      this.reject('executor err')
+      this.reject('executor err', e)
     }
   }
   status = PENDING
+  value = undefined
   reason = undefined
   successCallbacks = []
   failCallbacks = []
@@ -35,53 +36,30 @@ class MyPromise {
     onFulfilled = onFulfilled ? onFulfilled : value => value
     onRejected = onRejected ? onRejected : reason => { throw reason }
     const returePromise = new MyPromise((resolve, reject) => {
+      // 多次把任务放到宏队列，进行抽象
+      const handleSetTimeout = (callback) => {
+        setTimeout(() => {
+          // 捕获成功回调里面可能的异常
+          try {
+            const result = callback(this.value)
+            // 要判断result的类型和状态,决定如何处理
+            resovlePromise(returePromise, result, resolve, reject)
+          } catch (e) {
+            reject(e)
+          }
+        }, 0);
+      }
+
       if (this.status === FULFILLED) {
-        // 这里引入异步，先产生returnPromise
-        setTimeout(() => {
-          // 捕获成功回调里面可能的异常
-          try {
-            const result = onFulfilled(this.value)
-            // 要判断result的类型和状态,决定如何处理
-            resovlePromise(returePromise, result, resolve, reject)
-          } catch (e) {
-            reject(e)
-          }
-        }, 0);
+        handleSetTimeout(onFulfilled)
       } else if (this.status === REJECTED) {
-        setTimeout(() => {
-          // 捕获成功回调里面可能的异常
-          try {
-            const result = onRejected(this.reason)
-            // 要判断result的类型和状态,决定如何处理
-            resovlePromise(returePromise, result, resolve, reject)
-          } catch (e) {
-            reject(e)
-          }
-        }, 0);
+        handleSetTimeout(onRejected)
       } else {
         this.successCallbacks.push(() => {
-          setTimeout(() => {
-            // 捕获成功回调里面可能的异常
-            try {
-              const result = onFulfilled(this.value)
-              // 要判断result的类型和状态,决定如何处理
-              resovlePromise(returePromise, result, resolve, reject)
-            } catch (e) {
-              reject(e)
-            }
-          }, 0);
+          handleSetTimeout(onFulfilled)
         })
         this.failCallbacks.push(() => {
-          setTimeout(() => {
-            // 捕获成功回调里面可能的异常
-            try {
-              const result = onRejected(this.reason)
-              // 要判断result的类型和状态,决定如何处理
-              resovlePromise(returePromise, result, resolve, reject)
-            } catch (e) {
-              reject(e)
-            }
-          }, 0);
+          handleSetTimeout(onRejected)
         })
       }
     })

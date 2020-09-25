@@ -96,10 +96,35 @@ const { curry } = require('lodash')
 // maybe.map(ex1).map(console.log)
 // // [ 6, 7, 2 ]
 
+// const fp = require('lodash/fp')
+// const { Maybe, Container } = require('./functor')
+// let xs = Container.of(['do', 'ray',
+//   'me', 'fa', 'so', 'la', 'ti', 'do'])
+// let ex2 = value => {
+//   return fp.first(value)
+// }
+
+// xs.map(ex2).map(console.log)
+
+// const fp = require('lodash/fp')
+// const { Maybe, Container } = require('./functor')
+// let safeProp = fp.curry(function (x, o) {
+//   return Maybe.of(o[x])
+// })
+// let user = { id: 2, name: 'Albert' }
+// const ex3 = (value) => {
+//   safeProp('name', value).map(
+//     fp.flowRight(fp.first, fp.split(''), fp.trim)
+//   ).map(
+//     v => ans = v
+//   )
+//   return ans
+// }
+
+// Container.of(user).map(ex3).map(console.log)
+
 const fp = require('lodash/fp')
 const { Maybe, Container } = require('./functor')
-let xs = Container.of(['do', 'ray',
-  'me', 'fa', 'so', 'la', 'ti', 'do'])
-let ex2 = () => {
-  //你需要实现的函数。。。
-}
+const ex4 = n => Maybe.of(n).map(parseInt)
+
+ex4(null).map(console.log)

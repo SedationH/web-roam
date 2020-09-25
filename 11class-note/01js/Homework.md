@@ -145,3 +145,52 @@ maybe.map(ex1).map(console.log)
 
 练习2:实现一个函数ex2,能够使用fp.first获取列表的第一个元素
 
+```js
+const fp = require('lodash/fp')
+const { Maybe, Container } = require('./functor')
+let xs = Container.of(['do', 'ray',
+  'me', 'fa', 'so', 'la', 'ti', 'do'])
+let ex2 = value => {
+  return fp.first(value)
+}
+
+xs.map(ex2).map(console.log)
+```
+
+练习3:实现一个函数ex3,使用safeProp和fp.first找到user的名字的首字母
+
+```js
+const fp = require('lodash/fp')
+const { Maybe, Container } = require('./functor')
+let safeProp = fp.curry(function (x, o) {
+  return Maybe.of(o[x])
+})
+let user = { id: 2, name: 'Albert' }
+const ex3 = (value) => {
+  safeProp('name', value).map(
+    fp.flowRight(fp.first, fp.split(''), fp.trim)
+  ).map(
+    v => ans = v
+  )
+  return ans
+}
+
+Container.of(user).map(ex3).map(console.log)
+```
+
+练习4:使用Maybe重写ex4,不要有if语句
+
+```js
+const fp = require('lodash/fp')
+const { Maybe, Container } = require('./functor')
+const ex4 = n => Maybe.of(n).map(parseInt)
+
+ex4(null).map(console.log)
+```
+
+四、手写实现MyPromise源码
+
+要求:尽可能还原Promise中的每一个API,并通过注释的方式描述思路和原理。
+
+[MyPromise.js](./MyPromise.js)
+
