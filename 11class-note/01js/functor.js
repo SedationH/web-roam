@@ -20,15 +20,15 @@ const r = Container.of(3)
   .map(x => x + 2)
   .map(x => x * x)
 
-console.log(r)
+// console.log(r)
 
 // 由此可见，函数式编程的运算不直接操作值，而是借助函子完成
 // 所谓函子就是一个实现了map，存有值的对象
 
 // 为了解决空值异常，引入Mabe函子
-class MayBe {
+class Maybe {
   static of(value) {
-    return new MayBe(value)
+    return new Maybe(value)
   }
 
   constructor(value) {
@@ -37,8 +37,8 @@ class MayBe {
 
   map(fn) {
     // 实际上就是在fn执行前增加了一个空值处理
-    return this.isNothing() ? MayBe.of(this._value)
-      : MayBe.of(fn(this._value))
+    return this.isNothing() ? Maybe.of(this._value)
+      : Maybe.of(fn(this._value))
   }
 
   isNothing() {
@@ -46,10 +46,10 @@ class MayBe {
   }
 }
 
-const r2 = MayBe.of(null)
+const r2 = Maybe.of(null)
   .map(x => x.toLowerCase())
 
-console.log(r2)
+// console.log(r2)
 
 // 为了解决异常造成的副作用，引入Either函子
 
@@ -92,7 +92,9 @@ function parseJSON(json) {
   }
 }
 
-console.log(
-  parseJSON('{ "name": "zs" }').map(x => x.name.toUpperCase()),
-  parseJSON('{ name: "zs" }').map(x => x.name.toUpperCase())
-)
+// console.log(
+//   parseJSON('{ "name": "zs" }').map(x => x.name.toUpperCase()),
+//   parseJSON('{ name: "zs" }').map(x => x.name.toUpperCase())
+// )
+
+module.exports = { Maybe, Container }
