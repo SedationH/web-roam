@@ -1,0 +1,38 @@
+<body>
+  <button name="B2222" onclick="alert(this.name + 'clicked')">
+    Click me
+  </button>
+  <script>
+    // 定义出作为方法被使用的函数
+    function ptSum(pt2) {
+      return new Point(this.x + pt2.x, this.y + pt2.y);
+    }
+    function ptDistance(pt2) {
+      return Math.sqrt(Math.pow(pt2.x - this.x, 2) + Math.pow(pt2.y - this.y, 2));
+    }
+
+    // 定义 Point 构造函数
+    function Point(x, y) {
+      // 创建并初始化新对象的数据属性
+      this.x = x;
+      this.y = y;
+
+      this.sum = function () {
+        console.log('this is inner function sum')
+      }
+    }
+
+    // 添加方法到共享的原型对象
+    Point.prototype.sum = ptSum;
+    Point.prototype.distance = ptDistance;
+
+    var origin = new Point(0, 0);
+
+    console.log(origin)
+
+    origin.sum()
+    console.log(origin[1]) // undefined
+
+
+  </script>
+</body>
