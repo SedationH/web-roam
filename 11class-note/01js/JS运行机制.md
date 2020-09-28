@@ -18,10 +18,10 @@ JS引擎工作在宿主环境中，可以使用宿主环境所暴露的API，常
 - node
 - 浏览器
 
-| 宿主环境 | JS引擎        | 运行时特性                             |
-| -------- | ------------- | -------------------------------------- |
-| 浏览器   | chrome V8引擎 | DOM、 window对象、用户事件、Timers等   |
-| node.js  | chrome V8引擎 | require对象、 Buffer、Processes、fs 等 |
+| 宿主环境 | JS引擎        | 运行时特性                                                   |
+| -------- | ------------- | ------------------------------------------------------------ |
+| 浏览器   | chrome V8引擎 | DOM[(JavaScript Vs DOM Vs BOM, relationship explained)](https://vkanakaraj.wordpress.com/2009/12/18/javascript-vs-dom-vs-bom-relationship-explained/)、 window对象、用户事件、Timers等 |
+| node.js  | chrome V8引擎 | require对象、 Buffer、Processes、fs 等                       |
 
 
 

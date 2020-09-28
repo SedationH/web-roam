@@ -88,5 +88,30 @@ yarn tsc --init
 
 
 
+**标准库机制**
+
+标准库就是内置对象所对应的声明
 
 
+
+默认调用traget所指向ES版本的标准库，可能存在的问题
+
+Promise Symbol等无法使用，因为在lib中无相关定义
+
+
+
+解决方案 ： 更改taget | 添加lib
+
+后者值得注意的是 添加了EMACScript2015，其中无dom lib，即一些如console.log的web运行时提供给的api无法使用(Tip: Dom & BOM在TS lib 规范中都归于DOM，不作区分)
+
+
+
+**作用域问题**
+
+如果当前文件没有作为module导出，那么ts认为都是挂在全局上，可能会出现命名冲突的问题
+
+
+
+解决方案：
+
+文件底部添加 `export {}`让ts判断这个为 module  模块有单独作用域
