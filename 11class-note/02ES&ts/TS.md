@@ -4,7 +4,7 @@
 
 强类型不允许随意的隐式类型转换,而弱类型是允许的
 
-py是一个强类型的，尽管一个变量的类型可以改变
+py是一个强类型的，尽管一个变量的类型可以改变,这个改变体现的是py语言的动态类型特征
 
 ### 静态类型 动态类型（类型检查）
 
@@ -115,3 +115,10 @@ Promise Symbol等无法使用，因为在lib中无相关定义
 解决方案：
 
 文件底部添加 `export {}`让ts判断这个为 module  模块有单独作用域
+
+
+
+## More
+
+[Read doc & handbook](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
+
