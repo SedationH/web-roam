@@ -135,3 +135,83 @@
 
 
 实际的场景中，都是在做tradeoff
+
+
+
+## 性能相关工具
+
+### Task Manager 
+
+Chrome - more tools - task manager 主要是个大概的数值判断
+
+- Memory footprint 页面上dom节点所占用的内存
+- JavaScript Memory a k(b live) 主要关注b，b指可达堆所占内存
+
+
+
+### TimeLine
+
+![image-20201003104728028](http://picbed.sedationh.cn/image-20201003104728028.png)
+
+### HEAP SNAPSHOTS
+
+![image-20201003104909331](http://picbed.sedationh.cn/image-20201003104909331.png)
+
+主要查找的就是一个detached element
+
+就是一个dom对象只存在于js内存引用中（如果这里还不引用的话就是垃圾对象了）不存在于dom树中，叫做detached element
+
+
+
+## 一些策略
+
+先大致说下这些策略的出发点
+
+1. JS的作用域链机制下，逐步向上一层的[[Scope]]中进行查询
+2. 闭包机制下，会保存本应该被释放掉的[[Scope]]
+3. 涉及DOM的操作，可能会触发 reflow | repaint
+4. 不同的API内部实现有性能差异
+
+
+
+1. 常用变量局部缓存
+
+2. 闭包
+
+   1. ```js
+      function f(){
+        const node = document.getElementById('btn')
+        node.onclick = function(){
+          console.log(node.id)
+        }
+      }
+      f()
+      ```
+
+   2. via onclick 绑定的函数在调用时不处于f的作用域,仍然可以拿到`node.id`，闭包机制在这里起了作用
+
+   3. node被引用，无法被回收
+
+   4. ```js
+      function f(){
+        var node = document.getElementById('btn')
+        node.onclick = function(){
+          console.log(node.id)
+        }
+        node = null // 如果是const怎么处理？ delete mdn说can' t
+      }
+      f()
+      ```
+
+3. 尽量减少对象属性访问，可以缓存下来
+
+4. 遍历性能 : forEach > for > for in
+
+5. 使用文档碎片统一操作dom
+
+6. 能cloneELement 用clone instead of create
+
+   
+
+
+
