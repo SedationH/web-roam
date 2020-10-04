@@ -1,16 +1,15 @@
 <body>
-
   <script>
     // 组合继承
     (function () {
       function Parent(name) {
         this.name = name;
-        this.colors = ['red', 'blue', 'green'];
+        this.colors = ["red", "blue", "green"];
       }
 
       Parent.prototype.getName = function () {
-        console.log(this.name)
-      }
+        console.log(this.name);
+      };
 
       function Child(name, age) {
         // 二
@@ -23,23 +22,23 @@
       // Child.prototype.constructor = Child // ！！！
 
       // 第二次调用
-      var child1 = new Child('kevin', '18');
+      var child1 = new Child("kevin", "18");
       // 如果我们不使用 Child.prototype = new Parent() ，
       // 而是间接的让 Child.prototype 访问到 Parent.prototype 呢？
 
-      console.log(child1 instanceof Child)
+      console.log(child1 instanceof Child);
     })();
 
     // 寄生组合继承
     (function () {
       function Parent(name) {
         this.name = name;
-        this.colors = ['red', 'blue', 'green'];
+        this.colors = ["red", "blue", "green"];
       }
 
       Parent.prototype.getName = function () {
-        console.log(this.name)
-      }
+        console.log(this.name);
+      };
 
       function Child(name, age) {
         Parent.call(this, name);
@@ -53,15 +52,14 @@
 
       // Child.prototype = new F();
 
-      const obj = {}
-      Reflect.setPrototypeOf(obj, Parent.prototype)
-      obj.constructor = Child
+      const obj = {};
+      Reflect.setPrototypeOf(obj, Parent.prototype);
+      obj.constructor = Child;
       Child.prototype = obj;
 
-
-      var child1 = new Child('kevin', '18');
+      var child1 = new Child("kevin", "18");
 
       console.log(child1 instanceof Parent);
-    })()
+    })();
   </script>
 </body>
