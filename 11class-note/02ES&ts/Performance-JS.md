@@ -138,6 +138,12 @@
 
 
 
+### 增量标记算法
+
+对垃圾回收的执行进行时间分片，不过长阻塞JS代码的执行
+
+
+
 ## 性能相关工具
 
 ### Task Manager 
@@ -171,6 +177,7 @@ Chrome - more tools - task manager 主要是个大概的数值判断
 2. 闭包机制下，会保存本应该被释放掉的[[Scope]]
 3. 涉及DOM的操作，可能会触发 reflow | repaint
 4. 不同的API内部实现有性能差异
+5. 考虑编译逻辑中的词法，语法，语法树分析
 
 
 
@@ -210,6 +217,8 @@ Chrome - more tools - task manager 主要是个大概的数值判断
 5. 使用文档碎片统一操作dom
 
 6. 能cloneELement 用clone instead of create
+
+7. 事件委托
 
    
 
