@@ -1,0 +1,30 @@
+<body>
+  <script>
+    function fib(n) {
+      if (n == 1 || n == 2) return n
+      let f1 = 1,
+        f2 = 2;
+      for (let i = 3; i <= n; i++) {
+        [f1, f2] = [f2, f1 + f2]
+      }
+
+      return f2;
+    }
+
+    function fib2(n) {
+      if (n === 1 || n === 2) return n
+      return fib2(n - 1) + fib2(n - 2)
+    }
+
+    function fib3(n) {
+      const stack = [],
+        DEEP = 1,
+        BACK = 2
+      while (stack.length > 1) {
+
+      }
+    }
+
+    fib2(5);
+  </script>
+</body>
