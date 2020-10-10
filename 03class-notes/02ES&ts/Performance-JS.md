@@ -206,6 +206,8 @@ Chrome - more tools - task manager 主要是个大概的数值判断
           console.log(node.id)
         }
         node = null // 如果是const怎么处理？ delete mdn说can' t
+        
+        // let , null
       }
       f()
       ```
