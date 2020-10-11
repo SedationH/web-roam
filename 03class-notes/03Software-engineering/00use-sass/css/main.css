@@ -1,9 +1,10 @@
 body {
   margin: 0 auto;
   padding: 20px;
-  max-width: 800px;
+  min-width: 800px;
   background-color: #f8f9fb;
   color: #333;
+  background-color: aquamarine;
 }
 
 /*# sourceMappingURL=main.css.map */
