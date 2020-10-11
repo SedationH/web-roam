@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "browser-sync": "^2.26.12",
+    "sass": "^1.27.0"
+  },
+  "scripts": {
+    "build": "sass scss/main.scss css/main.css",
+    "serve": "browser-sync ."
+  },
+  "name": "00use-sass",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
