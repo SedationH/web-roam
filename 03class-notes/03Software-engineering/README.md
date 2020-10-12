@@ -42,3 +42,9 @@ stateDiagram
 
 `create-react-app` `vue-cli` ... 
 
+
+
+自动化构建：
+
+- Grunt 操作文件读写 慢
+- Gulp 操作内存 快
