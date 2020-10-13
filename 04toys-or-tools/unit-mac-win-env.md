@@ -47,3 +47,33 @@ export 起到导出作为全局变量的效果
 我是这么理解的：科学服务提供监听端口，将收到的数据进行转发，起到加密的效果，我们想要使用其服务，需要将流量发送到这个端口上。
 
 127.0.0.1是软件循环测试端口，刚好达到循环的效果，妙哉。
+
+
+
+node 并不走走上述的环境变量，需要自己进行设置
+
+`.npmrc `
+
+```.npmrc
+proxy="http://127.0.0.1:7890"
+https-proxy="http://127.0.0.1:7890"
+```
+
+`.yarnrc.yml`
+
+```yml
+httpProxy: "http://127.0.0.1:7890"
+httpsProxy: "http://127.0.0.1:7890"
+```
+
+最终发现，解决问题的核心能力是英语水平... 
+
+这里提供知识上下文的链接
+
+[npmrc](https://docs.npmjs.com/configuring-npm/npmrc) [npmrc config](https://docs.npmjs.com/using-npm/config)
+
+[yarnrc](https://yarnpkg.com/configuration/yarnrc)
+
+> Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). **Starting from the v2, they must be written in valid Yaml and have the right extension** (simply calling your file `.yarnrc` won't do).
+
+天哪噜
