@@ -1,18 +1,24 @@
 const { parallel, series, src, dest } = require('gulp')
 
-const sass = require('gulp-sass')
-const babel = require('gulp-babel')
-const swig = require('gulp-swig')
+const del = require('del')
+
+// f2 rename
+// const plugins.scss = require('gulp-sass')
+// const plugins.babel = require('gulp-babel')
+// const plugins.swig = require('gulp-swig')
+// const plugins.imageMin = require('gulp-imagemin')
+const plugins = require('gulp-load-plugins')()
+// 更新命名方式: 驼峰 if gulp-a-bc -> plugins.aBc
 
 const style = () =>
   src('src/assets/**/*.scss', { base: 'src' })
     // 默认不处理_开头的
-    .pipe(sass())
+    .pipe(plugins.sass())
     .pipe(dest('dist'))
 
 const script = () =>
   src('src/**/*.js', { base: 'src' })
-    .pipe(babel({ presets: ['@babel/preset-env'] }))
+    .pipe(plugins.babel({ presets: ['@babel/preset-env'] }))
     .pipe(dest('dist'))
 
 const data = {
@@ -59,14 +65,30 @@ const data = {
 const page = () =>
   // 这里约定src根目录下的html文件才需要转换
   src('src/*.html', { base: 'src' })
-    .pipe(swig(data))
+    .pipe(plugins.swig(data))
     .pipe(dest('dist'))
 
-const compile = () => parallel(style, script, page)
+// 压缩图片
+const image = () =>
+  src('src/assets/images/**', { base: 'src' })
+    .pipe(plugins.imagemin())
+    .pipe(dest('dist'))
 
+const font = () =>
+  src('src/assets/fonts/**', { base: 'src' })
+    .pipe(plugins.imagemin())
+    .pipe(dest('dist'))
+
+const extra = () =>
+  src('public/**', { base: 'public' })
+    .pipe(dest('dist/public'))
+
+const clean = () => del('dist')
+
+const compile = parallel(style, script, page, image, font)
+const build = series(clean, parallel(compile, extra))
 
 module.exports = {
-  style,
-  script,
-  page
+  compile,
+  build,
 }
