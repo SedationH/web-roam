@@ -1,0 +1,20 @@
+total 8
+-rw-r--r--  1 sedationh  staff  30 Oct 16 20:31 comman
+-rw-r--r--  1 sedationh  staff   0 Oct 17 11:02 out
+prw-r--r--  1 sedationh  staff   0 Oct 16 20:34 pip1
+-rw-r--r--  1 sedationh  staff   0 Oct 16 20:26 prifix_x.a
+-rw-r--r--  1 sedationh  staff   0 Oct 16 20:26 prifix_y.a
+-rw-r--r--  1 sedationh  staff   0 Oct 16 20:26 prifix_z.a
+comman
+out
+pip1
+prifix_x.a
+prifix_y.a
+prifix_z.a
+zsh: command not found: lsl
+comman
+out
+pip1
+prifix_x.a
+prifix_y.a
+prifix_z.a
