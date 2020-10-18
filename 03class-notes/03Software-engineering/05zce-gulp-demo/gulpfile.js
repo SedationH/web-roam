@@ -152,8 +152,19 @@ const build = series(
 const develop = series(compile, serve)
 // 一些重要的思考：平衡开发效率和上线效率
 
+const server = () => bs.init({
+  port: 3000,
+  files: 'dist/**',
+  server: {
+    // 如果在dist中不存在就向下一个找
+    baseDir: 'dist',
+  },
+})
+
 module.exports = {
-  compile,
   build,
-  develop
+  develop,
+  server
 }
+
+折叠所有 fold ... command + k & command + 1
