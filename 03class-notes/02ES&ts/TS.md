@@ -98,11 +98,57 @@ yarn tsc --init
 
 Promise Symbol等无法使用，因为在lib中无相关定义
 
+Vscode通过调用TS serve来进行智能提示和检查,
+
+如果在`.tsconfig`中不提供相应的语法相对应的lib，编辑器会报错
+
 
 
 解决方案 ： 更改taget | 添加lib
 
 后者值得注意的是 添加了EMACScript2015，其中无dom lib，即一些如console.log的web运行时提供给的api无法使用(Tip: Dom & BOM在TS lib 规范中都归于DOM，不作区分)
+
+[特性参考](https://juejin.im/post/6844903811622912014#heading-0)
+
+
+
+但因为node版本的不同，可能在执行新的语法的时候不支持如`Object.entries()`
+
+使用core-js把能够polifill的全部polyfill
+
+使用
+
+```zsh
+$ node -v
+v4.9.1
+
+$ node ../dist/02poly-ts.js
+/Users/sedationh/workspace/web-roam/03class-notes/02ES&ts/dist/02poly-ts.js:9
+var entries = Object.entries(tony);
+                     ^
+
+TypeError: Object.entries is not a function
+    at Object.<anonymous> (/Users/sedationh/workspace/web-roam/03class-notes/02ES&ts/dist/02poly-ts.js:9:22)
+    at Module._compile (module.js:409:26)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)
+    at Function.Module.runMain (module.js:441:10)
+    at startup (node.js:140:18)
+    at node.js:1043:3
+```
+
+解决方案
+
+`import "core-js/features/object"`
+
+
+
+方案二
+
+使用tsc traget的时候 target 定为 'esnext就好' 只用于从ts -> js的转换
+
+使用babel做兼容性处理
 
 
 

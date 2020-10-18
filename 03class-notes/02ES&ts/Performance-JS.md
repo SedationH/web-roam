@@ -178,6 +178,7 @@ Chrome - more tools - task manager 主要是个大概的数值判断
 3. 涉及DOM的操作，可能会触发 reflow | repaint
 4. 不同的API内部实现有性能差异
 5. 考虑编译逻辑中的词法，语法，语法树分析
+6. 减少内存申请的次数
 
 
 
