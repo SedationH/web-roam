@@ -3,14 +3,7 @@ const { parallel, series, src, dest, watch } = require("gulp")
 const del = require("del")
 const { stream } = require("browser-sync")
 
-// f2 rename
-// const plugins.scss = require('gulp-sass')
-// const plugins.babel = require('gulp-babel')
-// const plugins.swig = require('gulp-swig')
-// const plugins.imageMin = require('gulp-imagemin')
 const plugins = require("gulp-load-plugins")()
-// 更新命名方式: 驼峰 if gulp-a-bc -> plugins.aBc
-// 开发服务器 hot reload
 const bs = require("browser-sync").create()
 
 const style = () =>
@@ -70,7 +63,6 @@ const page = () =>
   src("src/*.html", { base: "src" })
     .pipe(plugins.swig({ data, defaults: { cache: false } }))
     .pipe(dest("temp"))
-// .pipe(bs.reload({ stream: true)})
 
 // 压缩图片
 const image = () =>
@@ -153,10 +145,22 @@ const server = () =>
     },
   })
 
+/**
+ * 自己实现这样的构建意义在于可以更好的把握细节(颗粒度)
+ * 目标有二
+ *  开发更爽 （速度，舒适度）
+ *    能先不处理的就不先处理，如image font ...
+ *    不得不处理的compile一下
+ *    使用brower-sync进行同步
+ *    其他就是查配置了
+ *  上线更畅快 （压缩，减少请求）
+ */
+
 module.exports = {
+  clean,
+  start: develop,
+  serve: server,
   build,
-  develop,
-  server,
 }
 
 // 折叠所有 fold ... command + k & command + 1

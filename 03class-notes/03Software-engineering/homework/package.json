@@ -1,0 +1,65 @@
+{
+  "name": "pages-boilerplate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Always a pleasure scaffolding your awesome static sites.",
+  "keywords": [
+    "pages-boilerplate",
+    "boilerplate",
+    "pages",
+    "zce"
+  ],
+  "homepage": "https://github.com/zce/pages-boilerplate#readme",
+  "bugs": {
+    "url": "https://github.com/zce/pages-boilerplate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zce/pages-boilerplate.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "zce",
+    "email": "w@zce.me",
+    "url": "https://zce.me"
+  },
+  "scripts": {
+    "clean": "gulp clean",
+    "lint": "gulp lint",
+    "serve": "gulp serve",
+    "build": "gulp build",
+    "start": "gulp start",
+    "deploy": "gulp deploy --production"
+  },
+  "browserslist": [
+    "last 1 version",
+    "> 1%",
+    "maintained node versions",
+    "not dead"
+  ],
+  "dependencies": {
+    "bootstrap": "4.4.1",
+    "jquery": "3.4.1",
+    "popper.js": "1.16.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "browser-sync": "^2.26.12",
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-if": "^3.0.0",
+    "gulp-imagemin": "^7.1.0",
+    "gulp-load-plugins": "^2.0.5",
+    "gulp-sass": "^4.0.2",
+    "gulp-swig": "^0.9.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-useref": "^4.0.1"
+  },
+  "engines": {
+    "node": ">=6"
+  }
+}
