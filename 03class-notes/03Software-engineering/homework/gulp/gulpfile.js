@@ -54,7 +54,7 @@ const data = {
       ],
     },
   ],
-  pkg: require("./package.json"),
+  pkg: require("../package.json"),
   date: new Date(),
 }
 

@@ -42,7 +42,7 @@
 
 2、尝试使用 Gulp 完成项目的自动化构建
 
-参看： 当前目录 [gulpfile.js](./gulpfile.js) 说明见comment
+参看： 当前目录 [gulpfile.js](./gulp/gulpfile.js) 说明见comment
 
 **重点摘要**
 
@@ -64,5 +64,5 @@
 
 3、使用 Grunt 完成项目的自动化构建
 
-懒得搞了，看的懂就好了
+参看: [grunt](./grunt/gruntfile.js)
 

@@ -92,3 +92,7 @@ interactive shell 相比 login shell 更容易理解一些, 直观上来说就�
 ## 实际使用
 
 个人觉得login的特性我现在基本用不到，为了提高加载速度，可以将zsh打开的时候通过非login 模式打开 "iTerm2 -> Preference -> Profiles -> General -> Comman -> /bin/zsh"
+
+
+
+最近发现使用非login模式打开brew命令使用不了了，还不明白为什么，留个坑
