@@ -187,5 +187,42 @@ AMD 应对Web场景下异步需求的规范模块化解决方案(Node也能用)
 
 
 
+有个问题，js请求比较多
+
+
+
 大概知道设计和背景就好了，之外还有CMD 不提了，都是历史的产物了。
+
+
+
+## 模块化标准规范
+
+目前规则比较统一了
+
+Web -> ES Module
+
+Node -> CommonJS
+
+
+
+## ES Module(ESM)
+
+特性
+
+1. 默认使用严格模式
+2. 每个ESM模块都是单独的私有作用域
+3. ESM是通过CORS请求外部JS模块的，这里不大明白，是要支持请求的服务设置跨域请求嘛？
+4. 默认defer
+
+> This attribute must not be used if the `src` attribute is absent (i.e. for inline scripts), in this case it would have no effect.
+>
+> The `defer` attribute has no effect on [module scripts ](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)— they defer by default.
+>
+> 关于 defer sync 参考
+>
+> [Scripts: async, defer](https://javascript.info/script-async-defer)
+>
+> [这里的配图很给力](growingwiththeweb.com/2014/02/async-vs-defer-attributes.html#script)
+
+
 

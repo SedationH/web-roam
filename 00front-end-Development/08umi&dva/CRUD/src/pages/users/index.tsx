@@ -53,14 +53,12 @@ const columns = [
 
 const Index = ({ users }) => (
   <div className="list-table">
-    <Table columns={columns} dataSource={users} />
+    <Table columns={columns} dataSource={users.data} />
   </div>
 )
 
-const mapStateToProps = ({ users }) => {
-  return {
-    users,
-  }
-}
+const mapStateToProps = ({ users }) => ({
+  users,
+})
 
 export default connect(mapStateToProps)(Index)
