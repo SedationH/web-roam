@@ -40,6 +40,7 @@ const UserModel = {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(({ pathname }) => {
+        console.log(`监听到路由变化${pathname}`)
         if (pathname === '/users') {
           dispatch({
             type: 'save',

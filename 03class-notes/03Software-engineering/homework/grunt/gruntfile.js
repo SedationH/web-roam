@@ -1,201 +1,195 @@
+const sass = require("sass");
 
-
-
-const sass = require('sass')
-
-
-const LoadGruntTasks = require('load-grunt-tasks') 
+const loadGruntTasks = require("load-grunt-tasks");
 
 const data = {
   menus: [
     {
-      name: 'Home',
-      icon: 'aperture',
-      link: 'index.html'
+      name: "Home",
+      icon: "aperture",
+      link: "index.html",
     },
     {
-      name: 'Features',
-      link: 'features.html'
+      name: "Features",
+      link: "features.html",
     },
     {
-      name: 'About',
-      link: 'about.html'
+      name: "About",
+      link: "about.html",
     },
     {
-      name: 'Contact',
-      link: '#',
+      name: "Contact",
+      link: "#",
       children: [
         {
-          name: 'Twitter',
-          link: 'https://twitter.com/w_zce'
+          name: "Twitter",
+          link: "https://twitter.com/w_zce",
         },
         {
-          name: 'About',
-          link: 'https://weibo.com/zceme'
+          name: "About",
+          link: "https://weibo.com/zceme",
         },
         {
-          name: 'divider'
+          name: "divider",
         },
         {
-          name: 'About',
-          link: 'https://github.com/zce'
-        }
-      ]
-    }
+          name: "About",
+          link: "https://github.com/zce",
+        },
+      ],
+    },
   ],
-  pkg: require('./package.json'),
-  date: new Date()
-}
+  pkg: require("./package.json"),
+  date: new Date(),
+};
 
 module.exports = (grunt) => {
-  
+  loadGruntTasks(grunt);
+
   grunt.initConfig({
-    
     clean: {
       build: {
-        src: ['dist', 'temp', '.tmp']
-      }
+        src: ["dist", "temp", ".tmp"],
+      },
     },
-    
+
     sass: {
       options: {
-        implementation: sass, 
-        sourceMap: false, 
-        outputStyle: 'expanded' 
+        implementation: sass,
+        sourceMap: false,
+        outputStyle: "expanded",
       },
       build: {
         expand: true,
-        ext: '.css',
-        cwd: 'src/assets/styles',
-        src: '*.scss',
-        dest: 'temp/assets/styles'
-      }
+        ext: ".css",
+        cwd: "src/assets/styles",
+        src: "*.scss",
+        dest: "temp/assets/styles",
+      },
     },
-    
+
     babel: {
       options: {
         sourceMap: false,
-        presets: ['@babel/preset-env']
+        presets: ["@babel/preset-env"],
       },
       build: {
         expand: true,
-        cwd: 'src/assets/scripts',
-        src: '*.js',
-        dest: 'temp/assets/scripts'
-      }
+        cwd: "src/assets/scripts",
+        src: "*.js",
+        dest: "temp/assets/scripts",
+      },
     },
-    
+
     swigtemplates: {
       options: {
         defaultContext: data,
-        templatesDir: 'src'
+        templatesDir: "src",
       },
       build: {
-        src: ['src/*.html'],
-        dest: 'temp/'
-      }
+        src: ["src/*.html"],
+        dest: "temp/",
+      },
     },
-    
+
     imagemin: {
       build: {
         expand: true,
-        cwd: 'src/assets/images',
-        src: '**',
-        dest: 'dist/assets/images'
+        cwd: "src/assets/images",
+        src: "**",
+        dest: "dist/assets/images",
       },
       buildFont: {
         expand: true,
-        cwd: 'src/assets/fonts',
-        src: '**',
-        dest: 'dist/assets/fonts'
-      }
+        cwd: "src/assets/fonts",
+        src: "**",
+        dest: "dist/assets/fonts",
+      },
     },
-    
+
     copy: {
       build: {
         expand: true,
-        cwd: 'public',
-        src: '**',
-        dest: 'dist'
-      }
+        cwd: "public",
+        src: "**",
+        dest: "dist",
+      },
     },
-    
+
     browserSync: {
       build: {
-        open: true, 
-        notify: false, 
+        open: true,
+        notify: false,
         bsFiles: {
-          src: ['temp', 'src', 'public']
+          src: ["temp", "src", "public"],
         },
         options: {
           watchTask: true,
           server: {
-            baseDir: ['temp', 'src', 'public'],
-            routes: { 
-              '/node_modules': 'node_modules'
-            }
-          }
-        }
-      }
+            baseDir: ["temp", "src", "public"],
+            routes: {
+              "/node_modules": "node_modules",
+            },
+          },
+        },
+      },
     },
-    
+
     watch: {
       bulidScss: {
-        files: 'src/assets/styles/*.scss',
-        tasks: ['sass']
+        files: "src/assets/styles/*.scss",
+        tasks: ["sass"],
       },
       bulidJs: {
-        files: 'src/assets/scripts/*.js',
-        tasks: ['babel']
+        files: "src/assets/scripts/*.js",
+        tasks: ["babel"],
       },
       buildHtml: {
-        files: 'src/*.html',
-        tasks: ['swigtemplates']
-      }
+        files: "src/*.html",
+        tasks: ["swigtemplates"],
+      },
     },
-    
+
     useminPrepare: {
-      html: 'temp/*.html',
+      html: "temp/*.html",
       options: {
-        dest: 'dist',
-        root: ['dist', '.'],
-      }
+        dest: "dist",
+        root: ["dist", "."],
+      },
     },
     usemin: {
-      html: 'dist/*.html'
+      html: "dist/*.html",
     },
     htmlmin: {
       options: {
         removeComments: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: true
+        minifyJS: true,
       },
       build: {
         expand: true,
-        cwd: 'temp',
-        src: '*.html',
-        dest: 'dist'
-      }
-    }
-    
-  })
+        cwd: "temp",
+        src: "*.html",
+        dest: "dist",
+      },
+    },
+  });
 
-  
-  grunt.registerTask('compile', ['sass', 'babel', 'swigtemplates'])
+  grunt.registerTask("compile", ["sass", "babel", "swigtemplates"]);
 
-  
-  
-  grunt.registerTask('build', [
-    'clean', 
-    'compile',
-    'useminPrepare', 'concat', 'cssmin', 'uglify', 'usemin', 'htmlmin', 
-    'copy', 'imagemin', 
-  ])
+  grunt.registerTask("build", [
+    "clean",
+    "compile",
+    "useminPrepare",
+    "concat",
+    "cssmin",
+    "uglify",
+    "usemin",
+    "htmlmin",
+    "copy",
+    "imagemin",
+  ]);
 
-  
-  
-  grunt.registerTask('develop', ['compile', 'browserSync', 'watch'])
-
-  LoadGruntTasks(grunt) 
-}
+  grunt.registerTask("develop", ["compile", "browserSync", "watch"]);
+};
