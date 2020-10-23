@@ -3,7 +3,6 @@ import { Modal, Button, Form, Input } from 'antd'
 
 export default ({
   modalVisibal,
-  handleModalOk,
   handleModalCancel,
   record,
   onFinish,
@@ -15,7 +14,6 @@ export default ({
 
   const onOk = () => {
     form.submit()
-    handleModalOk()
   }
 
   const onFinishFailed = ({

@@ -1,11 +1,12 @@
 import { Reducer, Effect, Subscription } from 'umi'
-import { getRemoteList } from './service'
+import { getRemote, editRemote } from './service'
 
 interface UserModelType {
   namespace: 'users'
   state: {}
   effects: {
     getRemote: Effect
+    editRemote: Effect
   }
   reducers: {
     getList: Reducer
@@ -28,11 +29,14 @@ const userModel: UserModelType = {
   },
   effects: {
     *getRemote(action, { put, call }) {
-      const data = yield call(getRemoteList)
+      const data = yield call(getRemote)
       yield put({
         type: 'getList',
         payload: data,
       })
+    },
+    *editRemote({ payload }, { call, put }) {
+      yield call(editRemote, payload)
     },
   },
   subscriptions: {

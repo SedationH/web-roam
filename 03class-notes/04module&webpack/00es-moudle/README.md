@@ -224,7 +224,60 @@ Node -> CommonJS
 >
 > [这里的配图很给力](growingwiththeweb.com/2014/02/async-vs-defer-attributes.html#script)
 
+```html
+<script type="module" src="demo.js"></script>
+```
 
 
 
+## [export import](https://javascript.info/import-export#a-word-against-default-exports)
+
+Here are all types of `export` that we covered in this and previous articles.
+
+You can check yourself by reading them and recalling what they mean:
+
+- Before declaration of a class/function/…:
+  - `export [default] class/function/variable ...`
+- Standalone export:
+  - `export {x [as y], ...}`.
+- Re-export:
+  - `export {x [as y], ...} from "module"`
+  - `export * from "module"` (doesn’t re-export default).
+  - `export {default [as y]} from "module"` (re-export default).
+
+Import:
+
+- Named exports from module:
+  - `import {x [as y], ...} from "module"`
+- Default export:
+  - `import x from "module"`
+  - `import {default as x} from "module"`
+- Everything:
+  - `import * as obj from "module"`
+- Import the module (its code runs), but do not assign it to a variable:
+  - `import "module"`
+
+
+
+值得注意的点
+
+```js
+export { a, b } 
+// { a, b }并不是一个对象字面量 只是语法上的规则
+```
+
+
+
+export & import 的位置可以是任意的
+
+ 是静态模块管理系统，看文末
+
+[参考](https://hacks.mozilla.org/2015/08/es6-in-depth-modules/)
+
+ 导入成员并不是复制一个副本，
+ 而是直接导入模块成员的引用地址，
+ 也就是说 import 得到的变量与 export 导入的变量在内存中是同一块空间。
+ 一旦模块中成员修改了，这里也会同时修改
+
+[参考](./00attension/app.js) 
 

@@ -1,27 +1,30 @@
-export const getRemoteList = async () => {
-  const data = [
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-      tags: ['nice', 'developer'],
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-      tags: ['loser'],
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-      tags: ['cool', 'teacher'],
-    },
-  ]
+import request from 'umi-request'
 
-  return data
+const getRemote = async () => {
+  try {
+    const result = await request('api/users', {
+      method: 'get',
+    })
+
+    return result.data
+  } catch (error) {
+    console.log(error)
+  }
 }
+
+const editRemote = async ({ id, data }) => {
+  console.log(id, data)
+  try {
+    await request(
+      `http://public-api-v1.aspirantzhang.com/users/${id}`,
+      {
+        method: 'put',
+        data,
+      },
+    )
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export { getRemote, editRemote }
