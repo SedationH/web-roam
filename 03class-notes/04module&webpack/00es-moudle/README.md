@@ -241,6 +241,7 @@ You can check yourself by reading them and recalling what they mean:
 - Standalone export:
   - `export {x [as y], ...}`.
 - Re-export:
+  - 本文件的作用域无法访问到了，通常在index模块用于统一导出
   - `export {x [as y], ...} from "module"`
   - `export * from "module"` (doesn’t re-export default).
   - `export {default [as y]} from "module"` (re-export default).
@@ -270,7 +271,7 @@ export { a, b }
 
 export & import 的位置可以是任意的
 
- 是静态模块管理系统，看文末
+ 是静态模块管理系统
 
 [参考](https://hacks.mozilla.org/2015/08/es6-in-depth-modules/)
 
@@ -280,4 +281,94 @@ export & import 的位置可以是任意的
  一旦模块中成员修改了，这里也会同时修改
 
 [参考](./00attension/app.js) 
+
+
+
+注意路径(包括文件后缀)要些完整，不要把CommonJs里的一些习惯带到这里 (很多事关于index的省略)
+
+关于re-export的使用说明
+
+```js
+// components/Button.js
+export const Button = 'Button Component'
+
+// components/avatar.js
+export const Avatar = 'Avatar Component'
+
+// components/index.js
+export { Button } from './button.js'
+export { Avatar } from './avatar.js'
+
+// app.js
+import { Button, Avatar } from 'components/index.js'
+```
+
+
+
+ES Module Polyfill
+
+```js
+<body>
+  <script nomodule src="https://unpkg.com/promise-polyfill@8.1.3/dist/polyfill.min.js"></script>
+  <script nomodule src="https://unpkg.com/browser-es-module-loader@0.4.1/dist/babel-browser-build.js"></script>
+  <script nomodule src="https://unpkg.com/browser-es-module-loader@0.4.1/dist/browser-es-module-loader.js"></script>
+  <script type="module">
+    import { foo } from './module.js'
+    console.log(foo)
+  </script>
+</body>
+```
+
+最终解决方案还是提前进行转换，不放在运行时转换
+
+
+
+## ESM in Node runtime
+
+[Differences between ES modules and CommonJS](https://nodejs.org/docs/latest/api/esm.html#esm_differences_between_es_modules_and_commonjs)
+
+> Node.js's native module system is [CommonJs](https://nodejs.org/docs/latest/api/modules.html).
+>
+> It has experimental support for the standard [ES6 module system](https://nodejs.org/docs/latest/api/esm.html) and using a `.mjs` file extension is part of one way to trigger that support. (As of Node 13, you can trigger support by setting `"type": "module",` in *package.json*).
+>
+> In short, it is used by Node.js to distinguish between CommonJS and ES6 module files.
+>
+> See also: [Differences between ES6 module system and CommonJs](https://nodejs.org/docs/latest/api/esm.html#esm_differences_between_es_modules_and_commonjs)
+
+node环境还是先用CommonJs吧.. 不折腾
+
+
+
+场景
+
+```js
+// commonjs.js
+module.exports = {
+  foo: 'commonjs exports value'
+}
+
+// esm.js
+import { foo } from './commonjs.js' //err {} 不代表对象结构 只是语法
+```
+
+
+
+**Summary**
+
+- ES Modules 中可以导入CommonJS模块
+- CommonJS中不可以导入 ESM
+- CommonJS 通过 import 导入的时候，只能有默认导出
+  - improt {} 不是结构对象
+
+
+
+## 也可以通过babel-node实现兼容
+
+简述下babel原理
+
+babel基于插件机制实现对于JS的转换
+
+![image-20201024192010105](http://picbed.sedationh.cn/image-20201024192010105.png)
+
+preset则是plugins的集合
 
