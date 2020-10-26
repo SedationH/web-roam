@@ -237,7 +237,15 @@ Webpack工作的过程中，有很多环节，webpack为这些向外界暴露钩
 
 
 
-2 可以通过 webpack --watch 和 brower-sync --files 来实现，但还是有物理磁盘读写操作，webpack-dev-server 可以提供一站式服务，并且相关操作都在内存中，挺升开发环境中的构建效率
+2 可以通过 webpack --watch 和 brower-sync --files 来实现，但还是有物理磁盘读写操作，**webpack-dev-server** 可以提供一站式服务，并且相关操作都在内存中，提升开发环境中的构建效率
+
+
+
+1另外，使用http服务的一个问题是api的调用和项目部署的地方存在跨域问题，虽然可以通过部署api cors支持来解决，但并不是所有的api都要设计成提供cors服务，这个时候就要proxy一下，让api调用满足同源要求
+
+
+
+
 
 3 主要是我们在页面中使用的代码都是构建后的，不方便debug，因此引入source map让浏览器可以通过map文件逆向解析出原来的js代码，从而更方便的进行错误定位
 
@@ -253,3 +261,19 @@ js的文末都有一个
 
 webpack 有多种sourcemap模式 其中就在 speed & quality中做取舍
 
+[devtool](https://webpack.js.org/configuration/devtool/#devtool)
+
+*We expect a certain pattern when validate devtool name, pay attention and dont mix up the sequence of devtool string. The pattern is:* `[inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map`*.*
+
+
+
+- eval 是否使用eval执行模块代码
+- cheap 是否包含行信息
+- module 是否能够得到loader处理之前的源代码
+- inline对source的处理是dataURLs
+- nosources 表示没有源代码 能看到行列信息
+- hidden表示不调用source map调用，但是产生文件
+
+
+
+以上问题的代码具体实践[参考](./03use-webpack-dev-server)
