@@ -163,3 +163,65 @@ webpack会引用相关的loader进行处理
 
 
 整个工作流程来看，webpack拿到依赖树，对依赖树进行递归遍历，refer `webpack.config.js`中的设置的rules使用相应的loader进行处理
+
+
+
+## plugins机制
+
+Loader专注实现资源模块的加载
+
+plugins解决一些除了资源加载外的需要自动化的工作
+
+使用方式
+
+webpack.config.js中
+
+```js
+const Xxx = require('xxx')
+
+modules.exports = {
+  plugins: [
+    // 具体看插件导出啥 一般是类
+    // 这就是 new Xxx({options: object})
+    xxx
+  ]
+}
+```
+
+
+
+## 一些常用的plugins
+
+- clean-webpack-plugin  常用于自动清理dist文件
+- html-webpack-plugin
+
+在00 和 01对webpack的使用中，指定webpack打包到dist/bundle.js中，
+
+都是自己写好index,进行硬编码引入的
+
+这样的方式在进行代码分割，生成多个js文件的时候，会很麻烦，而且在日后修改后，又需要再硬编码修改引用，所以更好的方式应该是让这个html在dist中自己生成
+
+其实也就是查文档+配置
+
+[参考下大致使用](./02use-plugins) 
+
+
+
+## 实现自己的webpack plugins
+
+先要理解webpack plugins的如何工作的
+
+**Plugins通过钩子机制实现**
+
+Webpack工作的过程中，有很多环节，webpack为这些向外界暴露钩子，外界可以利用钩子来实现对特定环节的逻辑处理
+
+![image-20201026111457445](http://picbed.sedationh.cn/image-20201026111457445.png)
+
+
+
+所以在添加plugins才没有强调顺序
+
+
+
+[自己实现参考](./02use-plugins/webpack.config.js#L19) 
+

@@ -6,6 +6,7 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.join(__dirname, "dist"),
+    // 这里的目的是
     publicPath: "dist/",
   },
   module: {

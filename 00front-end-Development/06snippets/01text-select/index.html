@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>This is H1</h1>
+    <p>
+      this is p tag
+      <div>
+        this is p > div tag
+      </div>
+    </p>
+    <script>
+      function foo() {
+        var selObj = window.getSelection()
+        console.log(selObj)
+        // do stuff with the range
+      }
+      document.addEventListener('mouseup',foo)
+    </script>
+  </body>
+</html>
