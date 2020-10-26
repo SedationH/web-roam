@@ -225,3 +225,31 @@ Webpack工作的过程中，有很多环节，webpack为这些向外界暴露钩
 
 [自己实现参考](./02use-plugins/webpack.config.js#L19) 
 
+
+
+## 理想的开发环境
+
+1. http服务的方式进行运行
+   1. 生产环境状态
+   2. ajax之类的api，以file的protocol是不支持的
+2. 自动编译和刷新
+3. source map支持
+
+
+
+2 可以通过 webpack --watch 和 brower-sync --files 来实现，但还是有物理磁盘读写操作，webpack-dev-server 可以提供一站式服务，并且相关操作都在内存中，挺升开发环境中的构建效率
+
+3 主要是我们在页面中使用的代码都是构建后的，不方便debug，因此引入source map让浏览器可以通过map文件逆向解析出原来的js代码，从而更方便的进行错误定位
+
+js的文末都有一个
+
+```js
+//# sourceMappingURL=xxx.js.map
+```
+
+浏览器在解析到这里的时候，会根据map逆向解析出原来的js
+
+
+
+webpack 有多种sourcemap模式 其中就在 speed & quality中做取舍
+
