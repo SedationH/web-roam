@@ -1,0 +1,10 @@
+.highlight-wrap {
+  background-color: #ff9;
+  /* font-style: italic; */
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.highlight-wrap-hover {
+  background-color: pink;
+}

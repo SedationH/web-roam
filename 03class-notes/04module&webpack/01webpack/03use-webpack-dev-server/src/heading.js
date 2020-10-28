@@ -8,8 +8,10 @@ export default () => {
   element.textContent = 'Hello world'
   element.classList.add('heading')
   element.addEventListener('click', () => {
-    alert('Hello webpack')
+    alert('Hello webpack2')
   })
+
+  
 
   return element
 }

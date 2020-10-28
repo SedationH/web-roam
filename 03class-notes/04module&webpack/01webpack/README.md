@@ -277,3 +277,91 @@ webpack 有多种sourcemap模式 其中就在 speed & quality中做取舍
 
 
 以上问题的代码具体实践[参考](./03use-webpack-dev-server)
+
+## 一些有趣的功能
+
+- hrm -> 仅仅替换修改的部分 不刷新页面（导致丢失页面原来的信息） [参考](./04use-hmr)
+- 多配置文件，优化生产环境，说白了就是让webpack读取不一样的config文件
+
+说个比较普遍的实现
+
+
+
+```js
+// webpack.common.js
+module.exports = {
+	// 这里是通用的配置
+}
+
+// webpack.dev.js
+const merge = require('webpack-merge')
+const common = require('./webpack.common')
+module.exports = merge(common, {
+  mode: 'development',
+  devtool: 'cheap-eval-module-source-map',
+})
+
+// webpack.prod.js
+const merge = require('webpack-merge')
+const common = require('./webpack.common')
+module.exports = merge(common, {
+  mode: 'production',
+  plugins: [
+    new CleanWebpackPlugin(),
+    new CopyWebpackPlugin(['public'])
+  ]
+})
+
+```
+
+使用 `yarn webpack --config webpack.xxx.js` 就好了
+
+- DefinePlugin 是用来注入全局成员的
+
+```js
+const webpack = require('webpack')
+
+module.exports = {
+  mode: 'none',
+  entry: './src/main.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      // 值要求的是一个代码片段
+      API_BASE_URL: JSON.stringify('https://api.example.com')
+    })
+  ]
+}
+```
+
+- Tree shaking 去除未引用代码
+
+在mode: production中默认开启
+
+其具体实现就是 tree shaking 是配置出来的
+
+```js
+module.exports = {
+  mode: 'none',
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js'
+  },
+  optimization: {
+    // 模块只导出被使用的成员
+    usedExports: true,
+    // 尽可能合并每一个模块到一个函数中
+    concatenateModules: true,
+    // 压缩输出结果
+    // minimize: true
+  }
+}
+```
+
+值得注意的是，tree shaking是基于module的，如果babel处理了module -> commonjs 可能就失效了 但现在对这个进行了优化 如果引入tree shaking 那么babel就不处理了
+
+- Scope Hoisting
+
+尽量集中不同module的模块

@@ -2,8 +2,10 @@ const path = require("path")
 const { CleanWebpackPlugin } = require("clean-webpack-plugin")
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 const CopyWebpackPlugin = require("copy-webpack-plugin")
+const webpack = require("webpack")
 
 module.exports = {
+  devtool: "eval-cheap-module-source-map",
   mode: "none",
   entry: "./src/main.js",
   output: {
@@ -11,6 +13,8 @@ module.exports = {
     path: path.join(__dirname, "dist"),
   },
   devServer: {
+    // HMR
+    hot: true,
     contentBase: "./public",
     proxy: {
       "/api": {
@@ -27,6 +31,15 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.js$/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
+      },
       {
         test: /.css$/,
         use: ["style-loader", "css-loader"],
@@ -52,6 +65,7 @@ module.exports = {
       },
       template: "./src/index.html",
     }),
+    new webpack.HotModuleReplacementPlugin(),
     // // 开发阶段最好不要使用这个插件
     // new CopyWebpackPlugin(['public'])
   ],
