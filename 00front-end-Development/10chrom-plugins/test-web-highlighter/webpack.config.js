@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  devtool: "eval-cheap-module-source-map",
+  mode: "development",
+  devtool: "source-map",
   module: {
     rules: [
       {

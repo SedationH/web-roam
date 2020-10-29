@@ -365,3 +365,62 @@ module.exports = {
 - Scope Hoisting
 
 尽量集中不同module的模块
+
+- 副作用 sideEffects 没看明白...
+
+- 代码分割 code splitting
+
+**分包 按需加载**
+
+多入口打包 Mutiple Entry 多页程序
+
+动态打包 这个好灵活啊 主要是利用
+
+```js
+import(/* webpackChunkName: 'b' */'./album/album').then(({ default: album }) => {
+  mainElement.appendChild(album())
+})
+```
+
+来实现的 import -> Promise then ...
+
+```zsh
+├── dist
+│   ├── a.bundle.js 可以只使用注释内容指定输出文件名
+│   ├── a~b.bundle.js 公共文件
+│   ├── b.bundle.js
+│   ├── index.html
+│   └── main.bundle.js
+├── package.json
+├── src
+│   ├── album
+│   │   ├── album.css
+│   │   └── album.js
+│   ├── common
+│   │   ├── fetch.js
+│   │   └── global.css
+│   ├── index.html
+│   ├── index.js
+│   └── posts
+│       ├── posts.css
+│       └── posts.js
+├── webpack.config.js
+└── yarn.lock
+```
+
+- Hash 文件名
+
+静态资源缓存 -> 缓存策略不确定 -> 利用文件Hash实现全新的文件全新的情况，搭配长时间缓存就完事了
+
+有全局 hash \  chrunk hash \ **content hash** 的区别
+
+最后一个是根据文件内容产生的哈希，比较好用
+
+
+
+```js
+output: {
+  filename: '[name]-[contenthash:8].bundle.js'
+},
+```
+
