@@ -424,3 +424,62 @@ output: {
 },
 ```
 
+
+
+## rullup & Pacel
+
+输出结果更加扁平
+
+打包结果可读性更好
+
+仅支持esm
+
+开发框架 -> Rollup
+
+感觉还是webpack香
+
+
+
+**Pacel** 才是真的爽 爱了爱了
+
+## ESLint
+
+Lint 原来c用来处理compile中无法发现的问题 后来用lint代指代码规范检查
+
+## Prettier
+
+用来格式化的 vscode 实质上就是利用Prettier运行，并且进行指令简化了
+
+## git-hooks
+
+指定在git执行特定指令的时候，执行某些指令
+
+常用的就是pre-commit，进行link 
+
+`.git/pre-hooks` 中编写shell脚本来实现需求，但是不会shell咋办呢
+
+npm i husky -D
+
+
+
+`package.json`
+
+```json
+{
+  "script": {
+    "precommit": "lint-staged"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  },
+  "lint-staged"; {
+  "*.js": [
+  	"eslint",
+  	"git add ."
+  ]
+}
+}
+```
+
