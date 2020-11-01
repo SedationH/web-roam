@@ -12,7 +12,7 @@ module.exports = {
     rules: [
       {
         test: /.md$/,
-        // use: ["./log-loader", "./markdown-loader"],
+        // use: ["./log-loader", "./markdown-loader","./log-loader"],
         use: "./markdown-loader",
       },
     ],
