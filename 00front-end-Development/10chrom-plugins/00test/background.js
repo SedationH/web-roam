@@ -1,3 +1,5 @@
+var buttonState = false // false表示关闭；true 表示开启
+
 chrome.browserAction.onClicked.addListener(function (tab) {
   // Send a message to the active tab
   chrome.tabs.query(
@@ -19,5 +21,27 @@ chrome.runtime.onMessage.addListener(function (
 ) {
   if (request.message === "open_new_tab") {
     chrome.tabs.create({ url: request.url })
+  }
+
+  if (request.message === "get_new_html_source") {
+    if (buttonState) {
+      console.log("begin post")
+      $.post(
+        "http://localhost:3000/api",
+        {
+          htmlSource: request.htmlSource,
+        },
+        (e) => {
+          console.log(e)
+        }
+      )
+    } else {
+      console.log("没有发送请求")
+    }
+  }
+
+  if (request.message === "toggle_button_state") {
+    console.log("toggle_button_state")
+    buttonState = !buttonState
   }
 })

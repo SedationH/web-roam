@@ -17,7 +17,13 @@ highlighter.run()
 // 从标记仓库中拿到曾经的值，再显示
 const storeInfos = store.getAll()
 storeInfos.forEach(({ hs }) =>
-  highlighter.fromStore(hs.startMeta, hs.endMeta, hs.text, hs.id, hs.extra)
+  highlighter.fromStore(
+    hs.startMeta,
+    hs.endMeta,
+    hs.text,
+    hs.id,
+    hs.extra
+  )
 )
 
 // 添加特定事件
@@ -30,25 +36,35 @@ highlighter
   .on(Highlighter.event.HOVER, ({ id }) => {
     highlighter.addClass("highlight-wrap-hover", id)
 
-    const $span = document.querySelector(`span[data-id='${id}']`)
+    const $span = document.querySelector(
+      `span[data-id='${id}']`
+    )
     // 防止创建多个
     if ($span) {
       $span.classList.remove("hidden")
       return
     }
     const position = getPosition(highlighter.getDoms(id)[0])
-    createTag(position.top, position.left, id).classList.remove("hidden")
+    createTag(
+      position.top,
+      position.left,
+      id
+    ).classList.remove("hidden")
   })
   .on(Highlighter.event.HOVER_OUT, ({ id }) => {
     highlighter.removeClass("highlight-wrap-hover", id)
-    const $span = document.querySelector(`span[data-id='${id}']`)
+    const $span = document.querySelector(
+      `span[data-id='${id}']`
+    )
     if ($span === null) return
     $span.classList.add("hidden")
   })
   .on(Highlighter.event.CLICK, ({ id }) => {
     highlighter.removeClass("highlight-wrap-hover", id)
     highlighter.remove(id)
-    const $span = document.querySelector(`span[data-id='${id}']`)
+    const $span = document.querySelector(
+      `span[data-id='${id}']`
+    )
     $span.parentElement.removeChild($span)
   })
   .on(Highlighter.event.REMOVE, ({ ids }) => {

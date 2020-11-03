@@ -14,3 +14,8 @@ chrome.runtime.onMessage.addListener(function (
     })
   }
 })
+
+chrome.runtime.sendMessage({
+  message: "get_new_html_source",
+  htmlSource: $("body").html(),
+})

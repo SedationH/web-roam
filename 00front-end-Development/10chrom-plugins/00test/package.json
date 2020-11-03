@@ -1,0 +1,16 @@
+{
+  "name": "00test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.0"
+  },
+  "devDependencies": {
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0"
+  },
+  "scripts": {
+    "back": "node ./back/index.js"
+  }
+}

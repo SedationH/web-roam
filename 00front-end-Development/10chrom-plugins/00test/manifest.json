@@ -11,7 +11,8 @@
       "js": [
         "lib/jquery.js",
         "content.js"
-      ]
+      ],
+      "run_at": "document_end"
     }
   ],
   "browser_action": {
@@ -21,6 +22,7 @@
   },
   "background": {
     "scripts": [
+      "lib/jquery.js",
       "background.js"
     ]
   }

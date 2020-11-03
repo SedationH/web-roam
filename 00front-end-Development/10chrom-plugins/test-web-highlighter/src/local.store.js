@@ -1,7 +1,9 @@
 class LocalStore {
   constructor(id) {
     this.key =
-      id !== undefined ? `highlight-mengshou-${id}` : "highlight-mengshou"
+      id !== undefined
+        ? `highlight-mengshou-${id}`
+        : "highlight-mengshou"
   }
 
   storeToJson() {

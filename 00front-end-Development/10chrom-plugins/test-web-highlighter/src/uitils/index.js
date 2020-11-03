@@ -1,1 +1,4 @@
-export const log = console.log.bind(console, "[highlighter]")
+export const log = console.log.bind(
+  console,
+  "[highlighter]"
+)
