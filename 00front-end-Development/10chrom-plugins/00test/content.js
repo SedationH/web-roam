@@ -15,7 +15,13 @@ chrome.runtime.onMessage.addListener(function (
   }
 })
 
-chrome.runtime.sendMessage({
-  message: "get_new_html_source",
-  htmlSource: $("body").html(),
-})
+setTimeout(() => {
+  chrome.runtime.sendMessage({
+    message: "get_new_html_source",
+    htmlSource: $("body").html(),
+  })
+
+  document.addEventListener("DOMNodeInserted", (e) => {
+    console.log("有新的DOM插入", e)
+  })
+}, 5000)

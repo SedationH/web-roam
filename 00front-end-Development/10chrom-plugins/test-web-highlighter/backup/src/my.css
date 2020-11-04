@@ -1,0 +1,41 @@
+.highlight-wrap {
+  background-color: #ff9;
+  /* font-style: italic; */
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.highlight-wrap-hover {
+  background-color: pink;
+}
+
+.remove-tip {
+  box-sizing: border-box;
+  position: absolute;
+  border: 1px solid #fff;
+  border-radius: 3px;
+  height: 20px;
+  color: #fff;
+  background: #444;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+  line-height: 18px;
+  overflow: visible;
+}
+
+.remove-tip::after {
+  content: "";
+  position: absolute;
+  left: 16px;
+  bottom: -4px;
+  border-color: #444 transparent transparent;
+  border-width: 4px 4px 0;
+  border-style: solid;
+  height: 0;
+  width: 0;
+}
+
+.remove-tip.hidden {
+  visibility: hidden;
+}

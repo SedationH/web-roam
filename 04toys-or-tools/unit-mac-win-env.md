@@ -77,3 +77,7 @@ httpsProxy: "http://127.0.0.1:7890"
 > Yarnrc files (named this way because they must be called `.yarnrc.yml`) are the one place where you'll be able to configure Yarn's internal settings. While Yarn will automatically find them in the parent directories, they should usually be kept at the root of your project (often your repository). **Starting from the v2, they must be written in valid Yaml and have the right extension** (simply calling your file `.yarnrc` won't do).
 
 天哪噜
+
+
+
+修正 不是 .yarnrc.yml中进行配置，这里错误先保留，理解.yml设计后再修改

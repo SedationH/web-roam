@@ -9,13 +9,41 @@
     <title>HighLight Test</title>
   </head>
   <body>
-    <h1>这里是标题</h1>
-    <div>这里是等待选择的文本内容</div>
-    <ul>
-      <li>这里LI标签提供的元素1</li>
-      <li>这里LI标签提供的元素2</li>
-      <li>这里LI标签提供的元素3</li>
-      <li>这里LI标签提供的元素4</li>
+    <h2>MutationObserver Example - childList</h2>
+
+    <p>
+      This page uses the MutationObserver API to watch for
+      changes to the DOM tree. In this case, the
+      MutationObserver is looking for child nodes to be
+      changed on the targeted element (the list).
+    </p>
+
+    <p>
+      A "Start..." and a "Stop..." button are used to start
+      and stop the MutationObserver. Console messages are
+      displayed specifying which change took place and
+      whether the MutationObserver is started or stopped.
+    </p>
+
+    <ul id="myList" class="list">
+      <li>Apples</li>
+      <li>Oranges</li>
+      <li>Bananas</li>
+      <li class="child">Peaches</li>
     </ul>
+
+    <p>
+      <button class="btnStart">
+        Start Observing for Mutations
+      </button>
+      <button class="btnStop" disabled>
+        Stop Observing for Mutations
+      </button>
+    </p>
+    <p>
+      <button class="btnChild">
+        Add/Remove a Child Node
+      </button>
+    </p>
   </body>
 </html>

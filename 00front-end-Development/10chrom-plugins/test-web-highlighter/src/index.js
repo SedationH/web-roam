@@ -1,97 +1,72 @@
 import "./my.css"
 import Highlighter from "web-highlighter"
-import LocalStore from "./local.store"
-import { log } from "./uitils/index"
-
-// 初始化仓库和highlighter instance
-const store = new LocalStore()
-const highlighter = new Highlighter({
-  style: {
-    className: "highlight-wrap",
+let mList = document.getElementById("myList"),
+  btnChild = document.querySelector(".btnChild"),
+  btnStart = document.querySelector(".btnStart"),
+  btnStop = document.querySelector(".btnStop"),
+  // The options object, later passed into observe()
+  options = {
+    childList: true,
   },
-})
+  // Grab a reference to the MutationObserver
+  // created with the constructor
+  observer = new MutationObserver(mCallback)
 
-// 开始文本自动标记
-highlighter.run()
+// This is the callback passed into the constructor
+function mCallback(mutations) {
+  console.log(mutations)
+  // loop through the mutations record to see
+  // if any match what we want
+  for (let mutation of mutations) {
+    if (mutation.type === "childList") {
+      console.log(
+        "Mutation Detected: A child node has been added or removed."
+      )
+    }
+  }
+}
 
-// 从标记仓库中拿到曾经的值，再显示
-const storeInfos = store.getAll()
-storeInfos.forEach(({ hs }) =>
-  highlighter.fromStore(
-    hs.startMeta,
-    hs.endMeta,
-    hs.text,
-    hs.id,
-    hs.extra
-  )
+// Just a utility function to simplify some btn/log code
+function doLogAndBtn(msg) {
+  console.log(msg)
+  btnStart.disabled = !btnStart.disabled
+  btnStop.disabled = !btnStop.disabled
+}
+
+btnStart.addEventListener(
+  "click",
+  function () {
+    // Start observing the list element using
+    // the passed in options as qualifiers
+    observer.observe(mList, options)
+    doLogAndBtn("Observing for mutations: STARTED")
+  },
+  false
 )
 
-// 添加特定事件
-highlighter
-  .on(Highlighter.event.CREATE, ({ sources }) => {
-    sources = sources.map((hs) => ({ hs }))
-    store.save(sources)
-    log(sources)
-  })
-  .on(Highlighter.event.HOVER, ({ id }) => {
-    highlighter.addClass("highlight-wrap-hover", id)
-
-    const $span = document.querySelector(
-      `span[data-id='${id}']`
-    )
-    // 防止创建多个
-    if ($span) {
-      $span.classList.remove("hidden")
-      return
+// This button interactively modifies the DOM
+// which meets the specified observe criteria
+btnChild.addEventListener(
+  "click",
+  function () {
+    if (document.querySelector(".child")) {
+      mList.removeChild(document.querySelector(".child"))
+    } else {
+      mList.insertAdjacentHTML(
+        "beforeend",
+        '\n<li class="child">Peaches</li>'
+      )
     }
-    const position = getPosition(highlighter.getDoms(id)[0])
-    createTag(
-      position.top,
-      position.left,
-      id
-    ).classList.remove("hidden")
-  })
-  .on(Highlighter.event.HOVER_OUT, ({ id }) => {
-    highlighter.removeClass("highlight-wrap-hover", id)
-    const $span = document.querySelector(
-      `span[data-id='${id}']`
-    )
-    if ($span === null) return
-    $span.classList.add("hidden")
-  })
-  .on(Highlighter.event.CLICK, ({ id }) => {
-    highlighter.removeClass("highlight-wrap-hover", id)
-    highlighter.remove(id)
-    const $span = document.querySelector(
-      `span[data-id='${id}']`
-    )
-    $span.parentElement.removeChild($span)
-  })
-  .on(Highlighter.event.REMOVE, ({ ids }) => {
-    ids.forEach((id) => store.remove(id))
-  })
+  },
+  false
+)
 
-function getPosition($node) {
-  let offset = {
-    top: 0,
-    left: 0,
-  }
-  while ($node) {
-    offset.top += $node.offsetTop
-    offset.left += $node.offsetLeft
-    $node = $node.offsetParent
-  }
-
-  return offset
-}
-
-const createTag = (top, left, id) => {
-  const $span = document.createElement("span")
-  $span.style.left = `${left - 20}px`
-  $span.style.top = `${top - 25}px`
-  $span.dataset["id"] = id
-  $span.textContent = "点击删除"
-  $span.classList.add("remove-tip")
-  document.body.appendChild($span)
-  return $span
-}
+btnStop.addEventListener(
+  "click",
+  function () {
+    // This stops the MutationObserver
+    observer.disconnect()
+    doLogAndBtn("Observing for mutations: STOPPED")
+  },
+  false
+)
