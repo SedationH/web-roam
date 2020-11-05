@@ -1,5 +1,7 @@
 配置来配置去，真是让人头秃
 
+## 关于yarnrc | npmrc 问题
+
 Yarn & NPM 都是包管理工具，前者取长补短的基础上再开发 关于[不同](https://www.geeksforgeeks.org/difference-between-npm-and-yarn/)
 
 Yarn 与 NPM是息息相关的
@@ -128,5 +130,17 @@ Commands:
   home <registry> [browser]    Open the homepage of registry with optional browser
   test [registry]              Show response time for specific or all registries
   help                         Print this help
+```
+
+
+
+## 关于版本问题
+
+[参考这里](https://docs.npmjs.com/cli/v6/using-npm/semver#x-ranges-12x-1x-12-)就好了，目前还只是控制major version
+
+想安装webpack 4 版本最新
+
+```zsh
+yarn add webapck @4 -D
 ```
 
