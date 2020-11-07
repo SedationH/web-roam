@@ -21,7 +21,7 @@ export default class VueRouter {
   constructor(options) {
     this.options = options
     this.routeMap = {}
-    // observable
+    // observable 响应式对象
     this.data = _Vue.observable({
       current: "/",
     })
@@ -59,12 +59,17 @@ export default class VueRouter {
       },
       methods: {
         clickhander(e) {
+          if (this.to === this.$router.data.current) {
+            e.preventDefault()
+            return
+          }
           history.pushState({}, "", this.to)
           this.$router.data.current = this.to
           e.preventDefault()
         },
       },
-      // template:"<a :href='to'><slot></slot><>"
+      // runtimeCompiler模式下才能使用
+      // template: "<a :href='to'><slot></slot></a>",
     })
     const self = this
     Vue.component("router-view", {
@@ -76,7 +81,7 @@ export default class VueRouter {
     })
   }
   initEvent() {
-    //
+    // 处理浏览器点击前进和后退操作 data.current是响应式的
     window.addEventListener("popstate", () => {
       this.data.current = window.location.pathname
     })

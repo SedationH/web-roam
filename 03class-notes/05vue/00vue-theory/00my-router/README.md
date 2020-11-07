@@ -109,7 +109,7 @@ server {
 
 值得注意的是 [runtimeCompiler](https://cli.vuejs.org/config/#runtimecompiler) 
 
-> ### [#](https://cli.vuejs.org/config/#runtimecompiler)runtimeCompiler
+> ### runtimeCompiler
 >
 > - Type: `boolean`
 >
@@ -119,9 +119,24 @@ server {
 >
 >   See also: [Runtime + Compiler vs. Runtime only](https://vuejs.org/v2/guide/installation.html#Runtime-Compiler-vs-Runtime-only).
 
-默认使用是 runtime only  不能直接使用template  这里存疑TODO
+默认使用是 runtime only  不能直接使用template 
+
+
+
+> vue.runtime.esm.js?2b0e:619 [Vue warn]: You are using the runtime-only build of Vue where the template compiler is not available. **Either pre-compile the templates into render functions, or use the compiler-included build.**
+>
+> found in
+>
+> ---> <RouterLink>
+>        <App> at src/App.vue
+>          <Root>
 
 
 
 
 
+完整= runtime + compiler 程序运行的时候complier会把template 转 render 函数
+
+
+
+render函数中的h函数是转virtual dom的
