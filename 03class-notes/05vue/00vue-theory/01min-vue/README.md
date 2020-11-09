@@ -145,6 +145,7 @@ class Dep {
 }
 // 订阅者-观察者 收到通知后 进行更新
 class Watcher {
+  // 观察者内部有实现update的方法，供发布者调用
   update() {
     console.log("update")
   }
