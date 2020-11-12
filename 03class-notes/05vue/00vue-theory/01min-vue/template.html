@@ -3,7 +3,7 @@
 <body>
   <div id="app">
     <h1>Mastache表达式</h1>
-    <h3>{{ msg }}</h3>
+    <h3>这里是msg: {{ msg }}</h3>
     <h3>{{ count }}</h3>
     <h1>v-text</h1>
     <div v-text="msg"></div>
@@ -13,7 +13,7 @@
   </div>
   <script type="module">
     import Vue from "./lib/vue.js"
-    let vm = new Vue({
+    var vm = new Vue({
       el: "#app",
       data: {
         msg: "Hello Vue",
@@ -23,6 +23,5 @@
         },
       },
     })
-    console.log(vm)
   </script>
 </body>
