@@ -11,7 +11,7 @@ export default class Vue {
         : options.el
     // 把dat中的成员转换为getter和setter,注入vue实例中
     this._proxyData(this.$data)
-    // 调用observer对象，监听数据的变化
+    // 调用observer对象，监听$data的变化
     new Observer(this.$data)
     // 调用compiler对象，解析指令和mustache语法
     new Compiler(this)
@@ -29,7 +29,7 @@ export default class Vue {
           return data[key]
         },
         set(newValue) {
-          newValue === data[key] && (data[key] = newValue)
+          newValue !== data[key] && (data[key] = newValue)
         },
       })
     })

@@ -158,3 +158,24 @@ let watcher = new Watcher()
 dep.addSub(watcher)
 dep.notify()
 ```
+
+
+
+## vue中响应式实现
+
+墙裂建议debug看一下函数调用栈，真的就什么都明白了
+
+断点打在较为难理解的watcher
+
+```js
+    Dep.target = this 
+```
+
+就好
+
+下面两张图好好理解
+
+![image-20201113164227062](http://picbed.sedationh.cn/image-20201113164227062.png)
+
+![image-20201113164051070](http://picbed.sedationh.cn/image-20201113164051070.png)
+

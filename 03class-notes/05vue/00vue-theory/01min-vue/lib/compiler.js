@@ -26,16 +26,28 @@ export default class Compiler {
 
   update(node, key, attrName) {
     const updateFn = this[attrName + "Updater"]
-    updateFn && updateFn(node, this.vm[key])
+    // 在函数里这样调用函数，注意函数的this指向
+    updateFn && updateFn.call(this, node, this.vm[key], key)
   }
 
   // handle v-text dir
-  textUpdater(node, value) {
+  textUpdater(node, value, key) {
     node.textContent = value
+    // 这里的this经过update中的处理后已经是compliler对象了
+    new Watcher(this.vm, key, (newvalue) => {
+      node.textContent = newvalue
+    })
   }
 
-  modelUpdater(node, value) {
+  modelUpdater(node, value, key) {
     node.value = value
+
+    new Watcher(this.vm, key, (newvalue) => {
+      node.value = newvalue
+    })
+    node.addEventListener("input", () => {
+      this.vm[key] = node.value
+    })
   }
 
   // 编译文本节点，处理Mustache语法

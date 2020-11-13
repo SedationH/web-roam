@@ -9,7 +9,8 @@
 - [Vue Router](https://router.vuejs.org/guide/) 理解router
   - 尝试自己实现 [00my-router](./00my-router)
 - 响应式原理
-  - 
+  - 看实现 [01min-vue](./01min-vue) 
+  - watcher & dep 进行配合
 
 
 
