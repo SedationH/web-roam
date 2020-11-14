@@ -7,7 +7,6 @@ export default class Watcher {
     this.key = key
     // 回调函数负责更新视图
     this.cb = cb
-    this.oldValue = vm[key]
 
     Dep.target = this
 
@@ -20,8 +19,14 @@ export default class Watcher {
     //   return val
     // },
     this.oldValue = vm[key]
-    // 防止重复添加 已经在对象上的这个属性上添加了监听dep的watcher
-    // 就不需要再添加了
+
+    // 对于Dep.target的理解
+    // 这里注意两个前提条件
+    // 创建新的observer对象的时候会在Dep.target上挂上oberser的实例
+    // 使用Dep.target的时机是在所有访问vm[key]的时候都要走的判断
+    // 但我们只需要添加一个watcher就好了，下面 null 就完成了这个效果
+    // 整体来看，我们通过在第一次替换Mastache的时候，进行了Watcher的创建，通过该属性的
+    // getter方法来向这个属性的dep实例的subs中添加上面创建的watcher
     Dep.target = null
   }
 

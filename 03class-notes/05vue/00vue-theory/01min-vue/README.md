@@ -165,17 +165,134 @@ dep.notify()
 
 墙裂建议debug看一下函数调用栈，真的就什么都明白了
 
-断点打在较为难理解的watcher
+断点打在较为难理解的watcher调用前
 
 ```js
-    Dep.target = this 
+node.textContent = value.replace(
+  pattern,
+  this.vm[key]
+)
+
+// 创建watcher对象，当数据改变的时候更新视图
+new Watcher(this.vm, key, (newvalue) => {
+  node.textContent = newvalue
+})
 ```
 
 就好
+
+![image-20201114095420382](http://picbed.sedationh.cn/image-20201114095420382.png)
+
+遇到Mustache语法，第一次进行替换的时候，创建Watcher
+
+![image-20201114095618318](http://picbed.sedationh.cn/image-20201114095618318.png)
+
+在watcher的构造函数内部，this指向本watcher实例，挂到Dep类上
+
+使用vm[key]会调用 相关key的geter方法
+
+![image-20201114100222227](http://picbed.sedationh.cn/image-20201114100222227.png)
+
+可以看到此时就有值了，有趣的是，我整体使用module模式，在Watche module中给Dep类上挂的内容，在compile.js中仍然可以拿到，这里是自己不熟悉的地方
+
+可以感受一下从开始处理Mastache语法的时候，到真正添加到dep 中 subs 的函数函数调用栈
+
+![image-20201114100516674](http://picbed.sedationh.cn/image-20201114100516674.png)
+
+
+
+```html
+<h3>{{ count }}</h3>    
+<h3>{{ count }}</h3>
+<input type="text" v-model="count" />
+```
+
+如果有这三个个，那么在第一次编译后
+
+$data.count属性的实际的watcher有
+
+![image-20201114105353194](http://picbed.sedationh.cn/image-20201114105353194.png)
+
+![image-20201114105608967](http://picbed.sedationh.cn/image-20201114105608967.png)
+
+这个元素上也有相关的input事件来进行监听
+
+
+
+**重点摘要**
+
+```js
+ // vm[key] 访问了get 方法 这个时候就添加了watcher
+// get() {
+//   // 收集依赖 只有
+//   Dep.target && dep.addSub(Dep.target)
+
+//   // 这里如果通过obj[key] 来调用 会发生没有出口的递归
+//   return val
+// },
+this.oldValue = vm[key]
+
+// 对于Dep.target的理解
+// 这里注意两个前提条件
+// 创建新的observer对象的时候会在Dep.target上挂上oberser的实例
+// 使用Dep.target的时机是在所有访问vm[key]的时候都要走的判断
+// 但我们只需要添加一个watcher就好了，下面 null 就完成了这个效果
+// 整体来看，我们通过在第一次替换Mastache的时候，进行了Watcher的创建，通过该属性的
+// getter方法来向这个属性的dep实例的subs中添加上面创建的watcher
+Dep.target = null
+```
+
+
 
 下面两张图好好理解
 
 ![image-20201113164227062](http://picbed.sedationh.cn/image-20201113164227062.png)
 
 ![image-20201113164051070](http://picbed.sedationh.cn/image-20201113164051070.png)
+
+
+
+总结
+
+![image-20201114091639926](http://picbed.sedationh.cn/image-20201114091639926.png)
+
+
+
+## 虚拟DOM
+
+what?
+
+通过 js对象来描述dom对象
+
+why?
+
+手动操作DOM麻烦 -> jQuery来简化DOM操作 -> MVVM框架进一步封装DOM操作 解决UI & 状态的同步
+
+MVVM可以通过模版引擎和虚拟DOM实现
+
+模版引擎可以完成DOM的替换工作，但不能跟踪状态变化，也不够高效
+
+虚拟DOM可以跟踪状态，通过算法优化DOM操作流程
+
+总的来看，**复杂视图**下虚拟DOM可以更好的管理状态和提高渲染性能
+
+
+
+抽象来看 虚拟DOM是对数据的抽象，视图的重要来源就是数据，虚拟DOM不是说只能在web平台使用，这是一种对象抽象方法
+
+web只是个平台，通过对数据的抽象，可以完成web，小程序，ssr，原生应用等各个平台的UI渲染
+
+
+
+开源实现
+
+[virtual-dom](https://github.com/Matt-Esch/virtual-dom)
+
+[snabbdom](https://github.com/snabbdom/snabbdom)
+
+> Virtual DOM is awesome. It allows us to express our application's view as a function of its state. But existing solutions were way way too bloated, too slow, lacked features, had an API biased towards OOP and/or lacked features I needed.
+>
+> Snabbdom consists of an extremely simple, performant and extensible core that is only ≈ 200 SLOC. It offers a modular architecture with rich functionality for extensions through custom modules. To keep the core simple, all non-essential functionality is delegated to modules.
+>
+> You can mold Snabbdom into whatever you desire! Pick, choose and customize the functionality you want. Alternatively you can just use the default extensions and get a virtual DOM library with high performance, small size and all the features listed below.
 
