@@ -6,7 +6,7 @@
 
 **核心使用逻辑**
 
-```js
+```json
 // router/index.js
 // 注册插件
 Vue.use(VueRouter)

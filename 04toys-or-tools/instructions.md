@@ -6,7 +6,7 @@ git reset --soft HEAD^
 tree -I node_modules
 
 # node 断点运行
-node index.js --inspect-brk
+node inspect index.js
 ```
 
 

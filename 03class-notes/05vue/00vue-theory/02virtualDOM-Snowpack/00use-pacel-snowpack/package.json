@@ -1,0 +1,18 @@
+{
+  "name": "use-pacel-snowpack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "clean": "rm dist/",
+    "dev": "parcel src/index.html --open",
+    "build-prod": "parcel build src/index.html"
+  },
+  "dependencies": {
+    "parcel-bundler": "^1.12.4",
+    "snabbdom": "^0.7.4"
+  }
+}
