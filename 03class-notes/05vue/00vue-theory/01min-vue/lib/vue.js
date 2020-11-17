@@ -5,6 +5,7 @@ export default class Vue {
     // 通过属性保存选择的数据
     this.$options = options || {}
     this.$data = options.data || {}
+    this.$method = options.method || {}
     this.$el =
       typeof options.el === "string"
         ? document.querySelector(options.el)

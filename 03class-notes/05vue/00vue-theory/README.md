@@ -11,6 +11,12 @@
 - 响应式原理
   - 看实现 [01min-vue](./01min-vue) 
   - watcher & dep 进行配合
+- 虚拟DOM
+  - 理解为什么要使用 [02virtualDOM-Snowpack](./02virtualDOM-Snowpack)
+  - 使用Snabbdom进行理解
+  - 深入Snabbdom观察实现
+
+
 
 
 

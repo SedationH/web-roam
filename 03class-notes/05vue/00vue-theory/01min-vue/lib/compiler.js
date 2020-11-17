@@ -30,7 +30,24 @@ export default class Compiler {
     updateFn && updateFn.call(this, node, this.vm[key], key)
   }
 
-  // handle v-text dir
+  onUpdater(node, value, key) {
+    // 先拿到vm中的函数
+    const invokeFn = this.vm.$method[key]
+
+    node.addEventListener("click", () => {
+      invokeFn && invokeFn.call(this.vm)
+    })
+  }
+  // handle v-html
+  htmlUpdater(node, value, key) {
+    node.innerHTML = value
+
+    new Watcher(this.vm, key, (newvalue) => {
+      node.innerHTML = newvalue
+    })
+  }
+
+  // handle v-text
   textUpdater(node, value, key) {
     node.textContent = value
     // 这里的this经过update中的处理后已经是compliler对象了
@@ -39,6 +56,7 @@ export default class Compiler {
     })
   }
 
+  // handle v-model
   modelUpdater(node, value, key) {
     node.value = value
 
