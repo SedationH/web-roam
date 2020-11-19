@@ -1,0 +1,33 @@
+<body>
+  <script>
+    function fn1() {
+      console.log(1)
+    }
+    function fn2() {
+      console.log(2)
+    }
+
+    function f() {
+      console.log(this.name)
+    }
+
+    console.log("call")
+    // fn1.call(fn2)
+    // fn1.call.call(fn2)
+
+    // 实现函数调用时可以指定this
+    Function.prototype.mycall = function (
+      context,
+      ...args
+    ) {
+      context = context || globalThis
+      context.fn = this
+      const res = context.fn(...args)
+      delete context.fn
+      return res
+    }
+
+    // f.mycall({ name: "name" })
+    fn1.mycall.mycall(fn2)
+  </script>
+</body>

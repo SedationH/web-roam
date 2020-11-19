@@ -1,3 +1,5 @@
+const EPSILON = "ε"
+
 // const grammar = {
 //   1: "E -> TX",
 //   2: "X -> +TX",
@@ -10,15 +12,18 @@
 // }
 
 const grammar = {
-  1: "X -> YZ",
+  1: "X -> YZQ",
   2: "Y -> ε",
   3: "Y -> a",
   4: "Z -> b",
   5: "Z -> ε",
+  6: `Q -> ${EPSILON}`,
 }
 
-const EPSILON = "ε"
+const START_SYMBOL = "X"
+
 const firstSets = {}
+const followSets = {}
 
 const text = "a+a*a+a"
 
@@ -27,7 +32,68 @@ startUp(grammar, text)
 function startUp(grammar, text) {
   printGrammar(grammar)
   buildFirstSets(grammar)
+  buildFollowSets(grammar)
   printSet("First sets", firstSets)
+  printSet("Follow sets", followSets)
+}
+
+function buildFollowSets(grammar) {
+  buildSet(followOf)
+}
+
+function followOf(symbol) {
+  if (followSets[symbol]) {
+    return followSets[symbol]
+  }
+  const follow = (followSets[symbol] = {})
+  if (symbol === START_SYMBOL) {
+    follow["$"] = true
+  }
+
+  const productionsWithSymbol = getProductionsWithSymbol(
+    symbol
+  )
+  for (const k in productionsWithSymbol) {
+    const production = productionsWithSymbol[k]
+    const RHS = getRHS(production)
+    // 几种可能出现的情况 默认都在求follow(B)
+    //   1. A -> aB 那么要求follow(A)
+    //   2. A -> aBC 求follow(C)
+    //   如果非终结符号 C | A 的first集合中没有ε 则 follow(B) = first(A) | first(C)
+    //   如果有ε 需要接着往下找
+    //   A -> Bz 直接z  因为上面first对于非终结符号的处理也有，所以也和上面的操作一致了
+    //   对于开始符号的处理进行了特定判断
+
+    const symbolIndex = RHS.indexOf(symbol)
+    let followIndex = symbolIndex + 1
+
+    while (true) {
+      if (followIndex === RHS.length) {
+        // "$"
+        //   1. A -> aB 那么要求follow(A)
+        // 同时处理1. 的情况和扫面到结尾的情况
+        const LHS = getLHS(production)
+        if (LHS !== symbol) {
+          // To avoid cases like: B -> aB awesome!!!!
+          merge(follow, followOf(LHS))
+        }
+        break
+      }
+
+      const followSymbol = RHS[followIndex]
+
+      const firstOfFollow = firstOf(followSymbol)
+
+      if (!firstOfFollow[EPSILON]) {
+        merge(follow, firstOfFollow)
+        break
+      }
+
+      merge(follow, firstOfFollow, [EPSILON])
+      followIndex++
+    }
+  }
+  return follow
 }
 
 function printGrammar(grammar) {
@@ -66,7 +132,7 @@ function firstOf(symbol) {
   const productionsForSymbol = getProductionsForSymbol(
     symbol
   )
-  for (let k in productionsForSymbol) {
+  for (const k in productionsForSymbol) {
     // 拿到产生式的右部
     const production = getRHS(productionsForSymbol[k])
 
@@ -78,25 +144,22 @@ function firstOf(symbol) {
     // 则检测到D时，
     // 将First（D）也加入First（A），若First（D）中含有ε,则将εe加入First（A）。
     const firstOfNonTerminalArr = []
-    let flag = false
     for (let i = 0; i < production.length; i++) {
       const productionSymbol = production[i]
 
       // 递归拿到这个symbol的first集合
       let firstOfNonTerminal = firstOf(productionSymbol)
 
-      // 两种情况 有空串和没空串
-      // 第一个就 没空串 直接跳出
-      if (!firstOfNonTerminal[EPSILON] && i == 0) {
-        merge(first, firstOfNonTerminal)
+      firstOfNonTerminalArr.push(firstOfNonTerminal)
+
+      // 整体来看，遇到没有空串都要直接跳出，不过要根据跳出时候
+      if (!firstOfNonTerminal[EPSILON]) {
         break
       }
-      // 有空串 需要接着往下面找 需要根据最后一个来判断
-      // 没有空串的firstOfNonTerminal来判断如何处理空串
-      firstOfNonTerminalArr.push(firstOfNonTerminal)
     }
     const len = firstOfNonTerminalArr.length
-    len && firstOfNonTerminalArr[len - 1][EPSILON] === true
+    const flag = firstOfNonTerminalArr[len - 1][EPSILON]
+    flag
       ? firstOfNonTerminalArr.forEach(
           (firstOfNonTerminal) =>
             merge(first, firstOfNonTerminal)
@@ -108,12 +171,14 @@ function firstOf(symbol) {
   }
   return first
 }
+// merge(first, firstOfNonTerminal, [EPSILON])
 
 // 暂时规定不是大写的都是终结符
 function isTerminal(symbol) {
   return !/[A-Z]/.test(symbol)
 }
 
+// 获得产生式左边有所需symbol的所有产生式子
 function getProductionsForSymbol(symbol) {
   const productionsForSymbol = {}
   for (const k in grammar) {
@@ -124,8 +189,25 @@ function getProductionsForSymbol(symbol) {
   return productionsForSymbol
 }
 
+// 获得产生式右边有所需symbol的所有产生式子
+function getProductionsWithSymbol(symbol) {
+  var productionsWithSymbol = {}
+  for (var k in grammar) {
+    var production = grammar[k]
+    var RHS = getRHS(production)
+    if (RHS.indexOf(symbol) !== -1) {
+      productionsWithSymbol[k] = production
+    }
+  }
+  return productionsWithSymbol
+}
+
 function getRHS(production) {
   return production.split("->")[1].replace(/\s+/g, "")
+}
+
+function getLHS(production) {
+  return production.split("->")[0].replace(/\s+/g, "")
 }
 
 function merge(to, from, exclude = []) {
