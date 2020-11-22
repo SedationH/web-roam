@@ -26,3 +26,25 @@ firstOf 会通过 getProductionsForSymbol(X) 来寻找每个grammer首字母含�
 
 
 
+## Follow
+
+```js
+// 几种可能出现的情况 默认都在求follow(B)
+//   1. A -> aB 那么要求follow(A)
+//   2. A -> aBC 求follow(C)
+//   如果非终结符号 C | A 的first集合中没有ε 则 follow(B) = first(A) | first(C)
+//   如果有ε 需要接着往下找
+//   A -> Bz 直接z  因为上面first对于非终结符号的处理也有，所以也和上面的操作一致了
+//   对于开始符号的处理进行了特定判断
+```
+
+
+
+## IMPLEMENT
+
+没啥好说的 
+
+注意下 在 B -> aB 中对可能造成的死循环跳出就好了
+
+
+

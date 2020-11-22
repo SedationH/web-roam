@@ -1,0 +1,10 @@
+{
+  "name": "ll1-parser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "cli-table": "^0.3.1"
+  }
+}
