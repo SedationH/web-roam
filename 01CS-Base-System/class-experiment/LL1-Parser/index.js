@@ -1,4 +1,3 @@
-import Table from "cli-table"
 import { printGrammar, printSet } from "./uitils.js"
 import buildFirstSets, {
   firstSets,
@@ -7,9 +6,10 @@ import buildFollowSets, {
   followSets,
 } from "./buildFollowSets.js"
 import {
-  buildNonTerminal,
+  buildNonTerminals,
   buildTerminals,
   buildParserTable,
+  drawParsingTable,
 } from "./buildParserTable.js"
 
 // const grammar = {
@@ -48,19 +48,4 @@ function startUp(grammar, text) {
   drawParsingTable(analyseTable)
 }
 
-function drawParsingTable(ptable) {
-  let table = new Table({
-    head: ["", ...terminals, "$"],
-  })
-  nonTerminals.map((nonTerminalItem) => {
-    let arr = []
-    terminals.map((terminalItem) => {
-      arr.push(ptable[nonTerminalItem][terminalItem] || "")
-    })
-    arr.push(ptable[nonTerminalItem]["$"] || "")
-
-    // console.log(ptable[item]);
-    table.push([nonTerminalItem, ...arr])
-  })
-  console.log(table.toString())
-}
+startUp(grammar, text)
