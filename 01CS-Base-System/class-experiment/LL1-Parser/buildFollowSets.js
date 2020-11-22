@@ -5,9 +5,9 @@ import {
   merge,
   getLHS,
   EPSILON,
+  findStart,
 } from "./uitils.js"
 import { firstOf } from "./buildFirstSets.js"
-import { START_SYMBOL } from "./index.js"
 
 export const followSets = {}
 
@@ -20,7 +20,7 @@ function followOf(symbol, grammar) {
     return followSets[symbol]
   }
   const follow = (followSets[symbol] = {})
-  if (symbol === START_SYMBOL) {
+  if (symbol === findStart(grammar)) {
     follow["$"] = true
   }
 

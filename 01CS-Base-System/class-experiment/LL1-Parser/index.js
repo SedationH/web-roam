@@ -1,4 +1,8 @@
-import { printGrammar, printSet } from "./uitils.js"
+import {
+  printGrammar,
+  printSet,
+  findStart,
+} from "./uitils.js"
 import buildFirstSets, {
   firstSets,
 } from "./buildFirstSets.js"
@@ -10,7 +14,6 @@ import {
   buildTerminals,
   buildParserTable,
   drawParsingTable,
-  findStart,
   isValid,
 } from "./buildParserTable.js"
 
