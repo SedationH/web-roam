@@ -10,6 +10,8 @@ import {
   buildTerminals,
   buildParserTable,
   drawParsingTable,
+  findStart,
+  isValid,
 } from "./buildParserTable.js"
 
 // const grammar = {
@@ -34,7 +36,7 @@ const grammar = {
 
 export const START_SYMBOL = "X"
 
-const text = "a+a*a+a"
+const text = "a"
 
 function startUp(grammar, text) {
   printGrammar(grammar)
@@ -42,10 +44,12 @@ function startUp(grammar, text) {
   buildFollowSets(grammar)
   printSet("First sets", firstSets)
   printSet("Follow sets", followSets)
-  buildNonTerminals(grammar)
-  buildTerminals(grammar)
+  console.log("NonTerminals: " + buildNonTerminals(grammar))
+  console.log("Terminals: " + buildTerminals(grammar))
   const analyseTable = buildParserTable(grammar)
   drawParsingTable(analyseTable)
+  const start = findStart(grammar)
+  isValid(start, analyseTable, text)
 }
 
 startUp(grammar, text)

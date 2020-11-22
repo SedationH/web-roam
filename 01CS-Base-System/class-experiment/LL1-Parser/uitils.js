@@ -23,10 +23,10 @@ export function getProductionsForSymbol(symbol, grammar) {
 
 // 获得产生式右边有所需symbol的所有产生式子
 export function getProductionsWithSymbol(symbol, grammar) {
-  var productionsWithSymbol = {}
-  for (var k in grammar) {
-    var production = grammar[k]
-    var RHS = getRHS(production)
+  const productionsWithSymbol = {}
+  for (const k in grammar) {
+    const production = grammar[k]
+    const RHS = getRHS(production)
     if (RHS.indexOf(symbol) !== -1) {
       productionsWithSymbol[k] = production
     }
