@@ -34,8 +34,6 @@ const grammar = {
   6: `Q -> ε`,
 }
 
-export const START_SYMBOL = "X"
-
 const text = "a"
 
 function startUp(grammar, text) {
