@@ -97,3 +97,83 @@ module.exports = {
 }
 ```
 
+
+
+## 入口文件
+
+看 `yarn dev` 执行了什么
+
+`    "dev": "rollup -w -c scripts/config.js --sourcemap --environment TARGET:web-full-dev",`
+
+[Command line flags about rollup](https://rollupjs.org/guide/en/#command-line-flags) 
+
+查看config 文件
+
+```js
+ // Runtime+compiler development build (Browser)
+  'web-full-dev': {
+    entry: resolve('web/entry-runtime-with-compiler.js'), // !!!! 这里
+    dest: resolve('dist/vue.js'),
+    format: 'umd',
+    env: 'development',
+    alias: { he: './entity-decoder' },
+    banner
+  },
+    
+  web: resolve('src/platforms/web'), // -> 最终定位到这里
+
+```
+
+
+
+## 整体结构分析
+
+大致分为平台相关和平台不相关的代码
+
+- `src/platforms/web/entry-runtime-with-compiler.js`
+  - web平台相关的入口
+  - 重写了平台相关的$mount方法，增加处理template的能力
+  - 增加静态方法compile
+  - 引用了 `import Vue from './runtime/index'` 这个也是平台相关的
+- `src/platforms/web/runtime/index.js`
+  - web相关
+  - 这里是$mount定义的地方
+  - 平台相关的
+    - uitils
+    - directives & components
+      - show model
+      - Transition TransitionGroup
+    - patch
+- `src/core/index.js`
+  - 平台不相关
+  - initGlobalAPI(Vue) 设置Vue的一堆静态方法
+
+- `src/core/instance/index.js` 终于找到了Vue的构造函数 这里是一切的出发点
+  - 初始化实例方法
+
+```js
+import { initMixin } from './init'
+import { stateMixin } from './state'
+import { renderMixin } from './render'
+import { eventsMixin } from './events'
+import { lifecycleMixin } from './lifecycle'
+import { warn } from '../util/index'
+
+function Vue (options) {
+  if (process.env.NODE_ENV !== 'production' &&
+    !(this instanceof Vue)
+  ) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
+  }
+  this._init(options)
+}
+
+initMixin(Vue)
+stateMixin(Vue)
+eventsMixin(Vue)
+lifecycleMixin(Vue)
+renderMixin(Vue)
+
+export default Vue
+```
+

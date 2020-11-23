@@ -14,6 +14,7 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 
+// 重写$mount方法，增加处理tempate的方法
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -31,6 +32,7 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 在这里可见有render就不会走template渲染了
   if (!options.render) {
     let template = options.template
     if (template) {
@@ -96,6 +98,7 @@ function getOuterHTML (el: Element): string {
   }
 }
 
+// 注册静态方法compile
 Vue.compile = compileToFunctions
 
 export default Vue
