@@ -45,12 +45,6 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   Vue.delete = del
   Vue.nextTick = nextTick
 
-  // 2.6 explicit observable API
-  Vue.observable = <T>(obj: T): T => {
-    observe(obj)
-    return obj
-  }
-
   Vue.options = Object.create(null)
   ASSET_TYPES.forEach(type => {
     Vue.options[type + 's'] = Object.create(null)
@@ -60,10 +54,17 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // components with in Weex's multi-instance scenarios.
   Vue.options._base = Vue
 
+  // 浅拷贝 注册全局组建
   extend(Vue.options.components, builtInComponents)
 
   initUse(Vue)
   initMixin(Vue)
   initExtend(Vue)
   initAssetRegisters(Vue)
+
+  // 2.6 explicit observable API
+  Vue.observable = <T>(obj: T): T => {
+    observe(obj)
+    return obj
+  }
 }

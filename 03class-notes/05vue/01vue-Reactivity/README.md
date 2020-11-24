@@ -139,6 +139,7 @@ module.exports = {
   - web相关
   - 这里是$mount定义的地方
   - 平台相关的
+    - config
     - uitils
     - directives & components
       - show model
@@ -177,3 +178,41 @@ renderMixin(Vue)
 export default Vue
 ```
 
+## 关于导入的研究
+
+ 参考 [import-vue](./import-vue)
+
+```zsh
+$ tree    
+.
+├── index.html
+├── index.js
+└── lib
+    ├── other
+    └── vue
+        ├── core
+        │   ├── index.js log(2)
+        │   └── instance
+        │       └── index.js log(1)
+        └── platforms
+            ├── web
+            │   ├── entry-runtime-with-compiler.js log(4)
+            │   └── runtime
+            │       └── index.js log(3)
+            └── weex
+```
+
+总结一下  是如何处理import & export这样的模块化机制的 和 于CJS的比较
+
+[阅读🔗](https://wizardforcel.gitbooks.io/es6-tutorial-3e/content/docs/module-loader.html)
+
+- CommonJS 模块输出的是一个值的拷贝，ES6 模块输出的是值的引用。
+- CommonJS 模块是运行时加载，ES6 模块是编译时输出接口。
+
+
+
+import 有提升 有顺序  只执行一次  递归执行 
+
+https://es6.ruanyifeng.com/#docs/module 理解这里所提的接口 想想Dan所提过的wires
+
+但在pacel中，等价转成了es5，这里也涉及到webpack是如何处理这样的依赖关系的，还是相互依赖的问题，下次在研究

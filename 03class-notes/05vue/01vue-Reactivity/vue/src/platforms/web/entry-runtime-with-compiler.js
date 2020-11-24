@@ -1,8 +1,11 @@
 /* @flow */
+// 这里是web-full-dev模式下的入口
+// 导出的Vue是经过一层又一层的包装的
 
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
+
 
 import Vue from './runtime/index'
 import { query } from './util/index'
@@ -101,4 +104,5 @@ function getOuterHTML (el: Element): string {
 // 注册静态方法compile
 Vue.compile = compileToFunctions
 
+// 最终包装结果导出
 export default Vue
