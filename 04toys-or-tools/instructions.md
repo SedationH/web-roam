@@ -7,6 +7,8 @@ tree -I node_modules
 
 # node 断点运行
 node inspect index.js
+
+git clone --depth 1 https://github.com.cnpmjs.org/vuejs/vue.git
 ```
 
 
