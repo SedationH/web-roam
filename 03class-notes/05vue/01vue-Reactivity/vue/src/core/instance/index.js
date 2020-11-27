@@ -5,6 +5,8 @@ import { eventsMixin } from './events'
 import { lifecycleMixin } from './lifecycle'
 import { warn } from '../util/index'
 
+// 这里使用构造函数而不是class来实现，是为了保持下面
+// 函数在向Vue.prototype上挂载方法时候的一致性
 function Vue (options) {
   if (process.env.NODE_ENV !== 'production' &&
     !(this instanceof Vue)
@@ -13,6 +15,7 @@ function Vue (options) {
   }
   this._init(options)
 }
+
 
 initMixin(Vue)
 stateMixin(Vue)

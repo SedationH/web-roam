@@ -126,6 +126,43 @@ module.exports = {
 
 
 
+有些文件里在引用其他模块的时候，有默认src为根的效果
+
+比如这个文件 vue/src/platforms/web/runtime/index.js
+
+```js
+import config from 'core/config'  -> src/core/config
+```
+
+这个效果是通过rollup来实现的，具体代码
+
+```js
+const aliases = require("./alias");
+
+... 
+
+function genConfig(name) {
+  const opts = builds[name];
+  const config = {
+    input: opts.entry,
+    external: opts.external,
+    plugins: [flow(), alias(Object.assign({}, aliases, opts.alias))].concat(
+      opts.plugins || []
+    ),
+...
+
+if (process.env.TARGET) {
+  module.exports = genConfig(process.env.TARGET);
+} else {
+  exports.getBuild = genConfig;
+  exports.getAllBuilds = () => Object.keys(builds).map(genConfig);
+}
+```
+
+
+
+
+
 ## 整体结构分析
 
 大致分为平台相关和平台不相关的代码
@@ -160,6 +197,7 @@ import { eventsMixin } from './events'
 import { lifecycleMixin } from './lifecycle'
 import { warn } from '../util/index'
 
+// 这
 function Vue (options) {
   if (process.env.NODE_ENV !== 'production' &&
     !(this instanceof Vue)
@@ -216,3 +254,161 @@ import 有提升 有顺序  只执行一次  递归执行
 https://es6.ruanyifeng.com/#docs/module 理解这里所提的接口 想想Dan所提过的wires
 
 但在pacel中，等价转成了es5，这里也涉及到webpack是如何处理这样的依赖关系的，还是相互依赖的问题，下次在研究
+
+
+
+## 从入口开始
+
+这里，通过源码可以看出一个问题
+
+在**Full**下，如果同时具有template & render 方法 会执行哪一个呢？
+
+```js
+// 可见有render就不需要处理template了
+if(!options.render){
+  ....
+}
+```
+
+还发现不能在body 或者 html标签下挂载	
+
+```js
+/* istanbul ignore if */
+if (el === document.body || el === document.documentElement) {
+  process.env.NODE_ENV !== 'production' && warn(
+    `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
+  )
+  return this
+}
+```
+
+
+
+## 看静态成员
+
+```js
+import Vue from './instance/index'
+import { initGlobalAPI } from './global-api/index'
+import { isServerRendering } from 'core/util/env'
+import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
+
+initGlobalAPI(Vue) -> 关键在这里 要挂一堆静态方法
+
+Object.defineProperty(Vue.prototype, '$isServer', {
+  get: isServerRendering
+})
+
+Object.defineProperty(Vue.prototype, '$ssrContext', {
+  get () {
+    /* istanbul ignore next */
+    return this.$vnode && this.$vnode.ssrContext
+  }
+})
+
+// expose FunctionalRenderContext for ssr runtime helper installation
+Object.defineProperty(Vue, 'FunctionalRenderContext', {
+  value: FunctionalRenderContext
+})
+
+Vue.version = '__VERSION__'
+
+export default Vue
+
+```
+
+
+
+```js
+/* @flow */
+
+import config from "../config"
+import { initUse } from "./use"
+import { initMixin } from "./mixin"
+import { initExtend } from "./extend"
+import { initAssetRegisters } from "./assets"
+import { set, del } from "../observer/index"
+import { ASSET_TYPES } from "shared/constants"
+import builtInComponents from "../components/index"
+import { observe } from "core/observer/index"
+
+import {
+  warn,
+  extend,
+  nextTick,
+  mergeOptions,
+  defineReactive,
+} from "../util/index"
+
+export function initGlobalAPI(Vue: GlobalAPI) {
+  // config
+  const configDef = {}
+  configDef.get = () => config
+  if (process.env.NODE_ENV !== "production") {
+    configDef.set = () => {
+      warn(
+        "Do not replace the Vue.config object, set individual fields instead."
+      )
+    }
+  }
+
+  Object.defineProperty(Vue, "config", configDef)
+  // 使用场景
+  // // install platform specific utils
+  // Vue.config.mustUseProp = mustUseProp
+  // Vue.config.isReservedTag = isReservedTag
+  // Vue.config.isReservedAttr = isReservedAttr
+  // Vue.config.getTagNamespace = getTagNamespace
+  // Vue.config.isUnknownElement = isUnknownElement
+
+  // exposed util methods.
+  // NOTE: these are not considered part of the public API - avoid relying on
+  // them unless you are aware of the risk.
+  Vue.util = {
+    warn,
+    extend,
+    mergeOptions,
+    defineReactive,
+  }
+
+  Vue.set = set
+  Vue.delete = del
+  Vue.nextTick = nextTick
+
+  // 初始化Vue.options对象，并拓展
+  // components/disrectives/filters属性
+  Vue.options = Object.create(null)
+  ASSET_TYPES.forEach(type => {
+    Vue.options[type + "s"] = Object.create(null)
+  })
+
+  // this is used to identify the "base" constructor to extend all plain-object
+  // components with in Weex's multi-instance scenarios.
+  Vue.options._base = Vue
+
+  // 浅拷贝 注册全局组建
+  // export function extend (to: Object, _from: ?Object): Object {
+  //   for (const key in _from) {
+  //     to[key] = _from[key]
+  //   }
+  //   return to
+  // }
+  // 设置 keep-alive组件
+  extend(Vue.options.components, builtInComponents)
+
+  // 注册Vue.use 来注册插件
+  initUse(Vue)
+  // 注册Vue.mixin来实现对Vue.options的混入
+  initMixin(Vue)
+  // Vue.extend 通过 传入options返回继承于根Vue的构造函数
+  initExtend(Vue)
+  // 因为Vue.directive filter component参数的相似 这里统一处理
+  initAssetRegisters(Vue)
+
+  // 2.6 explicit observable API
+  Vue.observable = <T>(obj: T): T => {
+    observe(obj)
+    return obj
+  }
+}
+```
+

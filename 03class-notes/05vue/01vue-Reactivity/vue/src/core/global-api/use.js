@@ -4,6 +4,7 @@ import { toArray } from "../util/index";
 
 export function initUse(Vue: GlobalAPI) {
   Vue.use = function (plugin: Function | Object) {
+    // 通过Vue.use使用那么this 就是Vue
     const installedPlugins =
       this._installedPlugins || (this._installedPlugins = []);
     if (installedPlugins.indexOf(plugin) > -1) {
