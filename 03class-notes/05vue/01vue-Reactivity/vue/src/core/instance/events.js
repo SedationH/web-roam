@@ -11,6 +11,7 @@ import { updateListeners } from '../vdom/helpers/index'
 
 export function initEvents (vm: Component) {
   vm._events = Object.create(null)
+  // key: Array(function)
   vm._hasHookEvent = false
   // init parent attached events
   const listeners = vm.$options._parentListeners

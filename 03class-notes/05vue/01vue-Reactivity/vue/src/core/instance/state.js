@@ -49,6 +49,7 @@ export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
+  // 有处理props和methods重名和命名规范
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
     initData(vm)
@@ -112,6 +113,7 @@ function initProps (vm: Component, propsOptions: Object) {
 function initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
+    // 在组件中的data是函数的
     ? getData(data, vm)
     : data || {}
   if (!isPlainObject(data)) {

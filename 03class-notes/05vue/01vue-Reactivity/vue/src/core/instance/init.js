@@ -14,8 +14,10 @@ let uid = 0
 
 export function initMixin (Vue: Class<Component>) {
   Vue.prototype._init = function (options?: Object) {
+    // 传入的用户设置的options
+    // 函数this指向vm
     const vm: Component = this
-    // a uid
+    // a uid`
     vm._uid = uid++
 
     let startTag, endTag
@@ -27,6 +29,7 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     // a flag to avoid this being observed
+    // 如果是Vue实例不需要被observe
     vm._isVue = true
     // merge options
     if (options && options._isComponent) {
@@ -36,6 +39,7 @@ export function initMixin (Vue: Class<Component>) {
       initInternalComponent(vm, options)
     } else {
       vm.$options = mergeOptions(
+        // 在初始化静态成员的时候，已经在vm.constructor上挂了很多方法 指令和全局组件
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
@@ -43,17 +47,24 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // vm._renderProxy = new Proxy(vm, handlers)
       initProxy(vm)
     } else {
       vm._renderProxy = vm
     }
     // expose real self
     vm._self = vm
+
+
     initLifecycle(vm)
+    // 父亲的事件也拿过来attach
     initEvents(vm)
+    // render(h) -> h: createElement
+    // $attrs $listeners
     initRender(vm)
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
+    // handle data props method
     initState(vm)
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')

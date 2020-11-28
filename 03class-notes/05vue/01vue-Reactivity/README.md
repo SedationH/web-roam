@@ -412,3 +412,130 @@ export function initGlobalAPI(Vue: GlobalAPI) {
 }
 ```
 
+
+
+## 看实例成员
+
+```js
+import { initMixin } from './init'
+import { stateMixin } from './state'
+import { renderMixin } from './render'
+import { eventsMixin } from './events'
+import { lifecycleMixin } from './lifecycle'
+import { warn } from '../util/index'
+
+// 这里使用构造函数而不是class来实现，是为了保持下面
+// 函数在向Vue.prototype上挂载方法时候的一致性
+function Vue (options) {
+  if (process.env.NODE_ENV !== 'production' &&
+    !(this instanceof Vue)
+  ) {
+    warn('Vue is a constructor and should be called with the `new` keyword')
+  }
+  this._init(options)
+}
+
+// 都是在Vue.protortype上挂方法 使用的就是vue的实例
+
+// _init 上面构造函数就在使用 用于初始化vm实例
+initMixin(Vue)
+// vm $data $props $set $delete $watch
+stateMixin(Vue)
+// $on $once $off $emit
+eventsMixin(Vue)
+// _uodate $forceUpdate $destroy
+lifecycleMixin(Vue)
+// $nextTick _render
+renderMixin(Vue)
+
+export default Vue
+
+```
+
+
+
+## _init
+
+完成静态和实例方法的初始化，vm._init调用进行初始化
+
+```js
+
+let uid = 0
+
+export function initMixin (Vue: Class<Component>) {
+  Vue.prototype._init = function (options?: Object) {
+    // 传入的用户设置的options
+    // 函数this指向vm
+    const vm: Component = this
+    // a uid`
+    vm._uid = uid++
+
+    let startTag, endTag
+    /* istanbul ignore if */
+    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+      startTag = `vue-perf-start:${vm._uid}`
+      endTag = `vue-perf-end:${vm._uid}`
+      mark(startTag)
+    }
+
+    // a flag to avoid this being observed
+    // 如果是Vue实例不需要被observe
+    vm._isVue = true
+    // merge options
+    if (options && options._isComponent) {
+      // optimize internal component instantiation
+      // since dynamic options merging is pretty slow, and none of the
+      // internal component options needs special treatment.
+      initInternalComponent(vm, options)
+    } else {
+      vm.$options = mergeOptions(
+        // 在初始化静态成员的时候，已经在vm.constructor上挂了很多方法 指令和全局组件
+        resolveConstructorOptions(vm.constructor),
+        options || {},
+        vm
+      )
+    }
+    /* istanbul ignore else */
+    if (process.env.NODE_ENV !== 'production') {
+      // vm._renderProxy = new Proxy(vm, handlers)
+      initProxy(vm)
+    } else {
+      vm._renderProxy = vm
+    }
+    // expose real self
+    vm._self = vm
+
+
+    initLifecycle(vm)
+    // 父亲的事件也拿过来attach
+    initEvents(vm)
+    // render(h) -> h: createElement
+    // $attrs $listeners
+    initRender(vm)
+    callHook(vm, 'beforeCreate')
+    initInjections(vm) // resolve injections before data/props
+    // handle data props method
+    initState(vm)
+    initProvide(vm) // resolve provide after data/props
+    callHook(vm, 'created')
+
+    /* istanbul ignore if */
+    if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
+      vm._name = formatComponentName(vm, false)
+      mark(endTag)
+      measure(`vue ${vm._name} init`, startTag, endTag)
+    }
+
+    if (vm.$options.el) {
+      vm.$mount(vm.$options.el)
+    }
+  }
+}
+```
+
+
+
+## debug   Vue初始化过程
+
+技巧 在四个Vue导出文件中进行端点 Watch Vue 查看相关属性变化
+

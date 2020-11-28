@@ -16,11 +16,17 @@ function Vue (options) {
   this._init(options)
 }
 
+// 都是在Vue.protortype上挂方法 使用的就是vue的实例
 
+// _init 上面构造函数就在使用 用于初始化vm实例
 initMixin(Vue)
+// vm $data $props $set $delete $watch
 stateMixin(Vue)
+// $on $once $off $emit
 eventsMixin(Vue)
+// _uodate $forceUpdate $destroy
 lifecycleMixin(Vue)
+// $nextTick _render
 renderMixin(Vue)
 
 export default Vue
