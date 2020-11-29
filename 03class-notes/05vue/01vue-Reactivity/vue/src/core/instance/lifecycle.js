@@ -166,6 +166,7 @@ export function mountComponent (
   }
   callHook(vm, 'beforeMount')
 
+  // 先定义 并没有直接调用
   let updateComponent
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -186,6 +187,9 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // 实现逻辑
+    // 上面下面都有这样的调用 通过render来渲染出虚拟dom 
+    // 再通过update更新真实dom
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }
@@ -194,6 +198,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // updateComponent 的调用是在Watcher中完成的
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {

@@ -535,7 +535,68 @@ export function initMixin (Vue: Class<Component>) {
 
 
 
-## debug   Vue初始化过程
+## debug   Vue初始化过程 & 首次渲染过程
 
 技巧 在四个Vue导出文件中进行端点 Watch Vue 查看相关属性变化
 
+![image-20201129142622633](http://picbed.sedationh.cn/image-20201129142622633.png)
+
+
+
+![image-20201129155455644](http://picbed.sedationh.cn/image-20201129155455644.png)
+
+### 重要函数 mountComponent
+
+先看调用方式
+
+```js
+Vue.prototype.$mount = function (
+  el?: string | Element,
+  hydrating?: boolean
+): Component {
+  el = el && inBrowser ? query(el) : undefined
+  return mountComponent(this, el, hydrating)
+}
+```
+
+
+
+函数位于 src/core/instance/lifecycle.js
+
+定义了 updateComponent
+
+```js
+ updateComponent = () => {
+   vm._update(vm._render(), hydrating)
+ }
+```
+
+最终使用是在
+
+```js
+new Watcher(vm, updateComponent, noop, {
+  before () {
+    if (vm._isMounted && !vm._isDestroyed) {
+      callHook(vm, 'beforeUpdate')
+    }
+  }
+}, true /* isRenderWatcher */)
+```
+
+中 
+
+注 意  调用方式
+
+```js
+this.getter = expOrFn
+
+this.value = this.lazy
+
+	? undefined
+
+	: this.get()
+```
+
+![image-20201129155027666](http://picbed.sedationh.cn/image-20201129155027666.png)
+
+注意调用栈

@@ -80,6 +80,7 @@ Vue.prototype.$mount = function (
         mark("compile")
       }
 
+      // 根据template编译成render函数
       const {
         render,
         staticRenderFns,
