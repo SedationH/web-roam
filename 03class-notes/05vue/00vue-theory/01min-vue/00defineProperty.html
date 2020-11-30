@@ -13,11 +13,22 @@
     <div id="app">hello</div>
     <div id="app2"></div>
     <script>
+      const ObKey = Object.keys,
+        ReOwnKeys = Reflect.ownKeys
       // 模拟 Vue 中的 data 选项
+      let foo = {
+        name: "foo",
+      }
+
       let data = {
         msg: "hello",
         count: 10,
+        [Symbol("hi")]: "hi",
+        __proto__: foo,
       }
+
+      console.log(ObKey(data), ReOwnKeys(data))
+      // 00defineProperty:30 (2) ["msg", "count"] (3) ["msg", "count", Symbol(hi)]
 
       // 模拟 Vue 的实例
       let vm = {}
@@ -27,9 +38,9 @@
       // 数据劫持：访问vm上的指定属性的时候，可以额外进行操作
       function proxyData(data) {
         // 遍历 data 对象的所有属性
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           // 把 data 中的属性，转换成 vm 的 setter/setter
-          Object.defineProperty(vm, key, {
+          Reflect.defineProperty(vm, key, {
             enumerable: true,
             configurable: true,
             get() {
@@ -60,6 +71,7 @@
       vm.msg = "Hello World"
       console.log(vm.msg)
       vm.count = 2
+      vm.foo = "not foo"
     </script>
   </body>
 </html>

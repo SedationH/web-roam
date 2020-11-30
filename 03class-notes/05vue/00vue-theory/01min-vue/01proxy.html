@@ -13,9 +13,15 @@
     <div id="app">hello</div>
     <script>
       // 模拟 Vue 中的 data 选项
+      let foo = {
+        name: "foo",
+      }
+
       let data = {
         msg: "hello",
-        count: 0,
+        count: 10,
+        [Symbol("hi")]: "hi",
+        __proto__: foo,
       }
 
       // 模拟 Vue 实例
@@ -43,9 +49,10 @@
       vm.msg = "Hello World"
       console.log(vm.msg)
 
-      // 这样的话，向data中加入新的key也可以监听到了
+      // 这样的话，向data中加入新的key也可以监听到了d
       data.foo = "Seda"
       vm.foo = 1
+      vm.name = 2
       // set, key:  foo 1
     </script>
   </body>

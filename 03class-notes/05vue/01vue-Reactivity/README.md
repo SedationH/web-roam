@@ -600,3 +600,155 @@ this.value = this.lazy
 ![image-20201129155027666](http://picbed.sedationh.cn/image-20201129155027666.png)
 
 注意调用栈
+
+
+
+## Vue的响应式处理
+
+前提概念 
+
+Watcher & Dep
+
+```js
+// 发布者-目标-dependency
+class Dep {
+  constructor() {
+    // 记录所有的订阅者
+    this.subs = []
+  }
+  // 添加订阅者
+  addSub(sub) {
+    if (sub && sub.update) {
+      this.subs.push(sub)
+    }
+  }
+  // 发布通知
+  notify() {
+    this.subs.forEach((sub) => {
+      sub.update()
+    })
+  }
+}
+// 订阅者-观察者 收到通知后 进行更新
+class Watcher {
+  // 观察者内部有实现update的方法，供发布者调用
+  update() {
+    console.log("update")
+  }
+}
+
+// 测试
+let dep = new Dep()
+let watcher = new Watcher()
+
+dep.addSub(watcher)
+dep.notify()
+```
+
+从视图和数据的角度来看，视图是Watcher 实现 update方法，数据收集来自视图的订阅，当数据更新的时候，notify所有的Watcher进行视图更新
+
+
+
+src/core/instance/lifecycle.js 中的mountComponent 创建了Watcher
+
+```js
+new Watcher(vm, updateComponent, noop, {
+  before () {
+    if (vm._isMounted && !vm._isDestroyed) {
+      callHook(vm, 'beforeUpdate')
+    }
+  }
+}, true /* isRenderWatcher */)
+```
+
+在Watcher调用get方法 pushTarget(this)  存储了当前Watcher 实例
+
+```js
+// The current target watcher being evaluated.
+// This is globally unique because only one watcher
+// can be evaluated at a time.
+Dep.target = null
+const targetStack = []
+
+export function pushTarget (target: ?Watcher) {
+  targetStack.push(target)
+  Dep.target = target
+}
+```
+
+```js
+value = this.getter.call(vm, vm) // 调用
+
+updateComponent = () => {
+  vm._update(vm._render(), hydrating)// 调用 render
+}
+
+vnode = render.call(vm._renderProxy, vm.$createElement) // 执行render方法
+```
+
+这个是生产的render函数，with(this) 的使用让里面不存在的变量会在this中寻找_c: createElement _stoString 
+
+当访问值的时候，就会收集触发get方法
+
+```js
+(function anonymous(
+) {
+with(this){return _c('div',{attrs:{"id":"app"}},[_c('h1',[_v(_s(msg))]),_v("\n      "+_s(msg)+"\n    ")])}
+})
+```
+
+![image-20201130222506441](http://picbed.sedationh.cn/image-20201130222506441.png)
+
+```js
+export function proxy (target: Object, sourceKey: string, key: string) {
+  sharedPropertyDefinition.get = function proxyGetter () {
+    return this[sourceKey][key]
+  }
+  sharedPropertyDefinition.set = function proxySetter (val) {
+    this[sourceKey][key] = val
+  }
+  Object.defineProperty(target, key, sharedPropertyDefinition)
+}
+```
+
+```js
+get: function reactiveGetter () {
+  const value = getter ? getter.call(obj) : val
+  if (Dep.target) {
+    dep.depend() // 依赖处理
+    if (childOb) {
+      childOb.dep.depend()
+      if (Array.isArray(value)) {
+        dependArray(value)
+      }
+    }
+  }
+  return value
+},
+  
+  
+  depend () {
+    if (Dep.target) {
+      Dep.target.addDep(this)
+    }
+  }
+
+  addDep (dep: Dep) {
+    const id = dep.id
+    // 不重复添加
+    if (!this.newDepIds.has(id)) {
+      this.newDepIds.add(id)
+      this.newDeps.push(dep)
+      if (!this.depIds.has(id)) {
+        dep.addSub(this)
+      }
+    }
+  }
+
+```
+
+![image-20201130223850640](http://picbed.sedationh.cn/image-20201130223850640.png)
+
+
+
+整体来看，是在render过程中，via get 来添加依赖的

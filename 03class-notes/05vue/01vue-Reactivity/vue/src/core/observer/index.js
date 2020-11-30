@@ -43,6 +43,7 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
+    // 默认 enumerable: false, 即不可枚举到 通过Object.keys()是拿不到的
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
       if (hasProto) {
@@ -63,6 +64,7 @@ export class Observer {
    */
   walk (obj: Object) {
     const keys = Object.keys(obj)
+    // 把对象的每一个可枚举属性设置响应式数据
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i])
     }
@@ -139,6 +141,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 用来收集当前object[key]的所有依赖
   const dep = new Dep()
 
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -159,7 +162,7 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
-      if (Dep.target) {
+      if (Dep.target) { 
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
