@@ -54,7 +54,7 @@ export default class Dep {
 // can be evaluated at a time.
 Dep.target = null
 const targetStack = []
-
+// targetStack用于处理组件嵌套的情况
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target

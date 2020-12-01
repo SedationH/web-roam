@@ -45,6 +45,8 @@ export class Observer {
     this.vmCount = 0
     // 默认 enumerable: false, 即不可枚举到 通过Object.keys()是拿不到的
     def(value, '__ob__', this)
+    // 对数组的处理，通过在原来的方法上套上一层，来实现
+    // 不改变地址的情况下，对数组中数据的响应式监听
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)

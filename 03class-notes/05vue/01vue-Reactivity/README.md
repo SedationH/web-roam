@@ -605,7 +605,7 @@ this.value = this.lazy
 
 ## Vue的响应式处理
 
-前提概念 
+### 前提概念 
 
 Watcher & Dep
 
@@ -648,6 +648,8 @@ dep.notify()
 从视图和数据的角度来看，视图是Watcher 实现 update方法，数据收集来自视图的订阅，当数据更新的时候，notify所有的Watcher进行视图更新
 
 
+
+### 具体实现
 
 src/core/instance/lifecycle.js 中的mountComponent 创建了Watcher
 
@@ -752,3 +754,77 @@ get: function reactiveGetter () {
 
 
 整体来看，是在render过程中，via get 来添加依赖的
+
+### 如何处理数组？
+
+```js
+export class Observer {
+  value: any;
+  dep: Dep;
+  vmCount: number; // number of vms that have this object as root $data
+
+  constructor (value: any) {
+    this.value = value
+    this.dep = new Dep()
+    this.vmCount = 0
+    // 默认 enumerable: false, 即不可枚举到 通过Object.keys()是拿不到的
+    def(value, '__ob__', this)
+    // 对数组的处理，通过在原来的方法上套上一层，来实现
+    // 不改变地址的情况下，对数组中数据的响应式监听
+    if (Array.isArray(value)) {
+      if (hasProto) {
+        protoAugment(value, arrayMethods)
+      } else {
+        copyAugment(value, arrayMethods, arrayKeys)
+      }
+      this.observeArray(value)
+    } else {
+      this.walk(value)
+    }
+  }
+```
+
+```js
+const arrayProto = Array.prototype
+export const arrayMethods = Object.create(arrayProto)
+
+const methodsToPatch = [
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse'
+]
+
+/**
+ * Intercept mutating methods and emit events
+ */
+methodsToPatch.forEach(function (method) {
+  // cache original method
+  const original = arrayProto[method]
+  def(arrayMethods, method, function mutator (...args) {
+    // 调用原来的方法
+    const result = original.apply(this, args)
+    const ob = this.__ob__
+    let inserted
+    switch (method) {
+      case 'push':
+      case 'unshift':
+        inserted = args
+        break
+      case 'splice':
+        inserted = args.slice(2)
+        break
+    }
+    if (inserted) ob.observeArray(inserted)
+    // notify change
+    ob.dep.notify()
+    return result
+  })
+})
+```
+
+![image-20201201221024731](http://picbed.sedationh.cn/image-20201201221024731.png)
+

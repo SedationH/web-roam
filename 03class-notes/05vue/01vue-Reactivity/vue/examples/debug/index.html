@@ -11,14 +11,15 @@
   <script src="../../dist/vue.js"></script>
   <body>
     <div id="app">
-      <h1>{{msg}}</h1>
-      {{msg}}
+      <!-- {{msg}} -->
+      {{arr}}
     </div>
     <script>
       const vm = new Vue({
         el: "#app",
         data: {
-          msg: "hello world",
+          // msg: "hello world",
+          arr: [1, 2, 3],
         },
       })
     </script>
