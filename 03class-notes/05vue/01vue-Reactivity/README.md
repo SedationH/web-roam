@@ -651,6 +651,45 @@ dep.notify()
 
 ### 具体实现
 
+![image-20201204111925124](http://picbed.sedationh.cn/image-20201204111925124.png)
+
+代码很多 很复杂
+
+但是逻辑和思路是清晰的
+
+如何实现响应式？
+
+让数据有dep进行watcher收集via defineReactive 重写属性的get方法
+
+数据变化的时候能够notify via defineReactive 重写属性的set方法
+
+让watcher实现视图更新
+
+
+
+比较难的理解在如何实现一一对应向dep中加入watchr
+
+打两个断点看调用栈
+
+![image-20201204110751953](http://picbed.sedationh.cn/image-20201204110751953.png)
+
+
+
+下面是一些具体解释，我感觉是能够大体把握才能看得懂在说什么
+
+在initState(vm)的时候 initData(vm)
+
+```js
+let data = vm.$options.data
+
+// observe data
+observe(data, true /* asRootData */)
+```
+
+
+
+![image-20201203104512737](http://picbed.sedationh.cn/image-20201203104512737.png)
+
 src/core/instance/lifecycle.js 中的mountComponent 创建了Watcher
 
 ```js
@@ -827,4 +866,6 @@ methodsToPatch.forEach(function (method) {
 ```
 
 ![image-20201201221024731](http://picbed.sedationh.cn/image-20201201221024731.png)
+
+
 

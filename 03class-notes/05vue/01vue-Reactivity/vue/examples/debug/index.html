@@ -10,18 +10,18 @@
   </head>
   <script src="../../dist/vue.js"></script>
   <body>
-    <div id="app">
-      <!-- {{msg}} -->
-      {{arr}}
-    </div>
+    <div id="app">{{msg}} {{arr}}</div>
     <script>
       const vm = new Vue({
         el: "#app",
         data: {
-          // msg: "hello world",
+          msg: "hello world",
           arr: [1, 2, 3],
         },
       })
+      setTimeout(() => {
+        vm._data.msg = "hi"
+      }, 2000)
     </script>
   </body>
 </html>
