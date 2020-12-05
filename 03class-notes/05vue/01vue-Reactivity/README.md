@@ -869,3 +869,37 @@ methodsToPatch.forEach(function (method) {
 
 
 
+set和delete就不用多说了用的都是上面这一套
+
+```js
+defineReactive(ob.value, key, val)
+ob.dep.notify()
+```
+
+
+
+###  Watcher
+
+- 没有静态方法，$watch要用到Vue的实例
+- 创建顺序
+  - 1 计算属性
+  - 2 用户（侦听器
+  - 3 渲染
+
+打断点在Watcher的构造函数上
+
+![image-20201205212353062](http://picbed.sedationh.cn/image-20201205212353062.png)
+
+![image-20201205212412771](http://picbed.sedationh.cn/image-20201205212412771.png)
+
+![image-20201205212428937](http://picbed.sedationh.cn/image-20201205212428937.png)
+
+
+
+### $nextTick
+
+- Vue更新Dom是异步执行的，批量处理
+- 所以我们对数据的修改在函数执行过程中不能立刻反应在视图了，想要在函数中对视图对数据变动产生相应后获取相关信息，就要异步处理，等待视图更新后异步执行
+
+
+

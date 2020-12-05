@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Document</title>
+  </head>
+  <script src="../../dist/vue.js"></script>
+  <body>
+    <div id="app">
+      <p>fullName: {{user.fullName}}</p>
+      <p>firstName: {{user.firstName}}</p>
+      <p>reversedFullName: {{reversedFullName}}</p>
+    </div>
+    <script>
+      const vm = new Vue({
+        el: "#app",
+        data: {
+          user: {
+            firstName: "initFirstName",
+            lastName: "initLastName",
+            fullName: "",
+          },
+        },
+        computed: {
+          reversedFullName() {
+            return this.user.fullName
+              .split("")
+              .reverse()
+              .join("")
+          },
+        },
+        watch: {
+          // 'user.name' : function (){}
+          user: {
+            handler() {
+              this.user.fullName =
+                `${this.user.firstName}  ${this.user.lastName}`
+            },
+            deep: true,
+            immediate: true,
+          },
+        },
+      })
+    </script>
+  </body>
+</html>
