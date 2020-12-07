@@ -10,7 +10,7 @@
   </head>
   <script src="../../dist/vue.js"></script>
   <body>
-    <div id="app">{{msg}} {{arr}}</div>
+    <div id="app">{{arr}}</div>
     <script>
       const vm = new Vue({
         el: "#app",
@@ -19,9 +19,9 @@
           arr: [1, 2, 3],
         },
       })
-      setTimeout(() => {
-        vm._data.msg = "hi"
-      }, 2000)
+      // setTimeout(() => {
+      //   vm._data.msg = "hi"
+      // }, 2000)
     </script>
   </body>
 </html>
