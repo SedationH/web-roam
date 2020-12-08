@@ -165,8 +165,14 @@ export function defineReactive (
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) { 
+        // 此处有两个依赖收集
+        // 依赖收集就是watcher收集
+        // watcher保存在 Dep.target+栈结构
+
+        // 这里是对属性对应的地址变化收集依赖
         dep.depend()
         if (childOb) {
+          // 这里是对属性对应的值，值中的数据发生变化的时候收集依赖
           childOb.dep.depend()
           if (Array.isArray(value)) {
             dependArray(value)

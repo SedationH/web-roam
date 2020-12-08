@@ -665,3 +665,231 @@ observe -> Observe ->  defineReactive 设置get & set方法 将Watcher & Dep联�
 
 ![image-20201207214654556](http://picbed.sedationh.cn/image-20201207214654556.png)
 
+
+
+写了个mindnode 下面是文本格式
+
+
+
+- 响应式处理过程
+
+- - Observe
+
+  - - 位置
+
+    - - core/observe/index.js
+
+    - 功能
+
+    - - 给value对象定义不可枚举的__ob__属性标记，记录当前的ovserve对象
+      - array -> 方法特殊处理 -> observeArray -> observe
+      - object -> walk -> defineReactive
+      - 其实总的来看，就是遍历要Obsere对象的key value
+
+  - ❤️defineReactive
+
+  - - 位置
+
+    - - core/observe/index.js
+
+    - 功能
+
+    - - 完成对object 的 指定key的响应化处理
+
+      - - 这里有相应的Dep实例创建，用于收集该数据的依赖
+
+      - get 负责依赖收集
+
+      - - ⚠️有两个依赖收集
+
+        - - key -> address
+          - value 中具体的内容 这是mutable的情况
+
+        - 依赖就是指watcher
+
+        - 这里是难点
+
+      - set进行dep.notify更新派发，这里数组是用的针对性修改的方法
+
+      - 简单来看 就是吧Watcher & Dep联系起来了
+
+  - Watcher
+
+  - - 准备工作
+
+    - - 
+      - 初始化的时候便创建了 暂时存在于Dep.target中，每次只处理一个wacher，js单线程工作
+
+    - 进行使用
+
+    - - dep.notify调用watcher对象的update方法 根据sync === true ? run() : queueWatcher()
+
+      - queueWatcher()判断watcher是否被处理，没有的话添加到queue中
+
+      - - nextTick(flushSchedulerQueue)
+
+        - - // Sort queue before flush.
+          -  // This ensures that:
+          -  // 1. Components are updated from parent to child. (because parent is always
+          -  //  created before the child)
+          -  // 2. A component's user watchers are run before its render watcher (because
+          -  //  user watchers are created before the render watcher)
+          -  // 3. If a component is destroyed during a parent component's watcher run,
+          -  //  its watchers can be skipped.
+          -  queue.sort((a, b) => a.id - b.id)
+          - run -> get -> getter -> updateComponent
+
+        - 视图更新是一起处理的
+
+  - observe(value)
+
+  - - 位置
+
+    - - core/observe/index.js
+
+    - 功能
+
+    - - 判断value是否是对象，不是对象的话直接返回
+      - 判断是否已经进行响应式处理(__ob__)，如果有直接返回
+      - 如果没有，创建Observe对象
+      - 返回observe实例对象
+
+  - initState() -> initData() -> observe
+
+
+
+
+
+###  Watcher
+
+- 没有静态方法，$watch要用到Vue的实例
+- 创建顺序
+  - 1 计算属性
+  - 2 用户（侦听器
+  - 3 渲染
+
+打断点在Watcher的构造函数上
+
+![image-20201205212353062](http://picbed.sedationh.cn/image-20201205212353062.png)
+
+![image-20201205212412771](http://picbed.sedationh.cn/image-20201205212412771.png)
+
+![image-20201205212428937](http://picbed.sedationh.cn/image-20201205212428937.png)
+
+
+
+### $nextTick
+
+- Vue更新Dom是异步执行的，批量处理
+- 所以我们对数据的修改在函数执行过程中不能立刻反应在视图了，想要在函数中对视图对数据变动产生相应后获取相关信息，就要异步处理，等待视图更新后异步执行
+
+```js
+callbacks.push(function () {
+  if (cb) {
+    try {
+      cb.call(ctx);
+    } catch (e) {
+      handleError(e, ctx, 'nextTick');
+    }
+  } else if (_resolve) {
+    _resolve(ctx);
+  }
+});
+if (!pending) {
+  pending = true;
+  timerFunc();
+}
+```
+
+```js
+// 异步处理 降级
+
+// Here we have async deferring wrappers using microtasks.
+// In 2.5 we used (macro) tasks (in combination with microtasks).
+// However, it has subtle problems when state is changed right before repaint
+// (e.g. #6813, out-in transitions).
+// Also, using (macro) tasks in event handler would cause some weird behaviors
+// that cannot be circumvented (e.g. #7109, #7153, #7546, #7834, #8109).
+// So we now use microtasks everywhere, again.
+// A major drawback of this tradeoff is that there are some scenarios
+// where microtasks have too high a priority and fire in between supposedly
+// sequential events (e.g. #4521, #6690, which have workarounds)
+// or even between bubbling of the same event (#6566).
+var timerFunc;
+
+// The nextTick behavior leverages the microtask queue, which can be accessed
+// via either native Promise.then or MutationObserver.
+// MutationObserver has wider support, however it is seriously bugged in
+// UIWebView in iOS >= 9.3.3 when triggered in touch event handlers. It
+// completely stops working after triggering a few times... so, if native
+// Promise is available, we will use it:
+/* istanbul ignore next, $flow-disable-line */
+if (typeof Promise !== 'undefined' && isNative(Promise)) {
+  var p = Promise.resolve();
+  timerFunc = function () {
+    p.then(flushCallbacks);
+    // In problematic UIWebViews, Promise.then doesn't completely break, but
+    // it can get stuck in a weird state where callbacks are pushed into the
+    // microtask queue but the queue isn't being flushed, until the browser
+    // needs to do some other work, e.g. handle a timer. Therefore we can
+    // "force" the microtask queue to be flushed by adding an empty timer.
+    if (isIOS) { setTimeout(noop); }
+  };
+} else if (!isIE && typeof MutationObserver !== 'undefined' && (
+  isNative(MutationObserver) ||
+  // PhantomJS and iOS 7.x
+  MutationObserver.toString() === '[object MutationObserverConstructor]'
+)) {
+  // Use MutationObserver where native Promise is not available,
+  // e.g. PhantomJS, iOS7, Android 4.4
+  // (#6466 MutationObserver is unreliable in IE11)
+  var counter = 1;
+  var observer = new MutationObserver(flushCallbacks);
+  var textNode = document.createTextNode(String(counter));
+  observer.observe(textNode, {
+    characterData: true
+  });
+  timerFunc = function () {
+    counter = (counter + 1) % 2;
+    textNode.data = String(counter);
+  };
+} else if (typeof setImmediate !== 'undefined' && isNative(setImmediate)) {
+  // Fallback to setImmediate.
+  // Technically it leverages the (macro) task queue,
+  // but it is still a better choice than setTimeout.
+  timerFunc = function () {
+    setImmediate(flushCallbacks);
+  };
+} else {
+  // Fallback to setTimeout.
+  timerFunc = function () {
+    setTimeout(flushCallbacks, 0);
+  };
+}
+
+function nextTick (cb, ctx) {
+  var _resolve;
+  callbacks.push(function () {
+    if (cb) {
+      try {
+        cb.call(ctx);
+      } catch (e) {
+        handleError(e, ctx, 'nextTick');
+      }
+    } else if (_resolve) {
+      _resolve(ctx);
+    }
+  });
+  if (!pending) {
+    pending = true;
+    timerFunc();
+  }
+  // $flow-disable-line
+  if (!cb && typeof Promise !== 'undefined') {
+    return new Promise(function (resolve) {
+      _resolve = resolve;
+    })
+  }
+}
+```
+
