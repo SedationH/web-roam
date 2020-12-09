@@ -8,14 +8,14 @@ const fs = require('fs')
 //  添加文件
 exports.create = (req, res) => {
   let params = {
-    file_name: req.files[0].originalname,
-    hash_name: req.files[0].filename,
+    file_name: 1,
+    hash_name: 1,
     upload_time:
       new Date().toLocaleDateString() +
       ' ' +
       new Date().toLocaleTimeString(),
-    type: path.parse(req.files[0].originalname).ext,
-    size: req.files[0].size,
+    type: 1,
+    size: 1,
     download: 0,
     uid: req.body.uid,
   }
