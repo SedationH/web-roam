@@ -667,98 +667,9 @@ observe -> Observe ->  defineReactive 设置get & set方法 将Watcher & Dep联�
 
 
 
-写了个mindnode 下面是文本格式
+写了个mindnode
 
-
-
-- 响应式处理过程
-
-- - Observe
-
-  - - 位置
-
-    - - core/observe/index.js
-
-    - 功能
-
-    - - 给value对象定义不可枚举的__ob__属性标记，记录当前的ovserve对象
-      - array -> 方法特殊处理 -> observeArray -> observe
-      - object -> walk -> defineReactive
-      - 其实总的来看，就是遍历要Obsere对象的key value
-
-  - ❤️defineReactive
-
-  - - 位置
-
-    - - core/observe/index.js
-
-    - 功能
-
-    - - 完成对object 的 指定key的响应化处理
-
-      - - 这里有相应的Dep实例创建，用于收集该数据的依赖
-
-      - get 负责依赖收集
-
-      - - ⚠️有两个依赖收集
-
-        - - key -> address
-          - value 中具体的内容 这是mutable的情况
-
-        - 依赖就是指watcher
-
-        - 这里是难点
-
-      - set进行dep.notify更新派发，这里数组是用的针对性修改的方法
-
-      - 简单来看 就是吧Watcher & Dep联系起来了
-
-  - Watcher
-
-  - - 准备工作
-
-    - - 
-      - 初始化的时候便创建了 暂时存在于Dep.target中，每次只处理一个wacher，js单线程工作
-
-    - 进行使用
-
-    - - dep.notify调用watcher对象的update方法 根据sync === true ? run() : queueWatcher()
-
-      - queueWatcher()判断watcher是否被处理，没有的话添加到queue中
-
-      - - nextTick(flushSchedulerQueue)
-
-        - - // Sort queue before flush.
-          -  // This ensures that:
-          -  // 1. Components are updated from parent to child. (because parent is always
-          -  //  created before the child)
-          -  // 2. A component's user watchers are run before its render watcher (because
-          -  //  user watchers are created before the render watcher)
-          -  // 3. If a component is destroyed during a parent component's watcher run,
-          -  //  its watchers can be skipped.
-          -  queue.sort((a, b) => a.id - b.id)
-          - run -> get -> getter -> updateComponent
-
-        - 视图更新是一起处理的
-
-  - observe(value)
-
-  - - 位置
-
-    - - core/observe/index.js
-
-    - 功能
-
-    - - 判断value是否是对象，不是对象的话直接返回
-      - 判断是否已经进行响应式处理(__ob__)，如果有直接返回
-      - 如果没有，创建Observe对象
-      - 返回observe实例对象
-
-  - initState() -> initData() -> observe
-
-
-
-
+![image-20201214212546304](http://picbed.sedationh.cn/image-20201214212546304.png)
 
 ###  Watcher
 
@@ -893,3 +804,8 @@ function nextTick (cb, ctx) {
 }
 ```
 
+
+
+## MORE
+
+更多相关细节参考 [more](./Reactive2.md)
