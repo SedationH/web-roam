@@ -17,15 +17,15 @@
 目录
 
 $ tree -L 1
-.
-├── 00vue-theory 前置理论 建议先看
-├── 98router 根据Vue提供的api来实现一个自己的router
-├── 99import-vue 理解Vue框架的导入过程(自己基础不扎实)
-├── README.md
-├── [Reactive.md](Reactive.md)
-├── [Reactive2.md](Reactive2.md)
-├── [compile-template.md](./compile-template.md)
-├── [virtualDOM.md](./virtualDOM.md ) 
-├── vue 自己搞的源代码 没写多少...
-└── vue-copy lg给的源代码 里面的注释更完善
+
+- 00vue-theory 前置理论 建议先看
+- 98router 根据Vue提供的api来实现一个自己的router
+- 99import-vue 理解Vue框架的导入过程(自己基础不扎实)
+- README.md
+-  [Reactive.md](Reactive.md) 
+-  [Reactive2.md](Reactive2.md) 
+-  [compile-template.md](./compile-template.md) 
+-  [virtualDOM.md](./virtualDOM.md ) 
+-  vue 自己搞的源代码 没写多少...
+-  vue-copy lg给的源代码 里面的注释更完善
 
