@@ -1,7 +1,10 @@
 export default {
   namespaced: true,
   state: {
-    cartProducts: []
+    cartProducts:
+      JSON.parse(
+        window.localStorage.getItem('cart-products')
+      ) || []
   },
   getters: {
     totalCount: state =>

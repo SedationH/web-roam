@@ -6,6 +6,17 @@ import products from './modules/products'
 
 Vue.use(Vuex)
 
+const localSave = store => {
+  store.subscribe((mutation, state) => {
+    if (mutation.type.startsWith('cart/')) {
+      window.localStorage.setItem(
+        'cart-products',
+        JSON.stringify(state.cart.cartProducts)
+      )
+    }
+  })
+}
+
 export default new Vuex.Store({
   state: {},
   mutations: {},
@@ -13,5 +24,6 @@ export default new Vuex.Store({
   modules: {
     cart,
     products
-  }
+  },
+  plugins: [localSave]
 })
