@@ -8,6 +8,10 @@
 
 [带你彻底弄懂Event Loop](https://juejin.im/post/5b8f76675188255c7c653811)
 
+[微任务、宏任务与Event-Loop](https://juejin.cn/post/6844903657264136200#heading-3)
+
+[深入理解js事件循环机制（浏览器篇）](http://lynnelv.github.io/js-event-loop-browser)
+
 ⚠️ 以下语境均为浏览器环境(Nodejs的实现不同)
 
 部分英文的使用是为了描述更加准确
