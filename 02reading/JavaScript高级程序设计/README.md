@@ -1,0 +1,163 @@
+## 第五章 第六章
+
+### 原始值包装类型
+
+```js
+let s1 = "foo"
+let  s2 = s1.substring(2)
+```
+
+知道s1是的value是Primitive value，但却拥有着方法和属性
+
+当访问s1的时候，是以读模式访问的，ECMAScript为了方便原始值的操作，提供Boolean，Number，String通过包装类型来提供操作。
+
+以上相当于
+
+```js
+let s1 = "foo"
+const tem = new String(s1)
+let s2 = tem.substring(2)
+tem = null
+```
+
+引用类型和原始值包装类型的主要区别在于对象的生命周期，包装类型临时提供，向上插入的属性和操作也都随着tem实例的销毁而销毁了
+
+区分转型函数和构造函数
+
+```js
+let v = '22'
+let n = Number(v) //转型
+let o = new Number(v) // 构造
+typeof n === 'number'
+typeof o === 'object'
+```
+
+
+
+### isArray引入的原因
+
+一个网页中有多个frame，来自其他frame的Array无法通过
+
+```js
+arr instanceof Array
+```
+
+来判断，Array.prototy !== arr.\__proto__ 产生的原因是因为数组源于不同的frame，联想到开发Chrome Extensions的时候，派发事件却拿不到监听，是因为把换来浏览器自己的函数给改了
+
+
+
+### Object to primitive conversion
+
+[Type Conversions](https://javascript.info/type-conversions)
+
+> The three most widely used type conversions are to string, to number, and to boolean.
+>
+> **`String Conversion`** – Occurs when we output something. Can be performed with `String(value)`. The conversion to string is usually obvious for primitive values.
+>
+> **`Numeric Conversion`** – Occurs in math operations. Can be performed with `Number(value)`.
+>
+> The conversion follows the rules:
+>
+> | Value          | Becomes…                                                     |
+> | :------------- | :----------------------------------------------------------- |
+> | `undefined`    | `NaN`                                                        |
+> | `null`         | `0`                                                          |
+> | `true / false` | `1 / 0`                                                      |
+> | `string`       | The string is read “as is”, whitespaces from both sides are ignored. An empty string becomes `0`. An error gives `NaN`. |
+>
+> **`Boolean Conversion`** – Occurs in logical operations. Can be performed with `Boolean(value)`.
+>
+> Follows the rules:
+>
+> | Value                                 | Becomes… |
+> | :------------------------------------ | :------- |
+> | `0`, `null`, `undefined`, `NaN`, `""` | `false`  |
+> | any other value                       | `true`   |
+>
+> Most of these rules are easy to understand and memorize. The notable exceptions where people usually make mistakes are:
+>
+> - `undefined` is `NaN` as a number, not `0`.
+> - `"0"` and space-only strings like `" "` are true as a boolean.
+
+[Object to primitive conversion](https://javascript.info/object-toprimitive) 关于处理Object到Primitives的转化
+
+一个重要的理解是这个value所处的上下文被期待成为什么 string or number or boolean
+
+第一次看规范
+
+https://tc39.es/ecma262/#sec-toprimitive
+
+https://tc39.es/ecma262/#sec-date.prototype-@@toprimitive
+
+文章写的已经很棒了
+
+记几个点
+
+1)
+
+The important thing to know about all primitive-conversion methods is that they do not necessarily return the “hinted” primitive.
+
+There is no control whether `toString` returns exactly a string, or whether `Symbol.toPrimitive` method returns a number for a hint `"number"`.
+
+The only mandatory thing: these methods must return a primitive, not an object. 事实上 在具体运算中 还会再转换
+
+2)
+
+```js
+let user = {
+  name: "John",
+  money: 1000,
+
+  [Symbol.toPrimitive](hint) {
+    alert(`hint: ${hint}`);
+    return hint == "string" ? `{name: "${this.name}"}` : this.money;
+  }
+};
+
+// conversions demo:
+alert(user); // hint: string -> {name: "John"}
+alert(+user); // hint: number -> 1000
+alert(user + 500); // hint: default -> 1500
+```
+
+3)
+
+```javascript
+let user = {
+  name: "John",
+  money: 1000,
+
+  // for hint="string"
+  toString() {
+    return `{name: "${this.name}"}`;
+  },
+
+  // for hint="number" or "default"
+  valueOf() {
+    return this.money;
+  }
+
+};
+
+alert(user); // toString -> {name: "John"}
+alert(+user); // valueOf -> 1000
+alert(user + 500); // valueOf -> 1500
+```
+
+
+
+### sort
+
+```js
+arr.sort(compare)
+
+// a b 是原始数组中前后相邻的数组元素[a,b]
+function compare(a, b){
+  	return 的值来操控a，b的前后关系
+wanna  [a,b] return 负数 | 0
+wanna  [b,a] return 正数
+}
+```
+
+
+
