@@ -77,7 +77,7 @@ Proxy(target, {
 
 上面代码中，Proxy 方法拦截 `target` 对象的属性赋值行为。它采用 `Reflect.set` 方法将值赋值给对象的属性，确保完成原有的行为，然后再部署额外的功能。
 
-## e.g.
+## 对于 receiver 的理解
 
 ```js
 const obj = {
@@ -101,7 +101,7 @@ const proxy = new Proxy(obj, {
 
 从 trap 中 的 receiver 是proxy 
 
-Reflect.get  可以改变调用的函数指向
+Reflect 可以改变调用的函数指向
 
 | Reflect 操作对象 | 老方法操作对象                                              |                                                       |
 | ---------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
@@ -109,3 +109,73 @@ Reflect.get  可以改变调用的函数指向
 | 函数式           | 所有方法都是函数                                            | 命令式、赋值、函数混用                                |
 | 规范报错         | `defineProperty` 无效返回 `false`，后面几个方法参数非法报错 | `defineProperty` 无效报错，后面几个方法参数非法不报错 |
 | 方法扩展         | 参数 `receiver` 指定 `this` 指向                            | 不能                                                  |
+
+
+
+## 实现reactivity
+
+### reactive
+
+![image-20210117091445142](http://picbed.sedationh.cn/image-20210117091445142.png)
+
+```js
+const log = str => console.log(`Reactivity: ${str}`)
+const isObject = val =>
+  val !== null && typeof val === 'object'
+const convert = target =>
+  isObject(target) ? reactive(target) : target
+
+/**
+ * @param {object} target 需要响应化的对象
+ */
+function reactive(target) {
+  if (!isObject(target)) return target
+
+  const handler = {
+    get(target, key, receiver) {
+      log('收集依赖')
+      const result = Reflect.get(target, key, receiver)
+      // 如果result是对象 那么还要对result进行响应处理
+      return convert(result)
+    },
+    set(target, key, value, receiver) {
+      log('派发更新')
+      const oldValue = Reflect.get(target, value, receiver)
+      return (
+        value === oldValue ||
+        Reflect.set(target, key, value, receiver)
+      )
+    },
+  }
+
+  return new Proxy(target, handler)
+}
+```
+
+
+
+### track
+
+![image-20210117094845967](http://picbed.sedationh.cn/image-20210117094845967.png)
+
+```js
+const targetMap = new WeakMap()
+
+/**
+ * 收集依赖
+ * @param {object} target 需要track的对象
+ * @param {string} key track对象具体key
+ */
+function track(target, key) {
+  if (!activeEffect) return
+
+  let depsMap = targetMap.get(target)
+  if (!depsMap) targetMap.set(target, (depsMap = new Map()))
+
+  let dep = depsMap.get(key)
+  if (!dep) depsMap.set(key, (dep = new Set()))
+
+  dep.add(activeEffect)
+}
+```
+
