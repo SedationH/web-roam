@@ -154,6 +154,23 @@ function reactive(target) {
 
 
 
+为啥不能解构reactivity返回的proxy，使用简单的解构后的值呢？
+
+```js
+const {x, y} = Position 
+
+// babel 降级处理
+"use strict";
+
+var _Position = Position,
+    x = _Position.x,
+    y = _Position.y;
+```
+
+[验证](https://babeljs.io/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&build=&builtIns=false&spec=false&loose=false&code_lz=MYewdgzgLgBA3gDwDQwJ4F8YF4YAUQQCWUh4MQA&debug=false&forceAllTransforms=false&shippedProposals=false&circleciRepo=&evaluate=true&fileSize=false&timeTravel=false&sourceType=module&lineWrap=false&presets=env%2Ces2015-loose&prettier=false&targets=&version=7.12.12&externalPlugins=)
+
+ 可以通过toRefs包装一下
+
 ### track
 
 ![image-20210117094845967](http://picbed.sedationh.cn/image-20210117094845967.png)

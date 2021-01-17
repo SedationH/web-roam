@@ -77,4 +77,73 @@ function trigger(target, key) {
   dep && dep.forEach(effect => effect())
 }
 
-export { reactive, effect }
+/**
+ * 包装数据，无论是对象还是Primitive value
+ * 通过统一 xxx.value 进行获取和赋值
+ * @param {*} raw 需要进行响应化的数据
+ */
+function ref(raw) {
+  if (isObject(raw) && raw.__v_isRef) return
+
+  let value = convert(raw)
+  const r = {
+    __v_isRef: true,
+    get value() {
+      track(r, 'value')
+      return value
+    },
+    set value(newValue) {
+      if (newValue !== value) {
+        raw = newValue
+        // 保持一致性
+        value = convert(raw)
+        trigger(r, 'value')
+      }
+    },
+  }
+  return r
+}
+
+/**
+ * 使用ref的方法来包装proxy对象的所有key
+ * 解构出来的值也是响应式的了
+ * 实现的时候注意使用的还是原来的proxy进行访问
+ * @param {Proxy} proxy reactivity返回的proxy对象
+ * @returns {object} 含有value的对象
+ */
+function toRefs(proxy) {
+  const ret = Array.isArray(proxy)
+    ? new Array(proxy.length)
+    : Object.create(null)
+
+  for (const key in proxy) {
+    ret[key] = _toProxyRef(proxy, key)
+  }
+  return ret
+}
+
+/**
+ * 通过ref的实现方式来包装对proxy key的访问
+ */
+function _toProxyRef(proxy, key) {
+  return {
+    __v_isRef: true,
+    get value() {
+      return proxy[key]
+    },
+    set value(newValue) {
+      proxy[key] = newValue
+    },
+  }
+}
+
+/**
+ * 计算属性
+ */
+function computed(getter) {
+  const ret = ref()
+  effect(() => (ret.value = getter()))
+  return ret
+}
+
+export { reactive, effect, ref, toRefs, computed }
