@@ -5,7 +5,7 @@
   "license": "MIT",
   "bin": "index.js",
   "dependencies": {
-    "@vue/compiler-sfc": "^3.0.5",
+    "@vue/compiler-sfc": "3.0.0-rc.10",
     "koa": "^2.13.1",
     "koa-send": "^5.0.1"
   }
