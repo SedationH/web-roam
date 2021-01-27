@@ -1,4 +1,4 @@
-## o资源整理
+## 资源整理
 
 理解Extension机制 http://blog.haoji.me/chrome-plugin-develop.html#content-scripts
 
