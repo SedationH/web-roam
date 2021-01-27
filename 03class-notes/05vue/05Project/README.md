@@ -54,7 +54,7 @@ console.log(ans)
 
 这里的说法我理解为**权限控制**如何设计
 
-see [access-control](access-control)
+see [access-control](access-control.md)
 
 
 
