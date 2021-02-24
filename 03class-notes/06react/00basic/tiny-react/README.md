@@ -94,3 +94,68 @@ https://babeljs.io/docs/en/babel-preset-react
 
 ```
 
+
+
+简单版本
+
+```js
+function createElement(type, props, ...children) {
+  return {
+    type,
+    props: props,
+    children,
+  }
+}
+
+export default createElement
+```
+
+
+
+
+
+需要完成的效果
+
+1. 处理文本节点
+2. 表达式中不处理Boolean && null
+3. props中可以通过children来访问子节点
+
+
+
+```js
+function createElement(type, props, ...children) {
+  const childElements = children.reduce((res, child) => {
+    if (
+      child !== false &&
+      child !== true &&
+      child !== null
+    ) {
+      if (child instanceof Object) {
+        res.push(child)
+      } else {
+        // 文本节点
+        res.push(
+          createElement('text', {
+            textContent: child,
+          })
+        )
+      }
+    }
+    return res
+  }, [])
+  return {
+    type,
+    props: Object.assign(
+      {
+        children: childElements,
+      },
+      props
+    ),
+    children: childElements,
+  }
+}
+
+export default createElement
+
+```
+
