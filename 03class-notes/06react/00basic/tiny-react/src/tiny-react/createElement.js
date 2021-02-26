@@ -18,6 +18,7 @@ function createElement(type, props, ...children) {
     }
     return res
   }, [])
+  console.log(type)
   return {
     type,
     props: Object.assign(

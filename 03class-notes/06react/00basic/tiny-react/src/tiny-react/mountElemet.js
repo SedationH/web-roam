@@ -1,4 +1,4 @@
-import mountNativeElement from './mountNativeElement'
+import mountNativeElement from './mountNativeElement.js'
 
 export default function mountElemet(virtualDOM, container) {
   // Component or NativeELement

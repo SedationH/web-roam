@@ -27,3 +27,4 @@ const virtualDOM = (
 TinyReact.render(virtualDOM, root)
 
 console.log(virtualDOM)
+

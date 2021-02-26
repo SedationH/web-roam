@@ -159,3 +159,21 @@ export default createElement
 
 ```
 
+
+
+## render
+
+virtualDOM -> realDOM
+
+
+
+render -> diff -> mountElement -> mountNativeElement
+
+通过一层又一层，逐渐简化处理逻辑，每部分完成自己的任务
+
+第一次的代码并不多，但能体现封装结构
+
+commit参考 ef4513203d94f2d067c33048b6cbac2039af20b3
+
+![image-20210226162544054](http://picbed.sedationh.cn/image-20210226162544054.png)
+
