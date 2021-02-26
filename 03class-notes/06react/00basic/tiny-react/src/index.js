@@ -29,16 +29,27 @@ const virtualDOM = (
 // console.log(virtualDOM)
 
 // const Foo = () => <div>This is Foo</div>
-const Hero = () => <div>this is Hero😊</div>
+// const Hero = () => <div>this is Hero😊</div>
 
-function Foo({ title }) {
-  return (
-    <div>
-      <h1>{title}</h1>
-      this is Foo
-      <Hero />
-    </div>
-  )
+// function Foo({ title }) {
+//   return (
+//     <div>
+//       <h1>{title}</h1>
+//       this is Foo
+//       <Hero />
+//     </div>
+//   )
+// }
+
+// TinyReact.render(<Foo title="Foo Title" />, root)
+
+class Foo extends TinyReact.Component {
+  constructor(props) {
+    super(props)
+  }
+  render() {
+    return <div>{this.props.title} Foo class Component</div>
+  }
 }
 
-TinyReact.render(<Foo title="Foo Title" />, root)
+TinyReact.render(<Foo title="1" />, root)

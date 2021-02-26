@@ -10,11 +10,18 @@ export default function mountComponent(
   if (isFunctionComponent(virtualDOM)) {
     nextVirtualDOM = buildFunctionComponent(virtualDOM)
   } else {
-    console.log('是类组件')
+    nextVirtualDOM = buildClassComponent(virtualDOM)
   }
   mountElemet(nextVirtualDOM, container)
 }
 
 function buildFunctionComponent(virtualDOM) {
   return virtualDOM.type(virtualDOM.props || {})
+}
+
+function buildClassComponent(virtualDOM) {
+  const component = new virtualDOM.type(
+    virtualDOM.props || {}
+  )
+  return component.render()
 }
