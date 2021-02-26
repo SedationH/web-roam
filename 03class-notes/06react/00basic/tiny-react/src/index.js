@@ -31,13 +31,14 @@ const virtualDOM = (
 // const Foo = () => <div>This is Foo</div>
 const Hero = () => <div>this is Hero😊</div>
 
-function Foo() {
+function Foo({ title }) {
   return (
     <div>
+      <h1>{title}</h1>
       this is Foo
       <Hero />
     </div>
   )
 }
 
-TinyReact.render(<Foo />, root)
+TinyReact.render(<Foo title="Foo Title" />, root)
