@@ -177,3 +177,39 @@ commit参考 ef4513203d94f2d067c33048b6cbac2039af20b3
 
 ![image-20210226162544054](http://picbed.sedationh.cn/image-20210226162544054.png)
 
+
+
+## 非Native组件处理
+
+```js
+const DOM = (
+  <div id="1" className="666">
+    <span>1</span>
+    <span>2</span>
+    <Foo />
+  </div>
+)
+
+function Foo() {
+  return <div>this is Foo</div>
+}
+```
+
+```js
+const DOM = /*#__PURE__*/ React.createElement(
+  "div",
+  {
+    id: "1",
+    className: "666"
+  },
+  /*#__PURE__*/ React.createElement("span", null, "1"),
+  /*#__PURE__*/ React.createElement("span", null, "2"),
+  /*#__PURE__*/ React.createElement(Foo, null)
+);
+
+function Foo() {
+  return /*#__PURE__*/ React.createElement("div", null, "this is Foo");
+}
+
+```
+

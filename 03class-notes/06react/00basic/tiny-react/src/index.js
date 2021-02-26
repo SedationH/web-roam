@@ -24,7 +24,20 @@ const virtualDOM = (
   </div>
 )
 
-TinyReact.render(virtualDOM, root)
+// TinyReact.render(virtualDOM, root)
 
-console.log(virtualDOM)
+// console.log(virtualDOM)
 
+// const Foo = () => <div>This is Foo</div>
+const Hero = () => <div>this is Hero😊</div>
+
+function Foo() {
+  return (
+    <div>
+      this is Foo
+      <Hero />
+    </div>
+  )
+}
+
+TinyReact.render(<Foo />, root)
