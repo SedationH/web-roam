@@ -2,7 +2,7 @@ import diff from './diff'
 export default function render(
   virtualDOM,
   container,
-  oldDOM
+  oldDOM = container.firstChild
 ) {
   diff(virtualDOM, container, oldDOM)
 }

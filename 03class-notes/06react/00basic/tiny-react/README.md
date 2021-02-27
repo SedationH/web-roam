@@ -213,3 +213,52 @@ function Foo() {
 
 ```
 
+首先判断出来是 **非NativeComponent**
+
+```js
+// Component or NativeELement
+if (isFunction(virtualDOM)) {
+  mountComponent(virtualDOM, container)
+} else {
+  mountNativeElement(virtualDOM, container)
+}
+```
+
+
+
+再根据是函数 还是 类进行区别构建就好了
+
+```js
+export default function mountComponent(
+  virtualDOM,
+  container
+) {
+  let nextVirtualDOM = null
+  // 判断是类组件还是函数式组件
+  if (isFunctionComponent(virtualDOM)) {
+    nextVirtualDOM = buildFunctionComponent(virtualDOM)
+  } else {
+    nextVirtualDOM = buildClassComponent(virtualDOM)
+  }
+  mountElemet(nextVirtualDOM, container)
+}
+
+function buildFunctionComponent(virtualDOM) {
+  return virtualDOM.type(virtualDOM.props || {})
+}
+
+function buildClassComponent(virtualDOM) {
+  const component = new virtualDOM.type(
+    virtualDOM.props || {}
+  )
+  return component.render()
+}
+
+```
+
+
+
+## 更新处理
+
+### 先从最简单的文字开始
+
