@@ -63,6 +63,7 @@ const initialVirtualDOM = (
 const updateVirtualDOM = (
   <div>
     <div className="container">this is updated DOM</div>
+    <div className="container">this is updated DOM</div>
   </div>
 )
 

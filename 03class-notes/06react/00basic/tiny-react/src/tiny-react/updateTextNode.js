@@ -1,7 +1,7 @@
 export default function updateTextNode(
+  DOM,
   virtualDOM,
-  oldVirtualDOM,
-  DOM
+  oldVirtualDOM
 ) {
   if (
     virtualDOM.props.textContent !==

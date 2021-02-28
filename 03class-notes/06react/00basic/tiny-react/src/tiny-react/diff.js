@@ -1,5 +1,6 @@
 import mountElemet from './mountElemet'
 import updateTextNode from './updateTextNode'
+import updateNodeElement from './updateNodeElement'
 /**
  * @param {object} virtualDOM 当前的虚拟dom
  * @param {node} container 当前的容器 父亲👨
@@ -21,9 +22,10 @@ export default function diff(
     if ((virtualDOM.type = oldVirtualDOM.type)) {
       if (virtualDOM.type === 'text') {
         // 更新文字
-        updateTextNode(virtualDOM, oldVirtualDOM, oldDOM)
+        updateTextNode(oldDOM, virtualDOM, oldVirtualDOM)
       } else {
         // 更新元素属性
+        updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
       }
 
       virtualDOM.children.forEach((child, index) => {

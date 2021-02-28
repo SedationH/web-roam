@@ -260,5 +260,62 @@ function buildClassComponent(virtualDOM) {
 
 ## 更新处理
 
-### 先从最简单的文字开始
+注意对render的修改
+
+```js
+export default function render(
+  virtualDOM,
+  container,
+  oldDOM = container.firstChild
+) {
+  diff(virtualDOM, container, oldDOM)
+}
+```
+
+
+
+### 先从最简单类型相同的文字开始
+
+diff
+
+```js
+if (!oldDOM) {
+  mountElemet(virtualDOM, container)
+} else if (oldVirtualDOM) {
+  if ((virtualDOM.type = oldVirtualDOM.type)) {
+    if (virtualDOM.type === 'text') {
+      // 更新文字
+      updateTextNode(virtualDOM, oldVirtualDOM, oldDOM)
+    } else {
+      // 更新元素属性
+    }
+
+    virtualDOM.children.forEach((child, index) => {
+      diff(child, oldDOM, oldDOM.childNodes[index])
+    })
+  }
+}
+```
+
+```js
+export default function updateTextNode(
+  virtualDOM,
+  oldVirtualDOM,
+  DOM
+) {
+  if (
+    virtualDOM.props.textContent !==
+    oldVirtualDOM.props.textContent
+  ) {
+    DOM.textContent = virtualDOM.props.textContent
+    DOM._virtualDOM = virtualDOM
+  }
+}
+```
+
+
+
+打debug自行体会，注意理解参数的语义
+
+### 处理类型相同时候的属性更换
 
