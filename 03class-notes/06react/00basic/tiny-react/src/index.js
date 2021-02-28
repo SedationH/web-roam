@@ -53,16 +53,25 @@ const root = document.getElementById('root')
 // }
 
 // TinyReact.render(<Foo title="1" />, root)
+function handleClick() {
+  alert('Click')
+}
+
+function updatedHandleClick() {
+  alert('updated click')
+}
 
 const initialVirtualDOM = (
   <div>
-    <div>this is initial DOM</div>
+    <div onClick={handleClick}>this is initial DOM</div>
   </div>
 )
 
 const updateVirtualDOM = (
   <div>
-    <div className="container">this is updated DOM</div>
+    <div className="container" onClick={updatedHandleClick}>
+      this is updated DOM
+    </div>
     <div className="container">this is updated DOM</div>
   </div>
 )
