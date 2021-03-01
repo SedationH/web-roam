@@ -319,3 +319,48 @@ export default function updateTextNode(
 
 ### 处理类型相同时候的属性更换
 
+```js
+if (virtualDOM.type === 'text') {
+  // 更新文字
+  updateTextNode(oldDOM, virtualDOM, oldVirtualDOM)
+} else {
+  // 更新元素属性
+  updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
+}
+```
+
+```js
+export default function updateNodeElement(
+  newElement,
+  virtualDOM,
+  oldVirtualDOM = {}
+) {
+  const newProps = virtualDOM.props
+  const oldProps = oldVirtualDOM.props || {}
+  // 处理更新的情况 创建和更新都是更新
+  Reflect.ownKeys(newProps).forEach(propName => {
+   	....
+  })
+
+  // 处理删除的情况
+  // 从旧props找新的props没有了就删除
+  Reflect.ownKeys(oldProps).forEach(propName => {
+    const newValue = newProps[propName]
+    const oldValue = oldProps[propName]
+    if (!newProps.hasOwnProperty(propName)) {
+      if (propName.slice(0, 2) === 'on') {
+        const eventName = propName.toLowerCase().slice(2)
+        newElement.removeEventListener(eventName, oldValue)
+      } else if (propName !== 'children') {
+        if (propName === 'className') {
+          newElement.removeAttribute('class')
+        } else {
+          newElement.removeAttribute(propName)
+        }
+      }
+    }
+  })
+}
+
+```
+

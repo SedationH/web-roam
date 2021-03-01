@@ -1,6 +1,8 @@
 import mountElemet from './mountElemet'
 import updateTextNode from './updateTextNode'
 import updateNodeElement from './updateNodeElement'
+import unMountNode from './unMountNode'
+
 /**
  * @param {object} virtualDOM 当前的虚拟dom
  * @param {node} container 当前的容器 父亲👨
@@ -15,7 +17,7 @@ export default function diff(
   // 见 createDOMElement
   //    newElement._virtualDOM = virtualDOM
   const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
-  // judge if oldDOM exists
+  // 相当于看container中是否含有元素
   if (!oldDOM) {
     mountElemet(virtualDOM, container)
   } else if (oldVirtualDOM) {
@@ -28,9 +30,21 @@ export default function diff(
         updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
       }
 
+      // 比对子节点 进行添加 更新(移除节点属性) 节点
       virtualDOM.children.forEach((child, index) => {
         diff(child, oldDOM, oldDOM.childNodes[index])
       })
+
+      // 先按次序简单实现节点移除(都有一个爸爸 type相同)
+      const oldChildNodes = oldDOM.childNodes
+      const newChildNodesLength = virtualDOM.children.length
+      for (
+        let i = oldChildNodes.length - 1;
+        i > newChildNodesLength - 1;
+        i--
+      ) {
+        unMountNode(oldChildNodes[i])
+      }
     }
   }
 }

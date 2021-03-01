@@ -64,6 +64,12 @@ function updatedHandleClick() {
 const initialVirtualDOM = (
   <div>
     <div onClick={handleClick}>this is initial DOM</div>
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+    </ul>
   </div>
 )
 
@@ -72,7 +78,11 @@ const updateVirtualDOM = (
     <div className="container" onClick={updatedHandleClick}>
       this is updated DOM
     </div>
-    <div className="container">this is updated DOM</div>
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+    </ul>
   </div>
 )
 
