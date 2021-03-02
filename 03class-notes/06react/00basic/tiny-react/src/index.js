@@ -24,4 +24,15 @@ class Foo extends TinyReact.Component {
   }
 }
 
+class Bar extends TinyReact.Component {
+  render() {
+    return <div>this is bar</div>
+  }
+}
+
 TinyReact.render(<Foo title="1" />, root)
+
+setTimeout(() => {
+  // TinyReact.render(<Foo title="2" />, root)
+  TinyReact.render(<Bar />, root)
+}, 200)

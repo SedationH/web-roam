@@ -361,6 +361,81 @@ export default function updateNodeElement(
     }
   })
 }
+```
 
+## 响应setState 并且进行更新
+
+```js
+import diff from './diff'
+
+export default class Component {
+  constructor(props) {
+    this.props = props
+  }
+  setState(state) {
+    this.state = Object.assign({}, this.state, state)
+    const virtualDOM = this.render()
+    // 整个过程中实例是没有改变过的
+    // 可以尝试从创建实例的时候拿到dom 来调用TintReat.render
+    // ⚠️区分 TintReat.render & this.render
+    diff(
+      virtualDOM,
+      this.getDOM().parentNode,
+      this.getDOM()
+    )
+  }
+
+  setDOM(newElement) {
+    this._DOM = newElement
+  }
+
+  getDOM() {
+    return this._DOM
+  }
+}
+```
+
+
+
+创建实例的时候挂上实例
+
+```js
+function buildClassComponent(virtualDOM) {
+  const component = new virtualDOM.type(
+    virtualDOM.props || {}
+  )
+  const newVirtualDOM = component.render()
+  newVirtualDOM.component = component
+  return newVirtualDOM
+}
+```
+
+创建DOM的时候向实例上挂DOM
+
+```js
+export default function mountNativeElement(
+  virtualDOM,
+  container
+) {
+  const newElement = createDOMElement(virtualDOM)
+  if (virtualDOM.component) {
+    virtualDOM.component.setDOM(newElement)
+  }
+  container.appendChild(newElement)
+}
+```
+
+
+
+现在的关系
+
+```js
+DOM = {
+  ...,
+  _virtualDOM : {
+  	...,
+  	component: ...(实例)
+	}
+}
 ```
 

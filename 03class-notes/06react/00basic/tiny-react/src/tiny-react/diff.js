@@ -2,12 +2,13 @@ import mountElemet from './mountElemet'
 import updateTextNode from './updateTextNode'
 import updateNodeElement from './updateNodeElement'
 import unMountNode from './unMountNode'
+import { isFunction } from './utils'
+import diffComponent from './diffComponent'
 
 /**
  * @param {object} virtualDOM 当前的虚拟dom
  * @param {node} container 当前的容器 父亲👨
  * @param {node} oldDOM 旧dom virtualDOM 对应的DOM
- *
  */
 export default function diff(
   virtualDOM,
@@ -21,7 +22,10 @@ export default function diff(
   if (!oldDOM) {
     mountElemet(virtualDOM, container)
   } else if (oldVirtualDOM) {
-    if ((virtualDOM.type = oldVirtualDOM.type)) {
+    if (isFunction(virtualDOM)) {
+      // 还需要进一步判断
+      diffComponent(virtualDOM, container, oldDOM)
+    } else if ((virtualDOM.type = oldVirtualDOM.type)) {
       if (virtualDOM.type === 'text') {
         // 更新文字
         updateTextNode(oldDOM, virtualDOM, oldVirtualDOM)

@@ -3,7 +3,8 @@ import mountElemet from './mountElemet'
 
 export default function mountComponent(
   virtualDOM,
-  container
+  container,
+  oldDOM
 ) {
   let nextVirtualDOM = null
   // 判断是类组件还是函数式组件
@@ -12,7 +13,7 @@ export default function mountComponent(
   } else {
     nextVirtualDOM = buildClassComponent(virtualDOM)
   }
-  mountElemet(nextVirtualDOM, container)
+  mountElemet(nextVirtualDOM, container, oldDOM)
 }
 
 function buildFunctionComponent(virtualDOM) {
