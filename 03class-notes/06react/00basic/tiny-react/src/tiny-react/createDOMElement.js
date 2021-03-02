@@ -12,6 +12,7 @@ export default function createDOMElement(virtualDOM) {
     updateNodeElement(newElement, virtualDOM)
   }
 
+  // 相当于说通过react创建的每个dom上都绑着virtualDOM
   newElement._virtualDOM = virtualDOM
   
   virtualDOM.children.forEach(child => {

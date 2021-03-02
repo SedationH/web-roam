@@ -5,6 +5,9 @@ export default function mountNativeElement(
   virtualDOM,
   container
 ) {
-  let newElement = createDOMElement(virtualDOM)
+  const newElement = createDOMElement(virtualDOM)
+  if (virtualDOM.component) {
+    virtualDOM.component.setDOM(newElement)
+  }
   container.appendChild(newElement)
 }
