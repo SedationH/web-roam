@@ -13,6 +13,18 @@ class Foo extends TinyReact.Component {
   setValue() {
     this.setState({ value: 'changed value' })
   }
+  componentWillReceiveProps() {
+    console.log(arguments)
+    console.log('componentWillReceiveProps')
+  }
+  componentWillUpdate() {
+    console.log(arguments)
+    console.log('componentWillUpdate')
+  }
+  componentDidUpdate() {
+    console.log(arguments)
+    console.log('componentDidUpdate')
+  }
   render() {
     return (
       <div>
@@ -33,6 +45,6 @@ class Bar extends TinyReact.Component {
 TinyReact.render(<Foo title="1" />, root)
 
 setTimeout(() => {
-  // TinyReact.render(<Foo title="2" />, root)
-  TinyReact.render(<Bar />, root)
+  TinyReact.render(<Foo title="2" />, root)
+  // TinyReact.render(<Bar />, root)
 }, 200)

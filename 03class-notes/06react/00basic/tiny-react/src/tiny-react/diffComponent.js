@@ -1,6 +1,7 @@
 import diff from './diff'
 import mountElemet from './mountElemet'
 import unMountNode from './unMountNode'
+import updateComponent from './updateComponent'
 
 export default function diffComponent(
   virtualDOM,
@@ -14,7 +15,7 @@ export default function diffComponent(
   // 已经变成NativeElement了
   // if (virtualDOM.type === oldVirtualDOM.type) {
   if (isSameComponent(virtualDOM, component)) {
-    // diff()
+    updateComponent(virtualDOM, container, oldDOM)
   } else {
     mountElemet(virtualDOM, container, oldDOM)
   }
