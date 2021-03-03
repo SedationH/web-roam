@@ -439,3 +439,69 @@ DOM = {
 }
 ```
 
+
+
+## 更新函数组件
+
+完善diff逻辑
+
+```js
+if (!oldDOM) {
+  mountElemet(virtualDOM, container)
+} else if (oldVirtualDOM) {
+  if (isFunction(virtualDOM)) {
+    // 还需要进一步判断
+    diffComponent(virtualDOM, container, oldDOM)
+```
+
+
+
+```js
+export default function diffComponent(
+  virtualDOM,
+  container,
+  oldDOM
+) {
+  const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
+  const component = oldVirtualDOM && oldVirtualDOM.component
+
+  // 判断是不是一个函数
+  // 已经变成NativeElement了
+  // if (virtualDOM.type === oldVirtualDOM.type) {
+  if (isSameComponent(virtualDOM, component)) {
+    updateComponent(virtualDOM, container, oldDOM)
+  } else {
+    mountElemet(virtualDOM, container, oldDOM)
+  }
+}
+
+function isSameComponent(virtualDOM, component) {
+  const constructor = component && component.constructor
+  return virtualDOM.type === constructor
+}
+```
+
+
+
+```js
+export default function updateComponent(
+  virtualDOM,
+  container,
+  oldDOM
+) {
+  const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
+  const component = oldVirtualDOM && oldVirtualDOM.component
+  const newProps = virtualDOM.props
+  const oldProps = component.props
+  component.componentWillReceiveProps(newProps)
+  if (component.shouldComponentUpdate(newProps)) {
+    component.componentWillUpdate(newProps)
+    const newComponent = component.updateProps(newProps)
+    const newVirtualDOM = component.render()
+    newVirtualDOM.component = newComponent
+    diff(newVirtualDOM, container, oldDOM)
+    component.componentDidUpdate(oldProps)
+  }
+}
+```
+

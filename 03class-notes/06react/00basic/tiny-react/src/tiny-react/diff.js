@@ -19,12 +19,12 @@ export default function diff(
   //    newElement._virtualDOM = virtualDOM
   const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
   // 相当于看container中是否含有元素
-  if (!oldDOM) {
-    mountElemet(virtualDOM, container)
-  } else if (oldVirtualDOM) {
-    if (isFunction(virtualDOM)) {
-      // 还需要进一步判断
-      diffComponent(virtualDOM, container, oldDOM)
+if (!oldDOM) {
+  mountElemet(virtualDOM, container)
+} else if (oldVirtualDOM) {
+  if (isFunction(virtualDOM)) {
+    // 还需要进一步判断
+    diffComponent(virtualDOM, container, oldDOM)
     } else if ((virtualDOM.type = oldVirtualDOM.type)) {
       if (virtualDOM.type === 'text') {
         // 更新文字

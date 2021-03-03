@@ -26,5 +26,10 @@ function buildClassComponent(virtualDOM) {
   )
   const newVirtualDOM = component.render()
   newVirtualDOM.component = component
+
+  // 处理组件的ref
+  if (virtualDOM.props && virtualDOM.props.ref) {
+    virtualDOM.props.ref(component)
+  }
   return newVirtualDOM
 }

@@ -14,7 +14,12 @@ export default function createDOMElement(virtualDOM) {
 
   // 相当于说通过react创建的每个dom上都绑着virtualDOM
   newElement._virtualDOM = virtualDOM
-  
+
+  // 处理ref
+  if (virtualDOM.props && virtualDOM.props.ref) {
+    virtualDOM.props.ref(newElement)
+  }
+
   virtualDOM.children.forEach(child => {
     mountElemet(child, newElement)
   })
