@@ -1,0 +1,1 @@
+{"version":3,"sources":["sheet1.css"],"names":[],"mappings":"AAAA;AACA;AACA","file":"sheet1.a3916b6c.css","sourceRoot":"..","sourcesContent":["li:nth-child(odd) {\n  color: pink;\n}"]}
