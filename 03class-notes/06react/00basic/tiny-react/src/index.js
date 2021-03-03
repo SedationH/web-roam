@@ -2,37 +2,33 @@ import TinyReact from './tiny-react'
 
 const root = document.getElementById('root')
 
-class Bar extends TinyReact.Component {
-  render() {
-    return <div>this is bar</div>
-  }
-}
-
 class Foo extends TinyReact.Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: 'default value',
+      children: [
+        { id: '1', name: 'A' },
+        { id: '2', name: 'B' },
+        { id: '3', name: 'C' },
+        { id: '4', name: 'D' },
+        { id: '5', name: 'E' },
+      ],
     }
   }
-  
-  getDOMRef() {
-    console.log(this.DOMRef)
+  change() {
+    const newState = Object.assign({}, this.state)
+    newState.children.push(newState.children.shift())
+    this.setState(newState)
   }
-
-  getComponentRef() {
-    console.log(this.bar)
-  }
-
   render() {
     return (
       <div>
-        <div ref={e => (this.DOMRef = e)}>DOM Ref</div>
-        <button onClick={() => this.getDOMRef()}>
-          getDOMRef
-        </button>
-        <Bar ref={e => (this.bar = e)} />
-        <button onClick={() => this.getComponentRef()}>
+        <ul>
+          {this.state.children.map(child => (
+            <li key={child.id}>{child.name}</li>
+          ))}
+        </ul>
+        <button onClick={() => this.change()}>
           getComponentRef
         </button>
       </div>
@@ -41,3 +37,7 @@ class Foo extends TinyReact.Component {
 }
 
 TinyReact.render(<Foo title="1" />, root)
+
+// const JSX = <div>hi</div>
+
+// TinyReact.render(JSX, root)

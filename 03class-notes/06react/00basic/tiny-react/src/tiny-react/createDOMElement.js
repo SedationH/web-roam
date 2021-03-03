@@ -20,8 +20,12 @@ export default function createDOMElement(virtualDOM) {
     virtualDOM.props.ref(newElement)
   }
 
+ try {
   virtualDOM.children.forEach(child => {
     mountElemet(child, newElement)
   })
+ } catch (error) {
+   debugger
+ }
   return newElement
 }

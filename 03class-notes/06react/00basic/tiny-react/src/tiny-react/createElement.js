@@ -1,23 +1,26 @@
 function createElement(type, props, ...children) {
-  const childElements = children.reduce((res, child) => {
-    if (
-      child !== false &&
-      child !== true &&
-      child !== null
-    ) {
-      if (child instanceof Object) {
-        res.push(child)
-      } else {
-        // 文本节点
-        res.push(
-          createElement('text', {
-            textContent: child,
-          })
-        )
+  const childElements = []
+    .concat(...children)
+    .reduce((res, child) => {
+      if (
+        child !== false &&
+        child !== true &&
+        child !== null
+      ) {
+        if (child instanceof Object) {
+          res.push(child)
+        } else {
+          // 文本节点
+          res.push(
+            createElement('text', {
+              textContent: child,
+            })
+          )
+        }
       }
-    }
-    return res
-  }, [])
+      return res
+    }, [])
+  console.log(...arguments)
   return {
     type,
     props: Object.assign(

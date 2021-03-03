@@ -1,4 +1,9 @@
-const input = document.getElementById('input')
+function foo(...args) {
+  const arr = [].concat(...args)
+  console.log(arr)
+}
 
-// input.setAttribute('value', 11)
-input['value'] = 1
+foo(1,2,3)
+// (3) [1, 2, 3]
+foo([1,2,3],4,[5,6])
+// (6) [1, 2, 3, 4, 5, 6]

@@ -505,3 +505,171 @@ export default function updateComponent(
 }
 ```
 
+
+
+## ref处理
+
+这里对理解this很有帮助
+
+两种ref   
+
+- NativeDOM
+- ComponentInstance
+
+```js
+function buildClassComponent(virtualDOM) {
+  const component = new virtualDOM.type(
+    virtualDOM.props || {}
+  )
+  const newVirtualDOM = component.render()
+  newVirtualDOM.component = component
+
+  // 处理组件的ref
+  if (virtualDOM.props && virtualDOM.props.ref) {
+    virtualDOM.props.ref(component)
+  }
+  return newVirtualDOM
+}
+```
+
+```js
+export default function createDOMElement(virtualDOM) {
+  let newElement = null
+  if (virtualDOM.type === 'text') {
+    newElement = document.createTextNode(
+      virtualDOM.props.textContent
+    )
+  } else {
+    newElement = document.createElement(virtualDOM.type)
+    updateNodeElement(newElement, virtualDOM)
+  }
+
+  // 相当于说通过react创建的每个dom上都绑着virtualDOM
+  newElement._virtualDOM = virtualDOM
+
+  // 处理ref
+  if (virtualDOM.props && virtualDOM.props.ref) {
+    virtualDOM.props.ref(newElement)
+  }
+
+  virtualDOM.children.forEach(child => {
+    mountElemet(child, newElement)
+  })
+  return newElement
+}
+
+```
+
+
+
+## key
+
+```js
+
+class Foo extends TinyReact.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      children: [
+        { id: '1', name: 'A' },
+        { id: '2', name: 'B' },
+        { id: '3', name: 'C' },
+      ],
+    }
+  }
+  render() {
+    return (
+      <div>
+        <ul>
+          {this.state.children.map(child => (
+            <li key={child.id}>{child.name}</li>
+          ))}
+        </ul>
+        <button onClick={() => this.getComponentRef()}>
+          getComponentRef
+        </button>
+      </div>
+    )
+  }
+}
+
+TinyReact.render(<Foo title="1" />, root)
+```
+
+```js
+class Foo extends TinyReact.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      children: [
+        {
+          id: "1",
+          name: "A"
+        },
+        {
+          id: "2",
+          name: "B"
+        },
+        {
+          id: "3",
+          name: "C"
+        }
+      ]
+    };
+  }
+
+  render() {
+    return /*#__PURE__*/ React.createElement(
+      "div",
+      null,
+      /*#__PURE__*/ React.createElement(
+        "ul",
+        null,
+        this.state.children.map((child) =>
+          /*#__PURE__*/ React.createElement(
+            "li",
+            {
+              key: child.id
+            },
+            child.name
+          )
+        )
+      ),
+      /*#__PURE__*/ React.createElement(
+        "button",
+        {
+          onClick: () => this.getComponentRef()
+        },
+        "getComponentRef"
+      )
+    );
+  }
+}
+
+TinyReact.render(
+  /*#__PURE__*/ React.createElement(Foo, {
+    title: "1"
+  }),
+  root
+);
+
+```
+
+
+
+## 遇到的问题
+
+### jsx 中 map
+
+```js
+function foo(...args) {
+  const arr = [].concat(...args)
+  console.log(arr)
+}
+
+foo(1,2,3)
+// (3) [1, 2, 3]
+foo([1,2,3],4,[5,6])
+// (6) [1, 2, 3, 4, 5, 6]
+```
+

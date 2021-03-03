@@ -3,10 +3,10 @@ export default function updateNodeElement(
   virtualDOM,
   oldVirtualDOM = {}
 ) {
-  const newProps = virtualDOM.props
+  const newProps = virtualDOM.props || {}
   const oldProps = oldVirtualDOM.props || {}
   // 处理更新的情况 创建和更新都是更新
-  Reflect.ownKeys(newProps).forEach(propName => {
+  Object.keys(newProps).forEach(propName => {
     const newValue = newProps[propName]
     const oldValue = oldProps[propName]
     if (newValue !== oldValue) {
@@ -40,7 +40,7 @@ export default function updateNodeElement(
 
   // 处理删除的情况
   // 从旧props找新的props没有了就删除
-  Reflect.ownKeys(oldProps).forEach(propName => {
+  Object.keys(oldProps).forEach(propName => {
     const newValue = newProps[propName]
     const oldValue = oldProps[propName]
     if (!newProps.hasOwnProperty(propName)) {
