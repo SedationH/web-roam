@@ -3,7 +3,7 @@ export default function updateNodeElement(
   virtualDOM,
   oldVirtualDOM = {}
 ) {
-  const newProps = virtualDOM.props || {}
+  const newProps = virtualDOM.props
   const oldProps = oldVirtualDOM.props || {}
   // 处理更新的情况 创建和更新都是更新
   Object.keys(newProps).forEach(propName => {

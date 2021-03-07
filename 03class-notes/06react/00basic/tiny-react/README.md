@@ -655,6 +655,47 @@ TinyReact.render(
 
 ```
 
+原来的解决办法
+
+- 同位置节点对比
+- 删除老节点中多的dom
+
+```js
+} else if ((virtualDOM.type = oldVirtualDOM.type)) {
+  if (virtualDOM.type === 'text') {
+    // 更新文字
+    updateTextNode(oldDOM, virtualDOM, oldVirtualDOM)
+  } else {
+    // 更新元素属性
+    updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
+  }
+
+  // 比对子节点 进行添加 更新(移除节点属性) 节点
+  virtualDOM.children.forEach((child, index) => {
+    diff(child, oldDOM, oldDOM.childNodes[index])
+  })
+
+  // 先按次序简单实现节点移除(都有一个爸爸 type相同)
+  const oldChildNodes = oldDOM.childNodes
+  const newChildNodesLength = virtualDOM.children.length
+  for (
+    let i = oldChildNodes.length - 1;
+    i > newChildNodesLength - 1;
+    i--
+  ) {
+    unMountNode(oldChildNodes[i])
+  }
+}
+```
+
+引入key来解决节点复用
+
+即当key不变的时候，我们认为节点是可以复用的
+
+局部唯一，同父亲，兄弟节点唯一
+
+
+
 
 
 ## 遇到的问题
@@ -672,4 +713,6 @@ foo(1,2,3)
 foo([1,2,3],4,[5,6])
 // (6) [1, 2, 3, 4, 5, 6]
 ```
+
+
 

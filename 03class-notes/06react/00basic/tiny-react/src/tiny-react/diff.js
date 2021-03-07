@@ -19,12 +19,12 @@ export default function diff(
   //    newElement._virtualDOM = virtualDOM
   const oldVirtualDOM = oldDOM && oldDOM._virtualDOM
   // 相当于看container中是否含有元素
-if (!oldDOM) {
-  mountElemet(virtualDOM, container)
-} else if (oldVirtualDOM) {
-  if (isFunction(virtualDOM)) {
-    // 还需要进一步判断
-    diffComponent(virtualDOM, container, oldDOM)
+  if (!oldDOM) {
+    mountElemet(virtualDOM, container)
+  } else if (oldVirtualDOM) {
+    if (isFunction(virtualDOM)) {
+      // 还需要进一步判断
+      diffComponent(virtualDOM, container, oldDOM)
     } else if ((virtualDOM.type = oldVirtualDOM.type)) {
       if (virtualDOM.type === 'text') {
         // 更新文字
@@ -34,13 +34,39 @@ if (!oldDOM) {
         updateNodeElement(oldDOM, virtualDOM, oldVirtualDOM)
       }
 
-      // 比对子节点 进行添加 更新(移除节点属性) 节点
+      const oldChildNodes = oldDOM.childNodes
+      const keyMap = {}
       virtualDOM.children.forEach((child, index) => {
-        diff(child, oldDOM, oldDOM.childNodes[index])
+        if (child.props.key) {
+          keyMap[child.props.key] = oldChildNodes[index]
+        }
       })
 
+      const hasKey = Reflect.ownKeys(keyMap).length !== 0
+      if (hasKey) {
+        virtualDOM.children.forEach((child, index) => {
+          const key = child.props.key
+          const dom = keyMap[key]
+          debugger
+          if (dom) {
+            if (
+              oldChildNodes[index] &&
+              dom !== oldChildNodes[index]
+            ) {
+              oldDOM.insertBefore(dom, oldChildNodes[index])
+            }
+          } else {
+            diff(child, oldDOM, oldDOM.childNodes[index])
+          }
+        })
+      } else {
+        // 比对子节点 进行添加 更新(移除节点属性) 节点
+        virtualDOM.children.forEach((child, index) => {
+          diff(child, oldDOM, oldDOM.childNodes[index])
+        })
+      }
+
       // 先按次序简单实现节点移除(都有一个爸爸 type相同)
-      const oldChildNodes = oldDOM.childNodes
       const newChildNodesLength = virtualDOM.children.length
       for (
         let i = oldChildNodes.length - 1;
