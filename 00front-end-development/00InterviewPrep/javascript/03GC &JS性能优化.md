@@ -133,3 +133,7 @@ body.append(el1)
 
 
 ![image-20210313220134620](http://picbed.sedationh.cn/image-20210313220134620.png)
+
+主要查找的就是一个detached element就是一个dom对象只存在于js内存引用中（如果这里还不引用的话就是垃圾对象了）
+
+不存在于dom树中，叫做detached element
