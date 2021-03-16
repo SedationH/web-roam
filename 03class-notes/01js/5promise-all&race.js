@@ -15,14 +15,11 @@ function ajax(url) {
 }
 
 ajax('/api/urls.json')
-  .then(
-    res => {
-      console.log(res)
-      return Promise.all(Object.values(res).map(value => ajax(value)))
-    }
-  ).then(
-    res => console.log(res)
-  )
-  .catch(
-    err => console.log(err)
-  )
+  .then(res => {
+    console.log(res)
+    return Promise.all(
+      Object.values(res).map(value => ajax(value))
+    )
+  })
+  .then(res => console.log(res))
+  .catch(err => console.log(err))

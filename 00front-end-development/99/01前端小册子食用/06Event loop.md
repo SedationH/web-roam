@@ -87,7 +87,7 @@ ans：
    2. setInterval
    3. setImmediate 
    4. requestAnimationFrame 
-   5. I/O
+   5. I/O 键盘 鼠标 
 2. microtask
    1. Promise.then catch finally
    2. MutationObserver
