@@ -1,0 +1,104 @@
+<h2>Containing floats</h2>
+
+<div class="ex1">
+  <div class="ex1-float">I am a floated element.</div>
+  I am text inside the outer box.
+</div>
+
+<h2>Prevent margin collapsing</h2>
+
+<div class="ex2">
+  <p>
+    I am paragraph one and I have a margin top and bottom of
+    20px;
+  </p>
+  <p>
+    I am paragraph two and I have a margin top and bottom of
+    20px;
+  </p>
+</div>
+
+<h2>Prevent float wrapping</h2>
+
+<div class="ex3">
+  <div class="ex3-float">I am a floated element.</div>
+  <div class="ex3-text">
+    I am text inside a div nested inside the outer box. I
+    have overflow auto which makes me a BFC and therefore I
+    do not wrap.
+  </div>
+</div>
+
+<style>
+  html CSSResult Skip Results iframe EDIT ON * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 40px;
+    background-color: #fff;
+    color: #444;
+    font: 1.4em Arial, sans-serif;
+  }
+
+  /** example 1*/
+
+  .ex1 {
+    border: 5px dotted rgb(214, 129, 137);
+    border-radius: 5px;
+    width: 450px;
+    padding: 10px;
+    margin-bottom: 40px;
+    display: flow-root;
+  }
+
+  .ex1-float {
+    padding: 10px;
+    border: 5px solid rgba(214, 129, 137, 0.4);
+    border-radius: 5px;
+    background-color: rgba(233, 78, 119, 0.4);
+    color: #fff;
+    float: left;
+    width: 200px;
+    margin: 0 20px 0 0;
+  }
+
+  /* example 2*/
+  .ex2 {
+    background-color: #ccc;
+    margin: 0 0 40px 0;
+    display: flow-root;
+  }
+
+  .ex2 p {
+    padding: 0;
+    margin: 20px 0 20px 0;
+    background-color: rgb(233, 78, 119);
+    color: #fff;
+  }
+
+  /* example 3 */
+
+  .ex3 {
+    border: 5px dotted rgb(214, 129, 137);
+    border-radius: 5px;
+    width: 450px;
+    padding: 10px;
+    margin-bottom: 40px;
+  }
+
+  .ex3-float {
+    padding: 10px;
+    border: 5px solid rgba(214, 129, 137, 0.4);
+    border-radius: 5px;
+    background-color: rgba(233, 78, 119, 0.4);
+    color: #fff;
+    float: left;
+    width: 200px;
+    margin: 0 20px 0 0;
+  }
+
+  .ex3-text {
+    display: flow-root;
+  }
+</style>

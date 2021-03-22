@@ -16,7 +16,7 @@ CSS的内部设计也是不断在发展的，1 -> 2 -> 2.1 ... -> 3
 >
 > 具体还有implement实现
 
-[**Visual Formatting Model**](https://developer.mozilla.org/en-US/docs/Web/CSS/Visual_formatting_model) 
+### [**Visual Formatting Model**](https://developer.mozilla.org/en-US/docs/Web/CSS/Visual_formatting_model) 
 
 > In CSS The **Visual Formatting Model** describes how user agents take the document tree, and process and display it for visual media.
 
@@ -85,7 +85,7 @@ The `<display-inside>` defines the type of formatting context that lays out its 
 >
 > outer box 负责对外的表现， inner box 负责内部的内容，宽高
 
-## Positioning scheme
+### Positioning scheme
 
 在盒子中的inner box就在决定如何布局，即把子元素放在什么样的context中
 
@@ -107,6 +107,14 @@ flow-root对应产生新的FC的布局方式
 
 > The outermost element in a document that uses block layout rules establishes the first, or **initial block formatting context**. This means that every element inside the `<html>` element's block is laid out according to normal flow following the rules for block and inline layout. Elements participating in a BFC use the rules outlined by the CSS Box Model, which defines how an element's margins, borders, and padding interact with other blocks in the same context.
 
+
+
+> A **block formatting context** is a part of a visual CSS rendering of a web page. It's the region in which the layout of block boxes occurs and in which floats interact with other elements. 
+>
+> 关于BFC与布局的处理
+>
+> [Understanding CSS Layout And The Block Formatting Context](https://www.smashingmagazine.com/2017/12/understanding-css-layout-block-formatting-context/)
+
 注意在IFC中提到的行盒 Line box
 
 在上述FC中的文档流，就是处于正常的文档流之中
@@ -126,17 +134,28 @@ flow-root对应产生新的FC的布局方式
 
 2 特别的是在说[float](https://developer.mozilla.org/en-US/docs/Web/CSS/float)
 
+As mentioned above, when an element is floated, it is taken out of the normal flow of the document (though still remaining part of it). It is shifted to the left, or right, until it touches the edge of its containing box, *or another floated element*.
+
 > The **`float`** CSS property places an element on the left or right side of its container, allowing text and inline elements to wrap around it. The element is removed from the normal flow of the page, though still remaining a part of the flow (in contrast to [absolute positioning](https://developer.mozilla.org/en-US/docs/Web/CSS/position#absolute_positioning)).
 
 3 以absolute为例子，从文档流拿出，跳出当前FC
 
 定位依据是nearest positioned ancestor(not static)，一直拿不到的话，就用html 这个 IFC
 
-这里需要提一下[containing block](https://www.w3.org/TR/CSS2/visudet.html#containing-block-details)
+这里需要提一下[containing block](https://www.w3.org/TR/CSS2/visudet.html#containing-block-details) 对理解Position有很关键的影响
 
 > absolute : 
 >
 > The element is removed from the normal document flow, and **no space is created for the element in the page layout.**
+>
+> 
+>
+> As noted above, when certain properties are given a percentage value, the computed value depends on the element's containing block. The properties that work this way are **box model properties** and **offset properties**:
+>
+> 1. The [`height`](https://developer.mozilla.org/en-US/docs/Web/CSS/height), [`top`](https://developer.mozilla.org/en-US/docs/Web/CSS/top), and [`bottom`](https://developer.mozilla.org/en-US/docs/Web/CSS/bottom) properties compute percentage values from the `height` of the containing block.
+> 2. The [`width`](https://developer.mozilla.org/en-US/docs/Web/CSS/width), [`left`](https://developer.mozilla.org/en-US/docs/Web/CSS/left), [`right`](https://developer.mozilla.org/en-US/docs/Web/CSS/right), [`padding`](https://developer.mozilla.org/en-US/docs/Web/CSS/padding), and [`margin`](https://developer.mozilla.org/en-US/docs/Web/CSS/margin) properties compute percentage values from the `width` of the containing block.
+
+
 
 fixed 就是 absolute的无脑版本 -> viewport（也要考虑一些except when one of its ancestors has a `transform`, `perspective`, or `filter` property set to something other than `none` (see the [CSS Transforms Spec](https://www.w3.org/TR/css-transforms-1/#propdef-transform)）
 
@@ -164,7 +183,7 @@ The **stacking context** is a three-dimensional conceptualization of HTML elemen
 
 
 
-啥时候回创建呢？这里简单记录一些好记的
+啥时候会创建呢？这里简单记录一些好记的
 
 - Root element of the document (`<html>`).
 - Element with a [`position`](https://developer.mozilla.org/en-US/docs/Web/CSS/position) value `absolute` or `relative` and [`z-index`](https://developer.mozilla.org/en-US/docs/Web/CSS/z-index) value other than `auto`.
@@ -175,7 +194,7 @@ The **stacking context** is a three-dimensional conceptualization of HTML elemen
 
 这里例子简单易懂
 
-![Example of stacking rules modified using z-index](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context/understanding_zindex_04.png)
+![Example of stacking rules modified using z-index](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/03d6f1ac0d9a4a7dafdb884411247f66~tplv-k3u1fbpfcp-zoom-1.image)
 
 In this example, every positioned element creates its own stacking context, because of their positioning and `z-index` values. The hierarchy of stacking contexts is organized as follows:
 
@@ -193,12 +212,18 @@ In this example, every positioned element creates its own stacking context, beca
 
 而且经历两年的发展，[有了CSS2.0版本](https://www.w3.org/TR/CSS22/)，在这之后，还经历了**CSS 2.1**和**CSS 2.2**版本的迭代。同时CSS 2.1规范指导Web开发者写CSS很多年。直到后面，也就是大约2015年，W3C规划的CSS工作小组发现CSS发展的越来越快，有关于CSS方面的特性增加了不少，而且不同的特性推进速度都有所不同。也就这个时候，[W3C的CSS工作小组为了能更好的维护和管理CSS的特性，该组织决定不在以CSS的版本号](https://www.w3.org/Style/CSS/current-work.en.html)，比如我们熟悉的CSS1.0、CSS2.0、CSS2.1这样的方式来管理CSS。而是将每个CSS功能特性拆分成独立的功能模块，并且以Level 1, Level2，Level 3等方式来管理CSS规范中的特性：
 
-![img](http://picbed.sedationh.cn/0*TdES1ZdisfnEWpe_.png)
+![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e2081d6de9ed4f259e68c050fa2e9807~tplv-k3u1fbpfcp-zoom-1.image)
 
-![img](http://picbed.sedationh.cn/0*5rXqQ-Df-x7CHFtq.png)
+![img](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/806237c72206405dacb7b8a57d4156ea~tplv-k3u1fbpfcp-zoom-1.image)
 
 客户端渲染页面时，除了选择器权重会影响元素样式规则之外，还有样式来源也会影响元素样式规则。就CSS规则的来源而言，规则主要来自三个地方：
 
 - **编写者规则（Author）** ：这是HTML文档声明的CSS。也就是我们前端开发人员编写的，根据文档语言（比如HTML）约定给源文档指定样式表。这也是我们能够控制的唯一来源
 - **用户（User）** ：这是由浏览器的用户定义和控制的。不是每个人都会有一个，但是当人们添加一个时，通常是为了覆盖样式和增加网站的可访问性。比如，用户可以指定一个售有样式表的文件，或者用户代理可能会提供一个用来生成用户样式（或者表现得像这样做了一样）的界面
 - **用户代理（User-Agent）** ：这些是浏览器为元素提供的默认样式。这就是为什么 `input` 在不同的浏览器上看起来略有不同，这也是人们喜欢使用CSS重置样式，以确保重写用户代理样式的原因之一
+
+
+
+## 💡想法 
+
+对于一个较为复杂的知识，在整个知识体系中理出一条逻辑，知识学习的过程就像在脑海中形成的知识树不断添加一样，他们之间是相互解释和促进的。
