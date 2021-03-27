@@ -94,7 +94,7 @@ const vm = new Vue({
 })
 ```
 
-通过`Object.defineProperty`来把data的 property全部转为vm实例的getter && setter属性，也对data进行getter && setter的处理
+通过`Object.defineProperty` (递归)来把data的 property全部转为vm实例的getter && setter属性，也对data进行getter && setter的处理
 
 ![data](https://cn.vuejs.org/images/data.png)
 
@@ -108,12 +108,25 @@ const vm = new Vue({
 >
 > 
 >
-> 在vue 1中是没有patch的，因为界面中每个依赖（DOM节点）都有专门的watcher负责更新，这样项目规模变大就会成为性能瓶颈，vue 2中为了降低watcher粒度，每个组件只有一个watcher，但是当需要更新的时候，怎样才能精确找到发生变化的地方？这就需要引入patch才行。这就涉及虚拟DOM和patch算法了
+> 在vue 1中是没有patch的，因为界面中每个依赖（DOM节点）都有专门的watcher负责更新，这样项目规模变大就会成为性能瓶颈，vue 2中为了降低watcher粒度，每个组件只有一个watcher，但是当需要更新的时候，怎样才能精确找到发生变化的地方？这就需要引入patch才行。这就涉及虚拟DOM和patch算法了。
 
 
 
 这里还存在Object.defineProperty的一些问题
 
-- 对象
-  - 无法检测到新增
-  - 数组方法的限制
+- 初始化时需要遍历对象所有key，如果对象层级较深，性能不好
+- 动态新增、删除对象属性无法拦截，只能用特定set/delete api代替
+- 数组需要将方法特殊处理，无法使用下标直接赋值
+
+
+
+v3通过 Proxy来解决
+
+https://gomakethings.com/how-to-create-a-reactive-state-based-ui-component-with-vanilla-js-proxies/
+
+更好的性能
+
+非侵入的写法（使用代理对象而不是在原有对象上操作）
+
+更多的情况监听、数组原生支持～
+

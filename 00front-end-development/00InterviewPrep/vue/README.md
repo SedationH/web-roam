@@ -119,7 +119,7 @@ diff 逻辑
 
 `vue/src/core/vdom/patch.js`
 
-d四个指针 
+四个指针 
 
 old -> start end
 
