@@ -50,7 +50,7 @@ https://www.zhihu.com/question/31809713/answer/53544875
 
 定义对象见1 : n的依赖关系，使得某个对象发生变化的时候，其依赖对象能够产型反应。又叫发布订阅模式。
 
-从Web角度来看，网页上的展示数据是由相关DOM的value进行决定的，即DOM节点是需要进行更新的，应该自己实现update方法，我们想和相关DOM节点进行绑定的数据是要能通知DOM节点进行更新的，要有notify方法，还要有加入所依赖节点的addSub
+从Web角度来看，网页上的展示数据是由相关DOM进行决定的，即DOM节点是需要进行更新的，应该自己实现update方法，我们想和相关DOM节点进行绑定的数据是要能通知DOM节点进行更新的，要有notify方法，还要有加入所依赖节点的addSub
 
 数据和节点的关系是 1: n 的
 
@@ -96,7 +96,7 @@ const vm = new Vue({
 
 通过`Object.defineProperty` (递归)来把data的 property全部转为vm实例的getter && setter属性，也对data进行getter && setter的处理
 
-![data](https://cn.vuejs.org/images/data.png)
+![data](http://picbed.sedationh.cn/data.png)
 
 每个组件实例 (new Vue出来的 or 模版 render出来的)都对应一个watcher
 
