@@ -118,6 +118,107 @@ const vm = new Vue({
 - 动态新增、删除对象属性无法拦截，只能用特定set/delete api代替
 - 数组需要将方法特殊处理，无法使用下标直接赋值
 
+```html
+<script>
+  const data = { name: 'sedationh' }
+  observe(data)
+
+  let name = data.name
+  data.name = 'qq'
+  console.log(data)
+
+  function observe(obj) {
+    if (!obj || typeof obj !== 'object') {
+      return
+    }
+    Object.keys(obj).forEach(key => defineReactive(obj, key, obj[key]))
+  }
+
+  function defineReactive(obj, key, val) {
+    observe(val)
+
+    Object.defineProperty(obj, key, {
+      enumerable: true,
+      configurable: true,
+      get() {
+        console.log('get ')
+        return val
+      },
+      set(newVal) {
+        console.log('set')
+        val = newVal
+      },
+    })
+  }
+</script>
+```
+
+```html
+<div id="app">hello</div>
+<div id="app2"></div>
+<script>
+  const ObKey = Object.keys,
+    ReOwnKeys = Reflect.ownKeys
+  // 模拟 Vue 中的 data 选项
+  let foo = {
+    name: "foo",
+  }
+
+  let data = {
+    msg: "hello",
+    count: 10,
+    [Symbol("hi")]: "hi",
+    __proto__: foo,
+  }
+
+  console.log(ObKey(data), ReOwnKeys(data))
+  // 00defineProperty:30 (2) ["msg", "count"] (3) ["msg", "count", Symbol(hi)]
+
+  // 模拟 Vue 的实例
+  let vm = {}
+
+  proxyData(data)
+
+  // 数据劫持：访问vm上的指定属性的时候，可以额外进行操作
+  function proxyData(data) {
+    // 遍历 data 对象的所有属性
+    Object.keys(data).forEach(key => {
+      // 把 data 中的属性，转换成 vm 的 setter/setter
+      Reflect.defineProperty(vm, key, {
+        enumerable: true,
+        configurable: true,
+        get() {
+          console.log("get: ", key, data[key])
+          return data[key]
+        },
+        set(newValue) {
+          console.log("set: ", key, newValue)
+          if (newValue === data[key]) {
+            return
+          }
+          data[key] = newValue
+          // 数据更改，更新 DOM 的值
+          if (key === "msg") {
+            document.querySelector("#app").textContent =
+              data[key]
+          } else if (key === "count") {
+            document.querySelector(
+              "#app2"
+            ).textContent = data[key]
+          }
+        },
+      })
+    })
+  }
+
+  // 测试
+  vm.msg = "Hello World"
+  console.log(vm.msg)
+  vm.count = 2
+  vm.foo = "not foo"
+</script>
+```
+
 
 
 v3通过 Proxy来解决
@@ -130,3 +231,113 @@ https://gomakethings.com/how-to-create-a-reactive-state-based-ui-component-with-
 
 更多的情况监听、数组原生支持～
 
+```js
+<div id="app"></div>
+
+<script>
+  function getHandler(instance) {
+    return {
+      get(target, prop, receiver) {
+        const value = Reflect.get(...arguments)
+        // 处理是对象的情况
+        if (
+          ['[object Object]', '[object Array]'].indexOf(
+            Object.prototype.toString.call(value)
+          ) !== -1
+        ) {
+          return new Proxy(Reflect.get(...arguments), getHandler(instance))
+        }
+        return Reflect.get(...arguments)
+      },
+
+      set(target, prop, receiver) {
+        Reflect.set(...arguments)
+        instance.render()
+        return true
+      },
+
+      deleteProperty(target, prop, receiver) {
+        Reflect.deleteProperty(...arguments)
+        instance.render()
+        return true
+      },
+    }
+  }
+
+  class Vue {
+    constructor(options) {
+      const { el, template, data } = options
+      this.el = document.querySelector(el)
+      this.template = template
+      let _data = new Proxy(data, getHandler(this))
+
+      Reflect.defineProperty(this, 'data', {
+        get: () => {
+          return _data
+        },
+        set: newData => {
+          _data = new Proxy(newData, getHandler(this))
+          this.render()
+          return true
+        },
+      })
+    }
+
+    render() {
+      this.el.innerHTML = this.template(this.data)
+    }
+  }
+
+  const vm = new Vue({
+    el: '#app',
+    template(props) {
+      return `
+      <h1>${props.title}</h1>
+      <ul>
+        ${
+          props.todos &&
+          props.todos.map(todo => `<li>${todo}</li>`).join('')
+        }
+      </ul>
+      <div>${props.new}</div>
+      `
+    },
+    data: {
+      title: 'todoDemo',
+      todos: ['1', '2', 'play'],
+    },
+  })
+
+  vm.render()
+
+  setTimeout(() => {
+    vm.data.title = 'Hi~'
+    vm.data.todos.push('666')
+    vm.data.todos[0] = '-1'
+    vm.data.new = 1
+  }, 1000)
+</script>
+```
+
+
+
+### 收集依赖的过程
+
+场景 
+
+```html
+<div>
+ 	{{ msg }}
+</div>
+```
+
+渲染成相关的render方法 类似
+
+```js
+(function anonymous(
+) {
+with(this){return _c('div',{attrs:{"id":"app"}},[_c('h1',[_v(_s(msg))]),_v("\n      "+_s(msg)+"\n    ")])}
+})
+```
+
+其中通过this.msg访问了msg，出发此时message的getter，在此时这个节点的watcher被加入msg的dep中，在将来msg变化出发，触发setter进行更新，dep notify其中所有相关联watcher对象的update方法
