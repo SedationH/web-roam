@@ -1,4 +1,4 @@
-## 前置知识
+## http://picbed.sedationh.cn/show-asdasd.gif前置知识
 
 JS单线程指JS执行JS代码是单线程进行
 
