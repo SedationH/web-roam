@@ -1,1 +1,0 @@
-export const module = 'This is module'

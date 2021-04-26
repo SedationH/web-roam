@@ -1,9 +1,0 @@
-{
-  "name": "01use-grunt",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "devDependencies": {
-    "grunt": "^1.3.0"
-  }
-}

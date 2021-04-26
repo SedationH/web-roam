@@ -1,9 +1,0 @@
-{
-  "name": "00vue3-reactivity-system",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "@vue/reactivity": "^3.0.5"
-  }
-}

@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/js/app.js"],"names":["fn","args","console","log","a"],"mappings":";;AAAA,IAAMA,EAAE,GAAG,SAALA,EAAK,GAAa;AAAA,oCAATC,IAAS;AAATA,IAAAA,IAAS;AAAA;;AACtBC,EAAAA,OAAO,CAACC,GAAR,CAAYF,IAAZ;AACA,MAAIG,CAAC,GAAG,CAAR;AACD,CAHD","sourcesContent":["const fn = (...args) => {\n  console.log(args)\n  var a = 1\n}"],"file":"app.js"}
