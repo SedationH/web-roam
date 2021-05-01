@@ -1,1 +1,32 @@
-<form action=""></form>
+  <form name="form1" id="form2" action="/my-handling-form-page" method="post">
+    <ul>
+      <li>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="user_name" />
+      </li>
+      <li>
+        <label for="mail">E-mail:</label>
+        <input type="email" id="mail" name="user_mail" />
+      </li>
+      <li>
+        <label for="msg">Message:</label>
+        <textarea id="msg" name="user_message"></textarea>
+      </li>
+      <li class="button">
+        <button type="submit">Send your message</button>
+      </li>
+    </ul>
+  </form>
+
+  <script>
+const $submit = document.querySelector('#submit')
+function formValidate() {
+  if(校验1)
+  if(校验2)
+  if(校验3)
+  if(校验4)
+  ...
+}
+$submit.addEventListener('click', formValidate)
+  </script>
+</body>

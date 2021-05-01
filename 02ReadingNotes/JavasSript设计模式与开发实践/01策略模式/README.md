@@ -1,3 +1,5 @@
+## 基本
+
 策略模式的定义是：
 
 定义一系列算法，把他们一个个封装起来，并且使他们可以相互替换。
@@ -28,9 +30,9 @@ JS相较于传统面向对象的开发语言，特殊在于函数，函数可以
 
 具体来说
 
+## CODE
 
-
-传统
+### 传统
 
 ```js
 function StrategyA() {}
@@ -65,7 +67,7 @@ console.log(s1.getCalculatedSalary())
 
 
 
-JS
+### JS
 
 ```js
 const strategy = {
@@ -120,5 +122,53 @@ console.log(s1)
 
 
 
+## 具体场景
+
 通过Web校验场景，考虑更加复杂的情况。
 
+```js
+const $submit = document.querySelector('#submit')
+function formValidate() {
+  if(校验1)
+  if(校验2)
+  if(校验3)
+  if(校验4)
+  ...
+}
+$submit.addEventListener('click', formValidate)
+```
+
+分析这个场景的分离需求
+
+校验对象 validator
+
+校验规则 rules
+
+
+
+validator 包含当前需要进行校验目标的上下文
+
+包含
+
+- 校验谁？
+- 调用哪些校验？
+
+通过向validator上添加不同的rules来实现具体的校验
+
+
+
+## 思考一等函数对象与策略模式
+
+在传统的对象语言中
+
+不同的算法需要依托于不同的Strategy类来实现调用
+
+
+
+在JS中，函数即对象，不需要再依托于Strategy累来实现调用
+
+我们可以在函数调用的时候就传入不同的函数来实现不同算法的使用
+
+策略模式的核心是分离算法实现和Context
+
+在函数可作为参数的编程模式中，这个语言本身就融入了策略模式。
