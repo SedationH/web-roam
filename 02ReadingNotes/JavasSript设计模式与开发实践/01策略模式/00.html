@@ -1,0 +1,133 @@
+<script>
+  // 引入场景
+  // 发工资
+  //   方法 绩效等级 -> 计算方法 -> 基础工资 -> 总工资
+  ;(function () {
+    // 调用方法
+    /**
+     * @param {string} strategy
+     * @param {number} salary
+     */
+    function getCalculatedSalary(strategy, salary) {
+      if (strategy === 'A') return salary * 3
+      if (strategy === 'B') return salary * 2
+      if (strategy === 'C') return salary * 1
+      return salary * 0.5
+    }
+    console.log(getCalculatedSalary('A', 100))
+  })
+  // 存在的问题
+  //   需求 加入新strategy
+  //     需要深入理解getCalculatedSalary内部实现和判断逻辑，违反开放封闭原则
+  //   需求 策略复用困难
+  //   需求 getCalculatedSalary处理了策略判断和实现，单一职责原则指导下不应该这么做，会导致维护困难
+  // 通过策略模式，分离算法的使用和算法的实现
+  // 先尝试利用组合函数
+  ;(function () {
+    /**
+     * @param {string} strategy
+     * @param {number} salary
+     */
+    function getCalculatedSalary(strategy, salary) {
+      if (strategy === 'A') return handleStrategyA(salary)
+      if (strategy === 'B') return handleStrategyB(salary)
+      if (strategy === 'C') return handleStrategyC(salary)
+      return salary * 0.5
+    }
+
+    function handleStrategyA(salary) {
+      return salary * 3
+    }
+
+    function handleStrategyB(salary) {
+      return salary * 2
+    }
+    function handleStrategyC(salary) {
+      return salary * 1
+    }
+
+    console.log(getCalculatedSalary('A', 100))
+
+    // 将处理方法写成单独的函数，一定程度上解决了策略复用的问题
+    // 还需解决单一职责 和 开放-封闭原则
+  })
+
+  // 使用传统的对象模式来实现策略模式
+  ;(function () {
+    function StrategyA() {}
+    StrategyA.prototype.calculate = function (salary) {
+      return salary * 3
+    }
+
+    function StrategyB() {}
+
+    StrategyB.prototype.calculate = function (salary) {
+      return salary * 2
+    }
+
+    function StrategyC() {}
+
+    StrategyC.prototype.calculate = function (salary) {
+      return salary
+    }
+
+    function Salary(salary, strategy) {
+      this.salary = salary
+      this.strategy = strategy
+    }
+
+    Salary.prototype.getCalculatedSalary = function () {
+      return this.strategy.calculate(this.salary)
+    }
+
+    const s1 = new Salary(100, new StrategyA())
+    console.log(s1.getCalculatedSalary())
+  })
+  // js
+  ;(function () {
+    const strategy = {
+      StrategyA(salary) {
+        return salary * 3
+      },
+      StrategyB(salary) {
+        return salary * 2
+      },
+      StrategyC(salary) {
+        return salary
+      },
+    }
+
+    function Salary(salary, strategy) {
+      this.salary = salary
+      this.strategy = strategy
+    }
+
+    Salary.prototype.getCalculatedSalary = function () {
+      return this.strategy(this.salary)
+    }
+
+    const s1 = new Salary(100, strategy.StrategyA)
+    console.log(s1.getCalculatedSalary())
+  })
+  // 当然，Salary也可以简化
+  ;(function () {
+    const strategy = {
+      StrategyA(salary) {
+        return salary * 3
+      },
+      StrategyB(salary) {
+        return salary * 2
+      },
+      StrategyC(salary) {
+        return salary
+      },
+    }
+
+    function getSalary(salary, strategy) {
+      return strategy(salary)
+    }
+
+    const s1 = getSalary(100, strategy.StrategyA)
+    console.log(s1)
+  })()
+</script>
