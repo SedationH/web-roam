@@ -97,3 +97,55 @@ form 的默认行为
 
 ![image-20210501202129335](http://picbed.sedationh.cn/image-20210501202129335.png)
 
+
+
+## image
+
+替换src还是会发起请求
+
+只是如果资源做了缓存处理表现的好像没请求一样
+
+```HTML
+<body></body>
+<script>
+  function myImage(width, height) {
+    const $img = new Image(width, height)
+    $img.src = 'loading.gif'
+    const tempImage = new Image()
+    tempImage.src = 'http://picbed.sedationh.cn/bl_8_convert.png'
+    tempImage.addEventListener('load', () => {
+      $img.src = tempImage.src
+    })
+    let flag = true
+    $img.addEventListener('click', () => {
+      $img.src = flag
+        ? 'loading.gif'
+        : 'http://picbed.sedationh.cn/bl_8_convert.png'
+      flag = !flag
+    })
+    return $img
+  }
+
+  const $img1 = myImage()
+  document.body.append($img1)
+</script>
+
+```
+
+
+
+![image-20210502114358503](http://picbed.sedationh.cn/image-20210502114358503.png)
+
+
+
+而且只替换个src原来的height width都失效了
+
+
+
+奇怪的表现是
+
+假设A请求事件 >> B
+
+A.onolad 时刻 我再把B的src换成A的，却没有请求发出
+
+这里我还是觉得替换DOM `Node.replaceChildren` 的处理更加好一些

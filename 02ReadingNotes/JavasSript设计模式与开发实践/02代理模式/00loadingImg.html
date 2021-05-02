@@ -1,0 +1,21 @@
+<body></body>
+<script>
+  const myImage = (function () {
+    const $img = new Image()
+    document.body.append($img)
+
+    const temp = new Image()
+    temp.addEventListener('load', () => {
+      $img.src = 'http://picbed.sedationh.cn/bl_8_convert.png'
+    })
+
+    return {
+      setSrc(src) {
+        $img.src = 'loading.gif'
+        temp.src = src
+      },
+    }
+  })()
+
+  myImage.setSrc('http://picbed.sedationh.cn/bl_8_convert.png')
+</script>
