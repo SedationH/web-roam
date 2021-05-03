@@ -162,3 +162,6 @@ requirements -> gate diagram
 
 ![image-20210503135403262](http://picbed.sedationh.cn/image-20210503135403262.png)
 
+gate diagram -> HDL implements
+
+![image-20210503140915776](http://picbed.sedationh.cn/image-20210503140915776.png)
