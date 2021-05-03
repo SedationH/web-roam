@@ -145,3 +145,20 @@ relays, and so on, you know, all this stuff, and what you see in the top
 left corner of the screen here, this is electrical engineering (EE). 
 
 It's not computer science(CS).
+
+
+
+## HDL (Hardware Description Language)
+
+### Design的过程如下
+
+requirements -> HDR interface 
+
+![image-20210503135258119](http://picbed.sedationh.cn/image-20210503135258119.png)
+
+
+
+requirements -> gate diagram
+
+![image-20210503135403262](http://picbed.sedationh.cn/image-20210503135403262.png)
+
