@@ -165,3 +165,72 @@ requirements -> gate diagram
 gate diagram -> HDL implements
 
 ![image-20210503140915776](http://picbed.sedationh.cn/image-20210503140915776.png)
+
+
+
+### 如何使用和测试HDL ？
+
+可以通过load相关的hdl引入文件, then eval get outputs...
+
+
+
+测试的方案按照自动化和系统化程度从低到高排序
+
+1. 利用GUI模拟
+2. 引入script 进行自动化
+3. 引入cmp文件进行自动比较
+
+
+
+![image-20210504150133403](http://picbed.sedationh.cn/image-20210504150133403.png)
+
+
+
+### 模块化开发
+
+具体到硬件模块构建中，需要进行开发的工作是复杂又需要相互协同的
+
+
+
+两种工作任务
+
+- 设计架构
+  - 做Plan
+  - 描述需要什么样的Chip -> Abstruction API...
+  - test script
+  - cmp file
+- 开发
+  - 根据设计架构所给定的目标和资源，进行具体逻辑的实现和开发
+
+
+
+>  Each of which can be created and tested in isolation.
+>
+> 把大的任务模块化开发，后面再进行组合
+
+
+
+### 再谈HDL
+
+许多时候chip的 输入输出不仅仅是一个 0 || 1
+
+而可能是一组
+
+比如 8bits 16bits...
+
+这里把他们视为bus , 数据组合的entity
+
+
+
+![image-20210504154240244](/Users/sedationh/Library/Application Support/typora-user-images/image-20210504154240244.png)
+
+
+
+又或是输入的来源多于两个
+
+![image-20210504154400997](http://picbed.sedationh.cn/image-20210504154400997.png)
+
+
+
+HDL其实也是一层抽象，下面帮助开发者自动进行了一些组合
+

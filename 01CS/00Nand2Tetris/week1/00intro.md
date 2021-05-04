@@ -46,9 +46,7 @@ Nand to Tetris
 
 
 
-
-
-![image-20210502214856367](/Users/sedationh/Library/Application Support/typora-user-images/image-20210502214856367.png)
+![image-20210502214856367](http://picbed.sedationh.cn/image-20210502214856367.png)
 
 Now, many of you are probably wondering, 
 
