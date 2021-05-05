@@ -11,10 +11,32 @@
  *       d if sel == 11
  */
 
+//  注意⚠️ sel = 10 -> sel[0] = 0 sel[1] = 1
+
+// CHIP Mux4Way16 {
+//     IN a[16], b[16], c[16], d[16], sel[2];
+//     OUT out[16];
+
+//     PARTS:
+//     // Put your code here:
+//     // if sel[1] === 0 frist = a, second = b
+//     // else frist = c, second = d
+//     // 这样两个集合就区分开了
+//     Mux16(a = a, b = c, sel = sel[1], out = first);
+//     Mux16(a = b, b = d, sel = sel[1], out = second);
+    
+//     Mux16(a = first, b = second, sel = sel[0], out = out);
+// }
+
+// 从Mux执行的结果来思考 0 输出前者 1 输出后者
 CHIP Mux4Way16 {
     IN a[16], b[16], c[16], d[16], sel[2];
     OUT out[16];
 
     PARTS:
     // Put your code here:
+    Mux16(a = a, b = b, sel = sel[0], out = AOrB);
+    Mux16(a = c, b = d, sel = sel[0], out = COrD);
+    
+    Mux16(a = AOrB, b = COrD, sel = sel[1], out = out);
 }

@@ -9,10 +9,16 @@
  *          {0, in} if sel == 1
  */
 
+// 思路 利用And 谁 1 返回谁
+
 CHIP DMux {
     IN in, sel;
     OUT a, b;
 
     PARTS:
     // Put your code here:
+    Not(in = sel, out = notSel);
+    
+    And(a = in, b = notSel, out = a);
+    And(a = in, b = sel, out = b);
 }

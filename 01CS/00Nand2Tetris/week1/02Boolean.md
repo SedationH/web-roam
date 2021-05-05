@@ -1,4 +1,4 @@
-## Boolean Logic
+##  Boolean Logic
 
 ### Bolean Operations
 
@@ -234,3 +234,48 @@ gate diagram -> HDL implements
 
 HDL其实也是一层抽象，下面帮助开发者自动进行了一些组合
 
+
+
+## Project
+
+要做哪些ship
+
+
+
+![image-20210504220611567](http://picbed.sedationh.cn/image-20210504220611567.png)
+
+
+
+
+
+大致讲了Mux && DMux && 一些组合
+
+![image-20210504220648938](http://picbed.sedationh.cn/image-20210504220648938.png)
+
+
+
+![image-20210504220732097](http://picbed.sedationh.cn/image-20210504220732097.png)
+
+
+
+![image-20210504220755882](http://picbed.sedationh.cn/image-20210504220755882.png)
+
+![image-20210504220823141](http://picbed.sedationh.cn/image-20210504220823141.png)
+
+
+
+## 开始做～
+
+https://www.nand2tetris.org/project01
+
+
+
+API
+
+https://drive.google.com/file/d/1IsDnH0t7q_Im491LQ7_5_ajV0CokRbwR/view
+
+
+
+留一些手写
+
+![image-20210505092814507](http://picbed.sedationh.cn/image-20210505092814507.png)

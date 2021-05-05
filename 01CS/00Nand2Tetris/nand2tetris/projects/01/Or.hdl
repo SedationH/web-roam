@@ -9,10 +9,27 @@
  *       0 otherwise
  */
 
+// CHIP Or {
+//     IN a, b;
+//     OUT out;
+
+//     PARTS:
+//     // Put your code here:
+//     Not(in = a, out = notA);
+//     Not(in = b, out = notB);
+//     And(a = notA, b = notB, out = notAAndNotB);
+//     Not(in = notAAndNotB, out = out);
+// }
+
+// 以Nand作为变换起始点
 CHIP Or {
     IN a, b;
     OUT out;
 
     PARTS:
     // Put your code here:
+    Not(in = a, out = notA);
+    Not(in = b, out = notB);
+    Nand(a = notA, b = notB, out = out);
 }
+
