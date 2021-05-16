@@ -12,6 +12,32 @@
 
 
 
+是一种用于构建通讯关系的设计模式
+
+
+
+场景
+
+异步编程
+
+生命周期，插件机制....
+
+
+
+> 发布订阅模式可以取代对象之间硬编码的通知机制，一个对象不用再显示地调用另外一个对象的某个接口。
+>
+> 通讯的双方(1-n ...)  认同一种模式、契约。
+
+
+
+事件步骤
+
+- 实现
+
+EventTarget 可支持
+
+
+
 ## EventTarget
 
 **`EventTarget`** is a DOM interface implemented by objects that can receive events and may have listeners for them.

@@ -102,6 +102,12 @@ CHIP Add16 {
 
 
 
+上述的实现最后一个数字的计算依赖前面的所以计算。所以会有很长的delay
+
+![image-20210509152359528](http://picbed.sedationh.cn/image-20210509152359528.png)
+
+
+
 ## Negative Numbers
 
 目前已经实现了加法
@@ -256,7 +262,52 @@ x = 6
 
 
 
+![image-20210509160007584](http://picbed.sedationh.cn/image-20210509160007584.png)
+
 > **Why use zr, ng?**
 >
 > These two control bits will come into play when we build the complete computers architecture
 
+
+
+设计Hack ALU能够体现设计ALU所设计的想法和设计。
+
+一句话
+Simplicity is the ultimate sophistication.
+
+![Leonardo da Vinci](https://www.origin8.africa/wp-content/uploads/2019/07/leonardo.jpg)
+
+
+
+## Perspective
+
+在做复杂开发的时候，一个原则很重要
+
+封装 抽象使得我们只需要关心当前需要进行的实现，而把已经实现的部分抽象为API进行调用就好了
+
+
+
+项目在使用代码的时候不是用自己前一层写的实现，而是用当前project所提供的。
+
+原因有2
+
+1. 有问题也只会是当前层的问题，通过标准化提供已经实现的部分，当我们面临错误的时候，只会是current layer的问题。
+2. simulater的性能有限，仅仅是模拟。
+
+
+
+## Project
+
+https://www.nand2tetris.org/project02
+
+https://drive.google.com/file/d/1IsDnH0t7q_Im491LQ7_5_ajV0CokRbwR/view
+
+实现下面几个
+
+![image-20210509155832045](http://picbed.sedationh.cn/image-20210509155832045.png)
+
+![image-20210508114441763](http://picbed.sedationh.cn/image-20210508114441763.png)
+
+
+
+![image-20210509160007584](http://picbed.sedationh.cn/image-20210509160007584.png)
