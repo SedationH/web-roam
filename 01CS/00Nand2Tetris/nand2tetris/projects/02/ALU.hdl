@@ -72,5 +72,19 @@ CHIP ALU {
     
     // no
     Not16(in = out3, out= notOut);
-    Mux16(a = out3, b = notOut, sel = no, out = out);
+    // Mux16(a = out3, b = notOut, sel = no, out = out);
+    Mux16(a = out3, b = notOut, sel = no, out = out, out[0..7] = finalOut1, out[8..15] = finalOut2, out[15] = ng);
+
+
+
+    // zr
+    // http://nand2tetris-questions-and-answers-forum.32033.n3.nabble.com/Sub-bus-of-an-internal-node-may-not-be-used-td4031198.html
+    Or8Way(in = finalOut1, out = orOut1);
+    Or8Way(in = finalOut2, out = orOut2);
+    Or(a = orOut1, b = orOut2, out = orOut1OrOrOut2);
+    Mux(a = true, b = false, sel = orOut1OrOrOut2, out = zr);
+    
+    // ng
+    // 注意符号是高位
+    // Mux(a = false, b = true, sel = finalOutTop, out = ng);
 }
