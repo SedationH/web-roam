@@ -59,7 +59,7 @@ CHIP ALU {
     
 
     // zy
-    Mux16(a = y, b = false, sel = zx, out = y1);
+    Mux16(a = y, b = false, sel = zy, out = y1);
 
     // ny
     Not16(in = y1, out = notY);
