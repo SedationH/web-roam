@@ -11,10 +11,41 @@
  * else                    out[t+1] = out[t]
  */
 
+// CHIP PC {
+//     IN in[16],load,inc,reset;
+//     OUT out[16];
+
+//     PARTS:
+//     // Put your code here:
+//     Register(in = o3, load = true, out = lastOut, out = out);
+
+//     // handle reset
+//     Mux16(a = lastOut, b = false, sel = reset, out = o1);
+    
+//     // handle load
+//     Mux16(a = o2, b = in, sel = load, out = o3);
+
+//     // handle inc
+//     Inc16(in = o1, out = addO2);
+//     Mux16(a = o1, b = addO2, sel = inc, out = o2);
+// }
+
 CHIP PC {
     IN in[16],load,inc,reset;
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // handle inc
+    Inc16(in = lastOut, out = addLastOut);
+    Mux16(a = lastOut, b = addLastOut, sel = inc, out = o1);
+
+    // handle load
+    Mux16(a = o1, b = in, sel = load, out = o2);
+    
+    // handle reset
+    Mux16(a = o2, b = false, sel = reset, out = o3);
+    
+
+    Register(in = o3, load = true, out = lastOut, out = out);
+    
 }

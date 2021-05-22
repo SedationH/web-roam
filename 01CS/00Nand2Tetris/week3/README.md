@@ -45,9 +45,31 @@ ok，这样可以做what呢？
 
 
 
-## Flip Plops
+📚书籍P 60
+
+>  记忆单元的实现是复杂的过程，涉及了同步、时钟和反馈回路。其中的大部分能够被封装到称为触发器(flip-flop)的底层时序门(sequential gate)中。、
+
+计算机中许多基础性的概念都有在这里体现
+
+时钟
+
+寄存器
+
+字（word）通用寄存器的宽度
+
+RAM
+
+地址
+
+
+
+## Flip flops
 
 这里感觉理解不是很清晰
+
+>  Perspectives 里面讲了DFF的**工作原理**
+>
+> 利用nand进行实现
 
 > - Missing ingredient: remember one bit of information from time t-1 so it can be used at time t.
 > - At the end of time t-1, such an ingredient can be at either of two states: "remember 0" or "remember 1"
@@ -121,3 +143,63 @@ RAM和精髓在于Random，基于地址索引，因此不管RAM的SIZE如何增�
 ## Project
 
 重点在这里，看如何组合和利用所提供的的DFF
+
+https://www.nand2tetris.org/project03
+
+
+
+核心技巧
+
+
+
+处理RAM的时候
+
+DMux + address 分发load
+
+Mux + address 几种load
+
+
+
+PC
+
+我们写if是从上向下思考👇
+
+```js
+/**
+ * A 16-bit counter with load and reset control bits.
+ * if      (reset[t] == 1) out[t+1] = 0
+ * else if (load[t] == 1)  out[t+1] = in[t]
+ * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
+ * else                    out[t+1] = out[t]
+ */
+```
+
+但在chips中，电流是在每个芯片中都有流动的
+
+处理思路是从下至上的
+
+先 inc 再 load 再 reset
+
+都不处理的初始流入就是 else中的
+
+```vhdl
+CHIP PC {
+    IN in[16],load,inc,reset;
+    OUT out[16];
+
+    PARTS:
+    // handle inc
+    Inc16(in = lastOut, out = addLastOut);
+    Mux16(a = lastOut, b = addLastOut, sel = inc, out = o1);
+
+    // handle load
+    Mux16(a = o1, b = in, sel = load, out = o2);
+    
+    // handle reset
+    Mux16(a = o2, b = false, sel = reset, out = o3);
+    
+
+    Register(in = o3, load = true, out = lastOut, out = out);
+    
+}
+```
