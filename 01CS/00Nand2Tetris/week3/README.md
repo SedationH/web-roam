@@ -16,7 +16,8 @@ why?
 
 这样的重复利用依赖之前的计算结果
 
-- remember "State" previous
+- remember "State" previous.
+- 
 - handle speed / delays
 
 

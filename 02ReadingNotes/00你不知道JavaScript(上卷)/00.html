@@ -1,0 +1,27 @@
+<script>
+var a
+function foo(obj) {
+  var a
+  with (obj) {
+    a = 1
+    var bar = 'bar'
+    try {
+      console.log('in with RHS', b)
+    } catch (error) {
+      console.log('cant find b when obj is ', JSON.stringify(obj))
+    }
+  }
+  console.log(obj) // {a: 1} || {b: 2}
+}
+
+const o1 = { a: 2 }
+const o2 = { b: 2 }
+
+console.log(a, o1.a)
+foo(o1)
+console.log(a, o1.a)
+
+console.log(a, o2.a)
+foo(o2)
+console.log(a, o2.a)
+</script>
