@@ -165,3 +165,353 @@ The physical display is continuously refreshed from the memory map, many times p
 
 键盘上的键 对应某个code 传入 keybord memory map
 
+## Hack programming
+
+底层的编码工作是在做什么
+
+- working with registers and memory
+- branching
+- variables
+- iteration
+- pointers
+- I/O
+
+
+
+## woring with registers and memory
+
+### 常见寄存器
+
+![image-20210606085839002](http://picbed.sedationh.cn/image-20210606085839002.png)
+
+D: data register
+
+A: address / data register
+
+M: the currently selected memory register
+
+
+
+### typical operations
+
+// wh? see A/C specification [link](#A)
+
+```
+// D = 10
+@10 // make A = 10
+D=A
+
+// D++
+D=D+1
+
+// D=RAM[17]
+@17
+D=M
+
+// RAM[17]=0
+@17
+M=0
+
+// RAM[17]=10
+@10
+D=A
+@17
+M=D
+
+// RAM[5]=RAM[3]
+@3
+D=M
+@5
+M=D
+```
+
+
+
+注意在载入到ROM之后，是有行数的，空行是被忽略的
+
+![image-20210607123648189](http://picbed.sedationh.cn/image-20210607123648189.png)
+
+
+
+### 第六行是没有指令的，这种情况称为NOP
+
+NOP -> Null instructions / Null Opcodes
+
+> a bed hacker can use this instructions to slide the flow of control to an area of the memory that he controls and then something bad can happen. 
+
+如果存在这样的NOP，黑客是可以进行利用的，避免的方式就是让所有的代码都在我们的可控范围内
+
+电脑无时无刻都在进行运转，通过使用loop来让指令的执行只在我们自己的可控代码范围内
+
+`JMP: Unconditional jump`
+
+```assembly
+@6
+0;JMP
+```
+
+
+
+### 内置的 symbols
+
+R0 .. R15 virtual registers 利用这个来清晰地址指向
+
+![image-20210607125744610](http://picbed.sedationh.cn/image-20210607125744610.png)
+
+All
+
+![image-20210607125823117](http://picbed.sedationh.cn/image-20210607125823117.png)
+
+## Branching
+
+分支 if ..
+
+```assembly
+// if we want to implement
+// if R0 > 0
+// 			R1 = 1
+// else
+// 			R0 = 0
+
+  @R0
+  D=M
+
+  @8
+  D;JGT // 这里是根据A register中存在的值进行跳跃的 -> 第八行
+
+  @R1
+  M=0
+  @10
+  0;JMP
+
+8 @R1
+  M=1
+
+10@10
+  0;JMP // jump with uncondition
+```
+
+这里代码实现的可读性很差
+
+
+
+课中引入了一句很经典的话
+
+![image-20210607140200217](http://picbed.sedationh.cn/image-20210607140200217.png)
+
+
+
+> what's is the main task of programer ?
+>
+> instruct a computer to do what (基本要实现的效果
+>
+> 在现代规模化和合作化的开发中，可能更重要的中心是
+>
+> 可读性
+
+为了增强可读性，在这里引入label标记跳转语义
+
+![image-20210607141405105](http://picbed.sedationh.cn/image-20210607141405105.png)
+
+## Variables
+
+![image-20210607142312767](http://picbed.sedationh.cn/image-20210607142312767.png)
+
+
+
+### Relocatable Code
+
+在引入了上述的一些symbols后
+
+除了可读性和优雅外，其实还引入了很重要的一个特性
+
+就是我们的代码在执行过程中所依赖的寄存器并不是固定的，而是通过 variables or 类似 @temp这样的symbols进行动态生成的
+
+相同的代码对于不同的load时机可能使用的寄存器就不一样了，上述代码也是代码生成概念中的 **relocatable code**
+
+
+
+## iteration
+
+![image-20210607143841711](http://picbed.sedationh.cn/image-20210607143841711.png)
+
+Best Practice:
+
+先写伪代码
+
+再转化成assemble language
+
+
+
+## Pointer
+
+![image-20210607145423847](http://picbed.sedationh.cn/image-20210607145423847.png)
+
+数组的概念是个空间指向
+
+数组再内存上分配一个连续的空间，然后通过偏移地址寄存器A来取到不同的值
+
+## I/O
+
+这里真的是很有意思的概念
+
+指针和I/O设备联系到了一起
+
+事实上，我们无法直接操作I/O设备，但I/O设备通过与内存中某些区域建立映射来进行工作的
+
+我们通过指针定位到那些区域，操作/读取那些区域，也就相当于操作了I/O设备
+
+
+
+![image-20210607151208961](http://picbed.sedationh.cn/image-20210607151208961.png)
+
+## END
+
+4.8结尾 老师提了一些有意思的话
+
+> Simple-minded people are impressed by sophisticated things, and sophisticated people are impressed by simple things.
+
+
+
+## 项目
+
+Well-written low-level code is
+
+- short
+- Efficient
+- Elegant
+- Self-describing
+
+
+
+### multi
+
+tsc 中是限制ticktock次数的
+
+因此 尽管这一版本是可读性最好的
+
+但次数上过不去
+
+```assembly
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/04/Mult.asm
+
+// Multiplies R0 and R1 and stores the result in R2.
+// (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
+//
+// This program only needs to handle arguments that satisfy
+// R0 >= 0, R1 >= 0, and R0*R1 < 32768.
+
+// Put your code here.
+
+// Analyse
+// R1*R2 可以理解为 times * value
+// 即 times 个 value相加
+
+// use some variables to save process value
+// more readale
+@sum
+M=0
+
+@i
+M=1
+
+@R0
+D=M
+@times
+M=D
+
+@R1
+D=M
+@value
+M=D
+
+(LOOP)
+  // 循环判断逻辑
+  @i
+  D=M
+  @times
+  D=D-M;
+  @GET_SUM
+  D;JGT
+  
+  // 计算
+  @sum
+  D=M
+  @value
+  D=D+M
+  // 写回
+  @sum
+  M=D
+
+  // 更改 i
+  @i
+  D=M+1
+  @i
+  M=D
+
+  @LOOP
+  0;JMP
+
+(GET_SUM)
+  @sum
+  D=M
+  @R2
+  M=D
+
+(END)
+  @END
+  0;JMP
+```
+
+只使用 i
+
+```assembly
+@i
+M=1
+
+@R2
+M=0
+
+(LOOP)
+  // 循环判断逻辑
+  @i
+  D=M
+  @R0
+  D=D-M;
+  @ENd
+  D;JGT
+  
+  // 计算
+  @R2
+  D=M
+  @R1
+  D=D+M
+  // 写回
+  @R2
+  M=D
+
+  // 更改 i
+  @i
+  D=M+1
+  @i
+  M=D
+
+  @LOOP
+  0;JMP
+
+(END)
+  @END
+  0;JMP
+```
+
+
+
+## fill
+
+能通过寄存器操作IO设备还是很有趣的～
+
+![2021-06-07 20.32.20](http://picbed.sedationh.cn/2021-06-07 20.32.20.gif)
+
