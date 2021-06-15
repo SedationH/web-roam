@@ -40,4 +40,9 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    // op A 以 0 开头
+    Not(in = instruction[15], out = isAOP);
+    Not(in = isAOP, out = isCOP);
+
+    ARegister(in = instruction[0..14], load=, out=);
 }
