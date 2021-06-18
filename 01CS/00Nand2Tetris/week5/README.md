@@ -79,7 +79,7 @@ execute 需要的是计算所需要的数据
 
 解决方案：
 
-![image-20210614161431415](http://picbed.sedationh.cn/image-20210614161431415.png)
+![image-20210618144006466](http://picbed.sedationh.cn/image-20210618144006466.png)
 
 
 
@@ -264,6 +264,169 @@ CHIP Memory {
 
 
 ![image-20210614162954694](http://picbed.sedationh.cn/image-20210614162954694.png)
+
+```vhdl
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/CPU.hdl
+
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction. 
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M?  ok
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // Put your code here:
+    // op A 以 0 开头
+    // 注意索引对应关系
+    // 0  d  d  d  d  d  d  d  d  d  d  d  d  d  d  d 
+    // 1  1  1  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+    // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+    Not(in = instruction[15], out = isAOP);
+    Not(in = isAOP, out = isCOP);
+
+    // A 寄存器的数据来源有 两个
+    //     1. A instruction
+    //     2. C instruction dest = A
+    And(a = isCOP, b = instruction[5], out = isARLoadALUOutput);
+    Mux16(a = instruction, b = ALUOutput, sel = isARLoadALUOutput, out = inAR);
+
+    // A寄存器 数据的导入和导出
+    Or(a = isARLoadALUOutput, b = isAOP, out = isARLoad);
+    ARegister(in = inAR, load = isARLoad, out = outAR, out[0..14] = addressM);
+
+    // 注意 http://picbed.sedationh.cn/image-20210606090213077.png 中 comp a = 1
+    // 的时候才会使用inM a = 0 的时候才会用A D和a无关
+    Mux16(a = outAR, b = inM, sel = instruction[12], out = inALUARMR);
+
+    // 如果当前需要写一个值到M[A], 将要写入的值存在outM, 地址在 addressM, writeM =1
+    // http://picbed.sedationh.cn/image-20210606090213077.png 可知 当需要写入M时候， d3 = 1
+    // 如果是C指令并且规定写入到M
+    And(a = isCOP, b = instruction[3], out = writeM);
+
+    // D寄存器的数据来源只可能是C OP 并且DEST 为 D -> d2 = 1
+    And(a = isCOP, b = instruction[4], out = isDRLoad);
+    DRegister(in = ALUOutput, load = isDRLoad, out = outDR, out = inALUDR);
+
+    // c1 -> c2的数据用于操作ALU的运算 注意比对
+    // http://picbed.sedationh.cn/image-20210508114441763.png 和 
+    // http://picbed.sedationh.cn/image-20210606090213077.png 中的  c1 -> c2
+    // 发现完全吻合 D -> x , M || A -> y
+    And(a = isCOP, b = instruction[6], out = no);
+    And(a = isCOP, b = instruction[7], out = f);
+    And(a = isCOP, b = instruction[8], out = ny);
+    And(a = isCOP, b = instruction[9], out = zy);
+    And(a = isCOP, b = instruction[10], out = nx);
+    And(a = isCOP, b = instruction[11], out = zx);
+    
+    ALU(
+        x = inALUDR, y = inALUARMR,
+        zx = zx, nx = nx, zy = zy, ny = ny, f = f, no = no,
+        out = ALUOutput, out = outM, zr = zr, ng = ng
+    );
+
+    And(a = isCOP, b = instruction[0], out = isGT);
+    And(a = isCOP, b = instruction[1], out = isEQ);
+    And(a = isCOP, b = instruction[2], out = isLT);
+
+    Not(in = ng, out = notNg);
+    Not(in = zr, out = notZr);
+    And(a = notNg, b = notZr, out = gt);
+
+    And(a = gt, b = isGT, out = isGTJump);
+    And(a = zr, b = isEQ, out = isEQJump);
+    And(a = ng, b = isLT, out = isLTJump);
+
+    Or(a = isGTJump, b = isEQJump, out = jumpTemp);
+    Or(a = jumpTemp, b = isLTJump, out = jump);
+    PC(in = outAR, load = jump, inc = true, reset = reset, out[0..14] = pc);
+}
+```
+
+### computer 就是把三个组合一下
+
+![image-20210615151407559](http://picbed.sedationh.cn/image-20210615151407559.png)
+
+```vhdl
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/05/Computer.hdl
+
+/**
+ * The HACK computer, including CPU, ROM and RAM.
+ * When reset is 0, the program stored in the computer's ROM executes.
+ * When reset is 1, the execution of the program restarts. 
+ * Thus, to start a program's execution, reset must be pushed "up" (1)
+ * and "down" (0). From this point onward the user is at the mercy of 
+ * the software. In particular, depending on the program's code, the 
+ * screen may show some output and the user may be able to interact 
+ * with the computer via the keyboard.
+ */
+
+CHIP Computer {
+
+    IN reset;
+
+    PARTS:
+    // Put your code here:
+    ROM32K(address = pc, out = instruction);
+    CPU(inM = inM, instruction = instruction, reset = reset, outM = outM, writeM = writeM, addressM = addressM, pc = pc);
+    Memory(in = outM, load = writeM, address = addressM, out = inM);
+}
+
+```
+
+
+
+## Perspective
+
+注意到上述在实现的时候程序在运行期间是不能产生和修改的，只能预先写好导入ROM，再进行运行
+
+Harvard 设计 这样拆分了执行和存储，简化了对于啥时候是指令，啥时候是数据的判定
+
+在 von Neumann architecture 的设计中  数据和指令是放在一起的，需要拆 fetch cycle && execute cycle 来进行设计
+
+这个需要引入新的寄存器(state register)来标记当前所处的状态
+
+
+
+随着外围设备的增加，其操作如果都交付CPU完成，会极大增加CPU负担
+
+通过引入 device controller 来解决这个问题
+
+GPU也是辅助CPU进行运算的
 
 
 
