@@ -34,15 +34,73 @@ CHIP CPU {
                          // the current program (reset==0).
 
     OUT outM[16],        // M value output
-        writeM,          // Write to M? 
+        writeM,          // Write to M?  ok
         addressM[15],    // Address in data memory (of M)
         pc[15];          // address of next instruction
 
     PARTS:
     // Put your code here:
     // op A 以 0 开头
+    // 注意索引对应关系
+    // 0  d  d  d  d  d  d  d  d  d  d  d  d  d  d  d 
+    // 1  1  1  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+    // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
     Not(in = instruction[15], out = isAOP);
     Not(in = isAOP, out = isCOP);
 
-    ARegister(in = instruction[0..14], load=, out=);
+    // A 寄存器的数据来源有 两个
+    //     1. A instruction
+    //     2. C instruction dest = A
+    And(a = isCOP, b = instruction[5], out = isARLoadALUOutput);
+    Mux16(a = instruction, b = ALUOutput, sel = isARLoadALUOutput, out = inAR);
+
+    // A寄存器 数据的导入和导出
+    Or(a = isARLoadALUOutput, b = isAOP, out = isARLoad);
+    ARegister(in = inAR, load = isARLoad, out = outAR, out[0..14] = addressM);
+
+    // 注意 http://picbed.sedationh.cn/image-20210606090213077.png 中 comp a = 1
+    // 的时候才会使用inM a = 0 的时候才会用A D和a无关
+    Mux16(a = outAR, b = inM, sel = instruction[12], out = inALUARMR);
+
+    // 如果当前需要写一个值到M[A], 将要写入的值存在outM, 地址在 addressM, writeM =1
+    // http://picbed.sedationh.cn/image-20210606090213077.png 可知 当需要写入M时候， d3 = 1
+    // 如果是C指令并且规定写入到M
+    And(a = isCOP, b = instruction[3], out = writeM);
+
+    // D寄存器的数据来源只可能是C OP 并且DEST 为 D -> d2 = 1
+    And(a = isCOP, b = instruction[4], out = isDRLoad);
+    DRegister(in = ALUOutput, load = isDRLoad, out = outDR, out = inALUDR);
+
+    // c1 -> c2的数据用于操作ALU的运算 注意比对
+    // http://picbed.sedationh.cn/image-20210508114441763.png 和 
+    // http://picbed.sedationh.cn/image-20210606090213077.png 中的  c1 -> c2
+    // 发现完全吻合 D -> x , M || A -> y
+    And(a = isCOP, b = instruction[6], out = no);
+    And(a = isCOP, b = instruction[7], out = f);
+    And(a = isCOP, b = instruction[8], out = ny);
+    And(a = isCOP, b = instruction[9], out = zy);
+    And(a = isCOP, b = instruction[10], out = nx);
+    And(a = isCOP, b = instruction[11], out = zx);
+    
+    ALU(
+        x = inALUDR, y = inALUARMR,
+        zx = zx, nx = nx, zy = zy, ny = ny, f = f, no = no,
+        out = ALUOutput, out = outM, zr = zr, ng = ng
+    );
+
+    And(a = isCOP, b = instruction[0], out = isGT);
+    And(a = isCOP, b = instruction[1], out = isEQ);
+    And(a = isCOP, b = instruction[2], out = isLT);
+
+    Not(in = ng, out = notNg);
+    Not(in = zr, out = notZr);
+    And(a = notNg, b = notZr, out = gt);
+
+    And(a = gt, b = isGT, out = isGTJump);
+    And(a = zr, b = isEQ, out = isEQJump);
+    And(a = ng, b = isLT, out = isLTJump);
+
+    Or(a = isGTJump, b = isEQJump, out = jumpTemp);
+    Or(a = jumpTemp, b = isLTJump, out = jump);
+    PC(in = outAR, load = jump, inc = true, reset = reset, out[0..14] = pc);
 }
