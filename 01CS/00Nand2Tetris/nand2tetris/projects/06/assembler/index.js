@@ -1,6 +1,10 @@
 const fs = require('fs')
 const path = require('path')
-const parser = require('./parser')
+const {
+  deleteIndentationAndComments,
+  parser,
+  handleLabels,
+} = require('./parser')
 
 // use:
 //  node assembler ./add/Add.asm
@@ -15,21 +19,15 @@ const sourceCode = fs.readFileSync(asmPath, 'utf8')
 let sourceCodeArrays = sourceCode.split('\r\n')
 
 sourceCodeArrays = deleteIndentationAndComments(sourceCodeArrays)
-log(sourceCodeArrays)
+log('after deleteIndentationAndComments', sourceCodeArrays)
+
+sourceCodeArrays = handleLabels(sourceCodeArrays)
+log('after handleLabels', sourceCodeArrays)
+
 sourceCodeArrays = parser(sourceCodeArrays, true)
-log(sourceCodeArrays)
+log('after parser', sourceCodeArrays)
+
 const targetCode = sourceCodeArrays.join('\r\n')
-log(targetCode)
+log('targetCode\n' + targetCode)
 
 fs.writeFileSync(targetPath, targetCode)
-
-// 删除其中的所有注释 空行
-function deleteIndentationAndComments(sourceCodeArrays) {
-  const commentsRegex = /\/\/.+/
-  let temp = []
-  sourceCodeArrays.forEach(line => {
-    line = line.replace(commentsRegex, '').trim()
-    if (line) temp.push(line)
-  })
-  return temp
-}
