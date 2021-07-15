@@ -154,3 +154,5 @@ Assumption: Xxx.asm is error-free
 这个就是用自己熟悉的编程语言去读写处理文件
 
 ![image-20210620154711212](http://picbed.sedationh.cn/image-20210620154711212.png)
+
+1
