@@ -421,6 +421,21 @@ myInstanceOf(str, String)
 
 
 
+理清原型链后的另一种写法
+
+```js
+function myInstanceOf(instance, constructor) {
+  return Object.prototype.isPrototypeOf.call(
+    constructor.prototype,
+    instance
+  )
+}
+```
+
+isPrototypeOf 和 instaceof都是查原型链上
+
+注意不包含自身，自己不是所查的原型
+
 ### 对象描述符
 
 Reflect.defineProperty()
@@ -671,3 +686,233 @@ Java中全是类，并不可选
 想起 <<JavaScript核心原理解析>> 中提到的，开发者总想着把自己过去的经验复用过来，mixin搞得就是这个感觉
 
 传统面向对象语言继承是真的在复制，于是开发者使用mixin来完成这样的需求
+
+
+
+## 原型
+
+### 屏蔽
+
+屏蔽就是说找某个属性的时候，链式查询，近的有了就用了，相当于原项链的上层被屏蔽了。
+
+
+
+```js
+'use strict'
+// 严格模式下对 writable 的属性赋值会 false
+
+const { log } = console
+
+const fooPrototype = {}
+
+Object.defineProperty(fooPrototype, 'name', {
+  writable: false,
+  value: 'foo proto ',
+})
+
+const foo = Object.create(fooPrototype)
+
+foo.name = 'foo'
+
+log(foo)
+```
+
+
+
+```js
+'use strict'
+
+const { log } = console
+
+const fooPrototype = {}
+
+Object.defineProperty(fooPrototype, 'name', {
+  set: function () {
+    this._name = 'foo'
+  },
+})
+
+const foo = Object.create(fooPrototype)
+
+foo.name = 'foo'
+
+log(foo)
+
+// _name: "foo"
+
+// __proto__:
+
+//   set name: ƒ ()
+
+//   __proto__: *Object*
+```
+
+
+
+### 类
+
+JavaScript实际上是更纯粹的面向对象
+
+这里除了一些primitive value之外，只有对象，并不需要类来实例化对象
+
+不需要类来描述对象的行为，对象直接定义自己的行为
+
+传统中类实例化创建对象的方式是把类的行为复制到实例中去、JS这里是建立关联
+
+继承意味着复制，这不适合描述JS引擎的行为，更合适的描述是创建关联 -> **委托**
+
+
+
+创建一个Foo函数 会自动有一个 Foo.prototype
+
+这个Foo.prototype 会 默认有一个 contructor -> Foo函数
+
+注意一下这个contructor 的 PropertyDescriptor
+
+```js
+function foo() {}
+
+console.log(
+  Object.getOwnPropertyDescriptor(foo.prototype, 'constructor')
+)
+// {
+//   configurable: true
+//   enumerable: false
+//   value: ƒ foo()
+//   writable: true
+// }
+```
+
+
+
+
+
+### 利用原型实现类似继承的效果
+
+```js
+function Bar() {}
+
+function Foo() {}
+
+Foo.prototype = Object.create(Bar.prototype)
+
+const f = new Foo()
+
+console.log(Foo.prototype.constructor) // Bar
+console.log(f instanceof Foo) // true
+```
+
+不太好，搞丢了contructor
+
+
+
+```js
+function Bar() {}
+
+function Foo() {}
+
+Object.setPrototypeOf(Foo.prototype, Bar.prototype)
+
+const f = new Foo()
+
+console.log(Foo.prototype.constructor) // Foo
+console.log(f instanceof Foo) // true
+```
+
+比较和谐的方案
+
+
+
+尽管从效果上来看setPrototypeOf优于create(影响了constructor)
+
+但浏览器实现起来不容易，考虑性能的话还是使用 create
+
+> Because this feature is a part of the language, it is still the burden on engine developers to implement that feature performantly (ideally). Until engine developers address this issue, if you are concerned about performance, you should avoid setting the `[[Prototype]]` of an object. Instead, create a new object with the desired `[[Prototype]]` using [`Object.create()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create).
+
+
+### 原型链
+
+原型链就是一系列[[ prototype ]]构成的链状关系
+
+属性在C上找不到，利用C.[[prototype]]找到B，B上没有找B.[[prototype]] ...
+
+
+
+## 行为委托
+
+
+
+面向对象
+
+```js
+function Foo(who) {
+  this.me = who
+}
+
+Foo.prototype.identify = function () {
+  return 'I am' + this.me
+}
+
+function Bar(who) {
+  Foo.call(this, who)
+}
+
+Reflect.setPrototypeOf(Bar.prototype, Foo.prototype)
+
+Bar.prototype.speak = function () {
+  console.log('hi' + this.identify())
+}
+
+const b1 = new Bar(1)
+const b2 = new Bar(2)
+
+b1.speak()
+b2.speak()
+
+console.log(b1 instanceof Foo) // true
+```
+
+
+
+对象关联
+
+```js
+const Foo = {
+  init: function (who) {
+    this.me = who
+  },
+  identify: function () {
+    return `Hi i am. ${this.me}`
+  },
+}
+
+const Bar = Object.create(Foo)
+
+Object.assign(Bar, {
+  speak() {
+    console.log(this.identify())
+  },
+})
+
+const b = Object.create(Bar)
+
+b.init('SedationH')
+b.speak()
+```
+
+
+
+类并不是唯一的代码组织方式，这里的行为委托可以用简洁的描述实现一样的功能
+
+
+
+还把声明和初始化(init) 分离
+
+
+
+但无奈的是，整个社区都在朝着类的方向努力着，让js更加像类
+
+比如class语法，从实现上来看，只是 prototype 的语法糖
+
+是种静态实现
+
