@@ -565,6 +565,24 @@ D是依赖关系中的叶子
 
 
 
+## loader手写思路
+
+ast 寻找需要处理的内容
+
+进行修改
+
+返回修改过的内容
+
+
+
+source
+
+->  AST 修改
+
+返回
+
+
+
 ## 需求
 
 基础库分离 利用走cdn html-webpack-externals-plugin
